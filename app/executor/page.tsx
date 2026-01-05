@@ -1,7 +1,10 @@
+import { AppPage } from "@/src/components";
 
 
 export default function ExecutorPage () {
   return (
-    <div>Executor Page</div>
+    <AppPage title="Исполнитель">
+      <div>Executor Page</div>
+    </AppPage>
   )
 }

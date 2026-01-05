@@ -1,8 +1,8 @@
 "use client"
 
 import React, { useState } from "react";
-import {Block, Button, Checkbox, ListItem, Page} from "konsta/react";
-import {AppList, AppNavbar, AppListInput, Select, InfoBlock} from "@/src/components";
+import {Block, Button, Checkbox, ListItem} from "konsta/react";
+import {AppList, AppListInput, Select, InfoBlock, AppPage} from "@/src/components";
 import {CATEGORIES, CITIES} from "@/src/data";
 import {Plus} from "lucide-react";
 
@@ -16,10 +16,9 @@ export default function CreateOrderPage() {
   };
 
   return (
-    <Page className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
-      <AppNavbar title="Создать заявку" />
+    <AppPage title="Создать заявку"  className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
 
-      <Block className="flex-1 flex flex-col gap-4 pb-14">
+      <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
         <AppList>
           {CATEGORIES.map((category: string) => (
             <ListItem
@@ -91,10 +90,10 @@ export default function CreateOrderPage() {
             onClick={() => {}}
           >
             <Plus className="w-5 h-5" />
-            <span>Создать заявку</span>
+            <span>Создать</span>
           </Button>
         </div>
       </Block>
-    </Page>
+    </AppPage>
   );
 }

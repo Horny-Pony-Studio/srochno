@@ -6,7 +6,7 @@ import { Plus, Edit2, Trash2 } from 'lucide-react';
 import {Order} from "@/src/models/Order";
 import {getTimeBackground, getTimeColor} from "@/src/utils/time";
 import {useRouter} from "next/navigation";
-import {AppNavbar} from "@/src/components";
+import {AppNavbar, AppPage} from "@/src/components";
 
 const createdAt = new Date(Date.now() - 8 * 60000);
 
@@ -31,9 +31,7 @@ export default function CustomerPage () {
   const onDeleteOrder = (orderId: string) => {}
 
   return (
-    <Page className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
-      <AppNavbar title="Мои заявки" />
-
+    <AppPage title="Мои заявки" className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
       <Block className="flex-1 overflow-auto px-4 py-4 flex flex-col gap-y-4 my-0">
         {orders.length === 0 ? (
           <div className="text-center py-20">
@@ -129,9 +127,9 @@ export default function CustomerPage () {
           onClick={() => router.push('/create-order')}
         >
           <Plus className="w-5 h-5" />
-          <span>Создать</span>
+          <span>Создать заявку</span>
         </Button>
       </div>
-    </Page>
+    </AppPage>
   )
 }
