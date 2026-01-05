@@ -4,18 +4,18 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import {
   Page,
-  Navbar,
   Block,
   BlockTitle,
   List,
 } from "konsta/react";
+import {AppNavbar} from "@/src/components";
 
 export default function Home() {
   const router = useRouter();
 
   return (
     <Page className="min-h-screen bg-[#F2F2F7] flex flex-col">
-      <Navbar className="bg-white border-b border-[#C6C6C8] px-4 py-3" title="Срочные услуги" />
+      <AppNavbar title="Срочные услуги" />
 
       <Block className="flex-1 flex flex-col items-center justify-center px-4 pb-20">
         <div className="text-center mb-8">
@@ -28,7 +28,7 @@ export default function Home() {
 
         <BlockTitle>Выбрать роль</BlockTitle>
 
-        <List className="w-full max-w-md space-y-4">
+        <List className="w-full max-w-md">
           <Block
             onClick={() => router.push("/customer")}
             className="w-full bg-white border border-[#C6C6C8] rounded-xl p-4 my-4 text-left active:bg-[#E5E5EA] transition-colors"
