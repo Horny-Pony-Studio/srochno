@@ -129,7 +129,7 @@ export default function CustomerPage () {
           onClick={() => router.push('/create-order')}
         >
           <Plus className="w-5 h-5" />
-          <span>Создать заявку</span>
+          <span>Создать</span>
         </Button>
       </div>
     </Page>

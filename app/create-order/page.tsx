@@ -1,10 +1,10 @@
 "use client"
 
 import React, { useState } from "react";
-import {Block, Checkbox, ListItem, Page} from "konsta/react";
-import {AppList, AppNavbar, AppListInput, Select} from "@/src/components";
+import {Block, Button, Checkbox, ListItem, Page} from "konsta/react";
+import {AppList, AppNavbar, AppListInput, Select, InfoBlock} from "@/src/components";
 import {CATEGORIES, CITIES} from "@/src/data";
-
+import {Plus} from "lucide-react";
 
 export default function CreateOrderPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>(CATEGORIES[0]);
@@ -19,7 +19,7 @@ export default function CreateOrderPage() {
     <Page className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
       <AppNavbar title="Создать заявку" />
 
-      <Block className="flex-1 flex flex-col gap-4">
+      <Block className="flex-1 flex flex-col gap-4 pb-14">
         <AppList>
           {CATEGORIES.map((category: string) => (
             <ListItem
@@ -74,6 +74,26 @@ export default function CreateOrderPage() {
             }
           />
         </AppList>
+
+        <InfoBlock
+          className={"mx-4"}
+          variant={"yellow"}
+          message={"Заявка будет активна 60 минут. После этого её можно обновить или удалить."}
+          icon={"⏱️"}
+        />
+
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#C6C6C8] px-4 py-3 safe-area-bottom z-50 pointer-events-auto">
+          <Button
+            type="button"
+            large
+            rounded
+            className="w-full flex items-center justify-center gap-2"
+            onClick={() => {}}
+          >
+            <Plus className="w-5 h-5" />
+            <span>Создать заявку</span>
+          </Button>
+        </div>
       </Block>
     </Page>
   );
