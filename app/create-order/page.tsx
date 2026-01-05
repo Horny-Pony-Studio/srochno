@@ -76,7 +76,7 @@ export default function CreateOrderPage() {
 
         <InfoBlock
           className={"mx-4"}
-          variant={"yellow"}
+          variant={"blue"}
           message={"Заявка будет активна 60 минут. После этого её можно обновить или удалить."}
           icon={"⏱️"}
         />

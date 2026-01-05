@@ -1,16 +1,16 @@
 "use client"
 
 import {useState} from "react";
-import {Block, List, Page, Button } from "konsta/react";
+import {Block, List, Button, Chip} from "konsta/react";
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import {Order} from "@/src/models/Order";
 import {getTimeBackground, getTimeColor} from "@/src/utils/time";
 import {useRouter} from "next/navigation";
-import {AppNavbar, AppPage} from "@/src/components";
+import {AppPage, InfoBlock} from "@/src/components";
 
 const createdAt = new Date(Date.now() - 8 * 60000);
 
-export default function CustomerPage () {
+function CustomerPage() {
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([
     {
@@ -26,13 +26,16 @@ export default function CustomerPage () {
     }
   ]);
 
-  const onCreateOrder = () => {}
-  const onEditOrder = (orderId: string) => {}
-  const onDeleteOrder = (orderId: string) => {}
+  const onCreateOrder = () => {
+  }
+  const onEditOrder = (orderId: string) => {
+  }
+  const onDeleteOrder = (orderId: string) => {
+  }
 
   return (
     <AppPage title="Мои заявки" className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
-      <Block className="flex-1 overflow-auto px-4 py-4 flex flex-col gap-y-4 my-0">
+      <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
         {orders.length === 0 ? (
           <div className="text-center py-20">
             <div className="w-20 h-20 mx-auto bg-[#E5E5EA] rounded-full flex items-center justify-center mb-4">
@@ -44,20 +47,25 @@ export default function CustomerPage () {
         ) : (
           <List className={"my-0"}>
             {orders.map((order) => (
-              <div
+              <Block
+                className={"my-0"}
+                strong inset
                 key={order.id}
-                className="bg-white rounded-xl p-4 border border-[#C6C6C8]"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <div className="text-sm text-[#8E8E93] mb-1">{order.category}</div>
                     <div className="text-xs text-[#8E8E93]">{order.city}</div>
                   </div>
-                  <div className={`px-3 py-1 rounded-full ${getTimeBackground(order.timeLeft)}`}>
-                    <span className={`text-sm ${getTimeColor(order.timeLeft)}`}>
-                      ⏱️ {order.timeLeft} мин
-                    </span>
-                  </div>
+                  <Chip
+                    colors={{
+                      fillBgIos: getTimeBackground(order.timeLeft),
+                      fillTextIos: getTimeColor(order.timeLeft),
+                    }}
+                    className="text-sm"
+                  >
+                    ⏱️ {order.timeLeft} мин
+                  </Chip>
                 </div>
 
                 <p className="mb-3 line-clamp-2">
@@ -66,9 +74,9 @@ export default function CustomerPage () {
 
                 <div className="flex items-center justify-between mb-3 pb-3 border-b border-[#C6C6C8]">
                   <span className="text-sm text-[#8E8E93]">Откликов</span>
-                  <span className={order.takenCount >= 3 ? 'text-[#34C759]' : ''}>
+                  <Chip className={order.takenCount >= 3 ? 'text-[#34C759]' : ''}>
                     {order.takenCount}/3
-                  </span>
+                  </Chip>
                 </div>
 
                 <div className="flex gap-2">
@@ -82,7 +90,7 @@ export default function CustomerPage () {
                     }}
                     className={"flex-1 justify-center k-color-brand-yellow"}
                   >
-                    <Edit2 className="w-4 h-4" />
+                    <Edit2 className="w-4 h-4"/>
                     <span className="text-sm">Изменить</span>
                   </Button>
                   <Button
@@ -96,7 +104,7 @@ export default function CustomerPage () {
                     }}
                     className={"flex-1 justify-center k-color-brand-red"}
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-4 h-4"/>
                     <span className="text-sm">Удалить</span>
                   </Button>
                 </div>
@@ -106,30 +114,35 @@ export default function CustomerPage () {
                     Редактирование недоступно после взятия исполнителем
                   </div>
                 )}
-              </div>
+              </Block>
             ))}
           </List>
         )}
 
-        <div className="bg-[#E5F8ED] rounded-xl p-4 border border-[#34C759]">
-          <p className="text-sm text-[#34C759]">
-            💡 Заявка активна 60 минут. После этого её можно обновить или удалить.
-          </p>
+        <InfoBlock
+          className={"mx-4"}
+          variant={"blue"}
+          message={"Заявка активна 60 минут. После этого её можно обновить или удалить."}
+          icon={"⏱️"}
+        />
+
+        <div
+          className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#C6C6C8] px-4 py-3 safe-area-bottom z-50 pointer-events-auto">
+          <Button
+            type="button"
+            large
+            rounded
+            className="w-full flex items-center justify-center gap-2"
+            onClick={() => router.push('/create-order')}
+          >
+            <Plus className="w-5 h-5"/>
+            <span>Создать заявку</span>
+          </Button>
         </div>
       </Block>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#C6C6C8] px-4 py-3 safe-area-bottom z-50 pointer-events-auto">
-        <Button
-          type="button"
-          large
-          rounded
-          className="w-full flex items-center justify-center gap-2"
-          onClick={() => router.push('/create-order')}
-        >
-          <Plus className="w-5 h-5" />
-          <span>Создать заявку</span>
-        </Button>
-      </div>
     </AppPage>
   )
 }
+
+export default CustomerPage
