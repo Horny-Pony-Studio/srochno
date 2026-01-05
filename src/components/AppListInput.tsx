@@ -8,17 +8,18 @@ type Props = React.ComponentProps<typeof ListInput> & {
 };
 
 const AppListInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
-  ({ labelText, className, ...props }, ref) => {
+  ({ labelText, className, label, ...props }, ref) => {
+    const resolvedLabel =
+      labelText !== undefined
+        ? typeof labelText === "string"
+          ? <span className="text-sm">{labelText}</span>
+          : labelText
+        : label;
+
     return (
       <ListInput
-        ref={ref as any}
-        label={
-          typeof labelText === "string" ? (
-            <span className="text-sm">{labelText}</span>
-          ) : (
-            labelText
-          )
-        }
+        ref={ref as unknown as React.Ref<HTMLInputElement | HTMLTextAreaElement>}
+        label={resolvedLabel}
         className={className}
         {...props}
       />
@@ -29,4 +30,3 @@ const AppListInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
 AppListInput.displayName = "AppListInput";
 
 export default AppListInput;
-

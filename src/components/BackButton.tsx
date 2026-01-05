@@ -5,28 +5,30 @@ import { Button } from "konsta/react";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+type KonstaColor = "primary" | "red" | "green" | "blue" | "yellow" | "gray";
+
 type Props = {
   text?: React.ReactNode;
   className?: string;
-  onClick?: (e?: React.MouseEvent) => void;
+  onClickAction?: () => void;
   rounded?: boolean;
   outline?: boolean;
-  color?: string;
+  color?: KonstaColor;
 };
 
 export default function BackButton({
   text = "Назад",
   className = "",
-  onClick,
+  onClickAction,
   rounded = true,
   outline = true,
   color,
 }: Props) {
   const router = useRouter();
 
-  const handleClick = (e: React.MouseEvent) => {
-    if (onClick) {
-      onClick(e);
+  const handleClick = () => {
+    if (onClickAction) {
+      onClickAction();
       return;
     }
     router.back();
@@ -39,11 +41,10 @@ export default function BackButton({
       outline={outline}
       className={`flex items-center gap-2 ${className}`}
       onClick={handleClick}
-      color={color as string}
+      color={color as any}
     >
       <ChevronLeft className="w-4 h-4" />
       <span className="text-sm">{text}</span>
     </Button>
   );
 }
-
