@@ -41,7 +41,7 @@ export default function BackButton({
       outline={outline}
       className={`flex items-center gap-2 ${className}`}
       onClick={handleClick}
-      color={color as any}
+      color={color}
     >
       <ChevronLeft className="w-4 h-4" />
       <span className="text-sm">{text}</span>

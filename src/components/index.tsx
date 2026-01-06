@@ -5,7 +5,7 @@ import AppPage from "./AppPage";
 import InfoBlock from "./InfoBlock";
 import Select from "./Select";
 import BackButton from "./BackButton";
-
+export { default as OrderCard } from "./OrderCard";
 
 export {
   AppList,

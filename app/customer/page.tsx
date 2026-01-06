@@ -4,11 +4,12 @@ import {useState} from "react";
 import {Block, List, Button, Chip} from "konsta/react";
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import {Order} from "@/src/models/Order";
+import { minutesLeft, takenCount } from "@/src/utils/order";
 import {getTimeBackground, getTimeColor} from "@/src/utils/time";
 import {useRouter} from "next/navigation";
 import {AppPage, InfoBlock} from "@/src/components";
 
-const createdAt = new Date(Date.now() - 8 * 60000);
+const createdAt = new Date(Date.now() - 8 * 60000).toISOString();
 
 function CustomerPage() {
   const router = useRouter();
@@ -19,10 +20,11 @@ function CustomerPage() {
       description: 'Течет кран на кухне. Район Центральный, ул. Ленина 45.',
       city: 'Москва',
       contact: '@ivan_petrov',
-      timeLeft: 52,
-      takenCount: 1,
       createdAt: createdAt,
-      canEdit: false
+      expiresInMinutes: 60,
+      status: 'active',
+      takenBy: [{ executorId: 'exec_1', takenAt: createdAt }],
+      cityLocked: true,
     }
   ]);
 
@@ -59,12 +61,12 @@ function CustomerPage() {
                   </div>
                   <Chip
                     colors={{
-                      fillBgIos: getTimeBackground(order.timeLeft),
-                      fillTextIos: getTimeColor(order.timeLeft),
+                      fillBgIos: getTimeBackground(minutesLeft(order)),
+                      fillTextIos: getTimeColor(minutesLeft(order)),
                     }}
                     className="text-sm"
                   >
-                    ⏱️ {order.timeLeft} мин
+                    ⏱️ {minutesLeft(order)} мин
                   </Chip>
                 </div>
 
@@ -74,8 +76,8 @@ function CustomerPage() {
 
                 <div className="flex items-center justify-between mb-3 pb-3 border-b border-[#C6C6C8]">
                   <span className="text-sm text-[#8E8E93]">Откликов</span>
-                  <Chip className={order.takenCount >= 3 ? 'text-[#34C759]' : ''}>
-                    {order.takenCount}/3
+                  <Chip className={takenCount(order) >= 3 ? 'text-[#34C759]' : ''}>
+                    {takenCount(order)}/3
                   </Chip>
                 </div>
 
@@ -83,7 +85,7 @@ function CustomerPage() {
                   <Button
                     rounded
                     outline
-                    disabled={!order.canEdit}
+                    disabled={!(order.status === 'active' && order.takenBy.length === 0)}
                     onClick={(e) => {
                       e.stopPropagation();
                       onEditOrder(order.id);
@@ -97,7 +99,7 @@ function CustomerPage() {
                     rounded
                     outline
                     color="red"
-                    disabled={!order.canEdit}
+                    disabled={!(order.status === 'active' && order.takenBy.length === 0)}
                     onClick={(e) => {
                       e.stopPropagation();
                       onDeleteOrder(order.id);
@@ -109,7 +111,7 @@ function CustomerPage() {
                   </Button>
                 </div>
 
-                {!order.canEdit && order.takenCount > 0 && (
+                {!(order.status === 'active' && order.takenBy.length === 0) && order.takenBy.length > 0 && (
                   <div className="mt-2 text-xs text-[#8E8E93] text-center">
                     Редактирование недоступно после взятия исполнителем
                   </div>

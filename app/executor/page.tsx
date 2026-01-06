@@ -1,10 +1,15 @@
-import { AppPage } from "@/src/components";
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 
 export default function ExecutorPage () {
-  return (
-    <AppPage title="Исполнитель">
-      <div>Executor Page</div>
-    </AppPage>
-  )
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/orders");
+  }, [router]);
+
+  return null;
 }

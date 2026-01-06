@@ -9,7 +9,7 @@ type Props = Omit<
   "value" | "onChange"
 > & {
   value: string;
-  onChangeAction: (value: string) => void; // serializable prop name per Next.js
+  onChangeAction: (value: string) => void;
   options: SelectOption[];
   placeholder?: string;
   name?: string;
