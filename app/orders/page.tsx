@@ -4,20 +4,31 @@ import { useRouter } from "next/navigation";
 import {Block, ListItem} from "konsta/react";
 import {AppList, AppPage, OrderCard, Select} from "@/src/components";
 import {CATEGORIES} from "@/src/data";
+import { CITIES } from "@/src/data";
 import { MOCK_ORDERS } from "@/src/data/mockOrders";
 import { minutesLeft, takenCount } from "@/src/utils/order";
 
 export default function OrdersPage() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState<string>("Все");
+  const [selectedCity, setSelectedCity] = useState<string>("Все");
 
   const categoryOptions = useMemo(() => ["Все", ...CATEGORIES], []);
+  const cityOptions = useMemo(() => ["Все", ...CITIES], []);
 
   const filteredOrders = useMemo(() => {
     const activeOrders = MOCK_ORDERS.filter((o) => o.status === "active" && minutesLeft(o) > 0);
-    if (selectedCategory === "Все") return activeOrders;
-    return activeOrders.filter((o) => o.category === selectedCategory);
-  }, [selectedCategory]);
+
+    const byCategory = selectedCategory === "Все"
+      ? activeOrders
+      : activeOrders.filter((o) => o.category === selectedCategory);
+
+    const byCity = selectedCity === "Все"
+      ? byCategory
+      : byCategory.filter((o) => o.city === selectedCity);
+
+    return byCity;
+  }, [selectedCategory, selectedCity]);
 
   return (
     <AppPage title="Срочные заказы"  className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
@@ -33,6 +44,20 @@ export default function OrdersPage() {
                 onChangeAction={setSelectedCategory}
                 options={categoryOptions}
                 placeholder="Выберите категорию"
+                className="w-48 text-right"
+              />
+            }
+          />
+
+          <ListItem
+            label
+            title={<span className={"text-sm"}>Город</span>}
+            after={
+              <Select
+                value={selectedCity}
+                onChangeAction={setSelectedCity}
+                options={cityOptions}
+                placeholder="Выберите город"
                 className="w-48 text-right"
               />
             }
