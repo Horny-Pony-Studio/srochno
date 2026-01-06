@@ -1,6 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import KonstaProvider from './konstaProvider';
-import AppStateProvider from "@/src/state/appState";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,9 +16,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <KonstaProvider>
-          <AppStateProvider>{children}</AppStateProvider>
-        </KonstaProvider>
+        <KonstaProvider>{children}</KonstaProvider>
       </body>
     </html>
   );

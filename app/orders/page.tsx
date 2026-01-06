@@ -1,25 +1,23 @@
 "use client";
-
 import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {Block, ListItem} from "konsta/react";
 import {AppList, AppPage, OrderCard, Select} from "@/src/components";
 import {CATEGORIES} from "@/src/data";
-import { useAppState } from "@/src/state/appState";
+import { MOCK_ORDERS } from "@/src/data/mockOrders";
 import { minutesLeft, takenCount } from "@/src/utils/order";
 
 export default function OrdersPage() {
   const router = useRouter();
-  const { state } = useAppState();
   const [selectedCategory, setSelectedCategory] = useState<string>("Все");
 
-  const orders = state.orders;
+  const categoryOptions = useMemo(() => ["Все", ...CATEGORIES], []);
 
   const filteredOrders = useMemo(() => {
-    const active = orders.filter((o) => o.status === "active" && minutesLeft(o) > 0);
-    if (selectedCategory === "Все") return active;
-    return active.filter((o) => o.category === selectedCategory);
-  }, [orders, selectedCategory]);
+    const activeOrders = MOCK_ORDERS.filter((o) => o.status === "active" && minutesLeft(o) > 0);
+    if (selectedCategory === "Все") return activeOrders;
+    return activeOrders.filter((o) => o.category === selectedCategory);
+  }, [selectedCategory]);
 
   return (
     <AppPage title="Срочные заказы"  className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
@@ -33,7 +31,7 @@ export default function OrdersPage() {
               <Select
                 value={selectedCategory}
                 onChangeAction={setSelectedCategory}
-                options={CATEGORIES}
+                options={categoryOptions}
                 placeholder="Выберите категорию"
                 className="w-48 text-right"
               />
@@ -75,4 +73,3 @@ export default function OrdersPage() {
     </AppPage>
   );
 }
-
