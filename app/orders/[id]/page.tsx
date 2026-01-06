@@ -149,7 +149,6 @@ export default function OrderDetailPage() {
         </Button>
       </div>
 
-      {/* Контакт скрыт до оплаты (взятия заказа). */}
     </AppPage>
   );
 }
