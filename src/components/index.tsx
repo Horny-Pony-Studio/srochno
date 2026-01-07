@@ -5,14 +5,17 @@ import AppPage from "./AppPage";
 import InfoBlock from "./InfoBlock";
 import Select from "./Select";
 import BackButton from "./BackButton";
-export { default as OrderCard } from "./OrderCard";
+import OrderCard from "./OrderCard";
+import HistoryCard from "./HistoryCard";
 
 export {
   AppList,
   AppListInput,
   AppNavbar,
   AppPage,
-  InfoBlock,
-  Select,
   BackButton,
+  HistoryCard,
+  InfoBlock,
+  OrderCard,
+  Select,
 };

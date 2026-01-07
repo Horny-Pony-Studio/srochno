@@ -90,7 +90,7 @@ export default function Profile() {
         <AppList>
           <ListItem title="История заказов" link onClick={() => router.push("/history")} />
           <ListItem title="Мои категории" link onClick={() => router.push("/executor")} />
-          <ListItem title="Отзывы" link onClick={() => {}} />
+          <ListItem title="Отзывы" link onClick={() => router.push("/reviews")} />
           <ListItem title="Настройки уведомлений" link onClick={() => {}} />
         </AppList>
 

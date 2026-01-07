@@ -1,0 +1,101 @@
+"use client";
+
+import React, { useMemo } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { Block, Button, Chip, ListItem } from "konsta/react";
+import { AppList, AppNavbar, AppPage, InfoBlock } from "@/src/components";
+import { MOCK_ORDERS } from "@/src/data/mockOrders";
+import { minutesLeft, takenCount } from "@/src/utils/order";
+
+function formatDateTime(iso: string) {
+  const d = new Date(iso);
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  const hh = String(d.getHours()).padStart(2, "0");
+  const min = String(d.getMinutes()).padStart(2, "0");
+  return `${dd}.${mm}.${yyyy} ${hh}:${min}`;
+}
+
+export default function HistoryDetailPage() {
+  const router = useRouter();
+  const params = useParams<{ id?: string }>();
+  const id = typeof params?.id === "string" ? params.id : "";
+
+  const order = useMemo(() => {
+    if (!id) return undefined;
+    return MOCK_ORDERS.find((o) => o.id === id) ?? null;
+  }, [id]);
+
+  if (!id || order === undefined) {
+    return (
+      <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
+        <AppNavbar title="История" />
+        <div className="flex-1" />
+      </AppPage>
+    );
+  }
+
+  if (order === null) {
+    return (
+      <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
+        <AppNavbar title="История" showRight />
+        <InfoBlock className="mx-4 mt-4" variant="red" icon="⚠️" message="Запись не найдена" />
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#C6C6C8] px-4 py-3 safe-area-bottom z-50">
+          <Button large rounded onClick={() => router.push("/history")}>
+            К истории
+          </Button>
+        </div>
+      </AppPage>
+    );
+  }
+
+  const left = minutesLeft(order);
+  const takes = takenCount(order);
+  const expired = left <= 0;
+  const status = expired ? (takes > 0 ? "Выполнен" : "Отменён") : "В работе";
+
+  return (
+    <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
+      <AppNavbar title="История заказа" />
+
+      <Block className="flex-1 flex flex-col gap-4 pb-20 my-4 pl-0! pr-0!">
+        <Block className="my-0" strong inset>
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="text-sm text-[#8E8E93] mb-1">{order.category} • {order.city}</div>
+              <p className="whitespace-pre-wrap">{order.description}</p>
+            </div>
+            <Chip
+              className={
+                expired
+                  ? takes > 0
+                    ? "bg-[#E5F8ED] text-[#34C759]"
+                    : "bg-[#FFE5E5] text-[#FF3B30]"
+                  : "bg-[#FFF5E5] text-[#FF9500]"
+              }
+            >
+              {status}
+            </Chip>
+          </div>
+
+          <div className="mt-3 text-xs text-[#8E8E93]">Создано: {formatDateTime(order.createdAt)}</div>
+        </Block>
+
+        <AppList>
+          <ListItem label title="Откликов" after={`${takes}/3`} />
+          <ListItem label title="Таймер" after={expired ? "Истек" : `${left} мин`} />
+        </AppList>
+
+        {expired && takes > 0 ? (
+          <InfoBlock
+            className="mx-4"
+            variant="blue"
+            icon="⭐"
+            message="Дальше тут будет отзыв и оценка (пока мок)."
+          />
+        ) : null}
+      </Block>
+    </AppPage>
+  );
+}

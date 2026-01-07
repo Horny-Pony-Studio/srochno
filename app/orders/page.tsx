@@ -50,8 +50,6 @@ export default function OrdersPage() {
               />
             }
           />
-
-
         </AppList>
 
         <AppList>
