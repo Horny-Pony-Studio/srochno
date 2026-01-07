@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Block, Button, Chip, Link, List, ListItem } from "konsta/react";
 import {Clock, Phone, Lock, ArrowLeft} from "lucide-react";
-import { AppPage, InfoBlock, AppNavbar } from "@/src/components";
+import {AppPage, InfoBlock, AppNavbar, Select, AppList} from "@/src/components";
 import { getTimeBackground, getTimeColor } from "@/src/utils/time";
 import { MOCK_ORDERS } from "@/src/data/mockOrders";
 import { minutesLeft, takenCount } from "@/src/utils/order";
@@ -94,15 +94,13 @@ export default function OrderDetailPage() {
           </div>
         </Block>
 
-        <Block strong inset className="my-0 flex items-center justify-between text-[17px]">
-          <span>Категория</span>
-          <span className={"text-black/55 dark:text-white/55"}>{order.category}</span>
-        </Block>
+        <AppList>
+          <ListItem label title={"Категория"} after={order.category}/>
+        </AppList>
 
-        <Block strong inset className="my-0 flex items-center justify-between text-[17px]">
-          <span>Город</span>
-          <span className={"text-black/55 dark:text-white/55"}>{order.city}</span>
-        </Block>
+        <AppList>
+          <ListItem label title={"Город"} after={order.city}/>
+        </AppList>
 
         <Block className="my-0" strong inset>
           <div className="text-sm text-[#8E8E93] mb-2">Описание</div>
