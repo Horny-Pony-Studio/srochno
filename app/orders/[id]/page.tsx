@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Block, Button, Chip, Link, List, ListItem } from "konsta/react";
-import { Clock, Phone, Lock } from "lucide-react";
+import {Clock, Phone, Lock, ArrowLeft} from "lucide-react";
 import { AppPage, InfoBlock, AppNavbar } from "@/src/components";
 import { getTimeBackground, getTimeColor } from "@/src/utils/time";
 import { MOCK_ORDERS } from "@/src/data/mockOrders";
@@ -46,16 +46,28 @@ export default function OrderDetailPage() {
 
   if (!order) {
     return (
-      <AppPage className="min-h-screen bg-[#F2F2F7] flex flex-col">
-        <AppNavbar title="Детали заказа" />
+      <AppPage className="min-h-svh bg-[#F2F2F7] flex flex-col">
+        <AppNavbar showRight title="Детали заказа" />
 
-        <Block className="my-4">
-          <InfoBlock variant="red" icon="⚠️" message="Заказ не найден" />
-          <Button className="mt-4" rounded onClick={() => router.push("/orders")}
+        <InfoBlock
+          className={"mx-4 mt-4"}
+          variant={"red"}
+          message={"Заказ не найден или взят в исполнение."}
+          icon={"⏱️"}
+        />
+
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#C6C6C8] px-4 py-3 safe-area-bottom z-50 pointer-events-auto">
+          <Button
+            type="button"
+            large
+            rounded
+            className="w-full flex items-center justify-center gap-2"
+            onClick={() => router.push("/orders")}
           >
-            К списку заказов
+            <ArrowLeft className="w-5 h-5" />
+            <span>К списку заказов</span>
           </Button>
-        </Block>
+        </div>
       </AppPage>
     );
   }
@@ -67,7 +79,7 @@ export default function OrderDetailPage() {
 
   return (
     <AppPage className="min-h-screen bg-[#F2F2F7] flex flex-col">
-      <AppNavbar title="Детали заказа" />
+      <AppNavbar showRight title="Детали заказа" />
 
       <Block className="flex-1 flex flex-col gap-4 pb-24 my-4 pl-0! pr-0!">
         <Block className="my-0" strong inset>

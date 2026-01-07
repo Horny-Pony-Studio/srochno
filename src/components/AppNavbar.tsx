@@ -23,20 +23,18 @@ export default function AppNavbar({
 
   const right =
     showRight || navRight ? (
-      <div className="flex items-center gap-2 sm:gap-3 pl-2 pr-2 sm:pr-4 max-w-[55vw]">
+      <Link href={"/profile"} className="px-0 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 pl-2 pr-2 sm:pr-4 max-w-[55vw]">
 
-        <div className="text-[14px] font-medium text-black whitespace-nowrap">
-          {10_000} P
-        </div>
+          <div className="text-[14px] font-medium text-black whitespace-nowrap">
+            {10_000} P
+          </div>
 
-
-
-        <Link href={"/profile"} className="px-0 shrink-0">
           <User className="w-6 h-6 text-[#007AFF]" />
-        </Link>
 
-        {navRight ? <div className="shrink-0">{navRight}</div> : null}
-      </div>
+          {navRight ? <div className="shrink-0">{navRight}</div> : null}
+        </div>
+      </Link>
     ) : undefined;
 
   const safeTitle =

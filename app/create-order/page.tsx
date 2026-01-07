@@ -17,7 +17,7 @@ export default function CreateOrderPage() {
 
   return (
     <AppPage className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
-      <AppNavbar title="Создать заявку" />
+      <AppNavbar showRight title="Создать заявку" />
 
       <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
         <AppList>
