@@ -64,22 +64,22 @@ export default function Profile() {
             <div className="text-sm text-[#8E8E93]">Пополнить баланс</div>
 
             <div className="grid grid-cols-2 gap-2 mt-2">
-              {PACKAGES.map((pkg) => (
+              {PACKAGES.map((_package) => (
                 <Button
-                  key={pkg.amount}
+                  key={_package.amount}
                   onClick={() => {}}
                   rounded
-                  outline={!pkg.popular}
-                  className={`relative h-10 overflow-visible ${pkg.popular ? "k-color-brand" : "k-color-brand"}`}
+                  outline={!_package.popular}
+                  className={`relative h-10 overflow-visible ${_package.popular ? "k-color-brand" : "k-color-brand"}`}
                 >
-                  {pkg.popular && (
+                  {_package.popular && (
                     <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#FF9500] text-white text-xs px-2 py-0.5 rounded-full">
                       Популярное
                     </div>
                   )}
                   <div className="flex items-center justify-center gap-1">
                     <CreditCard className="w-3.5 h-3.5" />
-                    <span className={"text-sm"}>{pkg.label}</span>
+                    <span className={"text-sm"}>{_package.label}</span>
                   </div>
                 </Button>
               ))}
