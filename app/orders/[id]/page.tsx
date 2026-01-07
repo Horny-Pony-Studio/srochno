@@ -2,23 +2,28 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Block, Button, Chip, Link, List, ListItem } from "konsta/react";
-import {Clock, Phone, Lock, ArrowLeft} from "lucide-react";
-import {AppPage, InfoBlock, AppNavbar, Select, AppList} from "@/src/components";
+import { Block, Button, Chip, Link, ListItem, Preloader } from "konsta/react";
+import { Clock, Phone, Lock, ArrowLeft } from "lucide-react";
+import { AppPage, InfoBlock, AppNavbar, AppList } from "@/src/components";
 import { getTimeBackground, getTimeColor } from "@/src/utils/time";
 import { MOCK_ORDERS } from "@/src/data/mockOrders";
 import { minutesLeft, takenCount } from "@/src/utils/order";
 
 export default function OrderDetailPage() {
   const router = useRouter();
-  const params = useParams<{ id: string }>();
+  const params = useParams<{ id?: string }>();
+
+  const orderId = typeof params?.id === "string" ? params.id : "";
+  const isParamsReady = orderId.length > 0;
 
   const balance = 128;
 
   const [contactUnlocked, setContactUnlocked] = useState<boolean>(false);
 
   const order = useMemo(() => {
-    const base = MOCK_ORDERS.find((o) => o.id === params.id);
+    if (!isParamsReady) return undefined;
+
+    const base = MOCK_ORDERS.find((o) => o.id === orderId);
     if (!base) return null;
 
     return {
@@ -28,7 +33,7 @@ export default function OrderDetailPage() {
         base.description +
         "\n\nАдрес: ул. Ленина 45, подъезд 2, квартира 15. Вода капает постоянно, нужно заменить прокладку или сам кран.",
     };
-  }, [params.id]);
+  }, [isParamsReady, orderId]);
 
   const [minuteTick, setMinuteTick] = useState<number>(0);
 
@@ -44,16 +49,27 @@ export default function OrderDetailPage() {
     return order ? minutesLeft(order) : 0;
   }, [order, minuteTick]);
 
-  if (!order) {
+  if (!isParamsReady || order === undefined) {
     return (
-      <AppPage className="min-h-svh bg-[#F2F2F7] flex flex-col">
+      <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
+        <AppNavbar showRight title="Детали заказа" />
+        <div className="flex-1 flex items-center justify-center py-20">
+          <Preloader className="text-[#007AFF]" />
+        </div>
+      </AppPage>
+    );
+  }
+
+  if (order === null) {
+    return (
+      <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
         <AppNavbar showRight title="Детали заказа" />
 
         <InfoBlock
           className={"mx-4 mt-4"}
           variant={"red"}
           message={"Заказ не найден или взят в исполнение."}
-          icon={"⏱️"}
+          icon={"⚠️"}
         />
 
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#C6C6C8] px-4 py-3 safe-area-bottom z-50 pointer-events-auto">
@@ -78,7 +94,7 @@ export default function OrderDetailPage() {
   const canTake = balance >= pay && takes < 3 && left > 0;
 
   return (
-    <AppPage className="min-h-screen bg-[#F2F2F7] flex flex-col">
+    <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
       <AppNavbar showRight title="Детали заказа" />
 
       <Block className="flex-1 flex flex-col gap-4 pb-24 my-4 pl-0! pr-0!">
