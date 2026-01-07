@@ -7,7 +7,7 @@ import {Order} from "@/src/models/Order";
 import { minutesLeft, takenCount } from "@/src/utils/order";
 import {getTimeBackground, getTimeColor} from "@/src/utils/time";
 import {useRouter} from "next/navigation";
-import {AppPage, InfoBlock} from "@/src/components";
+import {AppPage, InfoBlock, AppNavbar} from "@/src/components";
 
 const createdAt = new Date(Date.now() - 8 * 60000).toISOString();
 
@@ -36,7 +36,9 @@ function CustomerPage() {
   }
 
   return (
-    <AppPage title="Мои заявки" className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
+    <AppPage className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
+      <AppNavbar title="Мои заявки" showRight />
+
       <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
         {orders.length === 0 ? (
           <div className="text-center py-20">

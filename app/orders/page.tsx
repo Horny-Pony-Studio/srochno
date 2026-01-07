@@ -2,7 +2,7 @@
 import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {Block, ListItem} from "konsta/react";
-import {AppList, AppPage, OrderCard, Select} from "@/src/components";
+import {AppList, AppPage, InfoBlock, OrderCard, Select, AppNavbar} from "@/src/components";
 import {CATEGORIES} from "@/src/data";
 import { CITIES } from "@/src/data";
 import { MOCK_ORDERS } from "@/src/data/mockOrders";
@@ -31,7 +31,9 @@ export default function OrdersPage() {
   }, [selectedCategory, selectedCity]);
 
   return (
-    <AppPage title="Срочные заказы"  className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
+    <AppPage className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
+      <AppNavbar title="Срочные заказы" showRight />
+
       <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
 
         <AppList>
@@ -49,6 +51,10 @@ export default function OrdersPage() {
             }
           />
 
+
+        </AppList>
+
+        <AppList>
           <ListItem
             label
             title={<span className={"text-sm"}>Город</span>}
@@ -66,9 +72,11 @@ export default function OrdersPage() {
 
         <Block className="flex-1 flex flex-col gap-4 pb-16 my-0 pl-0! pr-0!">
           {filteredOrders.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-[#8E8E93]">Нет заказов в этой категории</p>
-            </div>
+            <InfoBlock
+              className={"mx-4"}
+              variant={"blue"}
+              message={"Нет заказов в этой категории или городе"}
+            />
           ) : (
             <div className="flex flex-col gap-4">
               {filteredOrders.map((order) => {

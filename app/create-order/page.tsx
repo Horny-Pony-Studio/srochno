@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import {Block, Button, Checkbox, ListItem} from "konsta/react";
-import {AppList, AppListInput, Select, InfoBlock, AppPage} from "@/src/components";
+import {AppList, AppListInput, Select, InfoBlock, AppPage, AppNavbar} from "@/src/components";
 import {CATEGORIES, CITIES} from "@/src/data";
 import {Plus} from "lucide-react";
 
@@ -16,7 +16,8 @@ export default function CreateOrderPage() {
   };
 
   return (
-    <AppPage title="Создать заявку"  className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
+    <AppPage className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
+      <AppNavbar title="Создать заявку" />
 
       <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
         <AppList>

@@ -3,7 +3,7 @@
 import React from "react";
 import { Block, Button, List, ListItem } from "konsta/react";
 import { ChevronRight, Star, Wallet, CreditCard } from "lucide-react";
-import { AppPage } from "@/src/components";
+import { AppPage, AppNavbar } from "@/src/components";
 
 const PACKAGES = [
   { amount: 100, label: "100 ₽" },
@@ -13,7 +13,6 @@ const PACKAGES = [
 ];
 
 export default function ProfilePage() {
-  // TODO: replace with real account state
   const balance = 128;
 
   const rating = 4.8;
@@ -25,7 +24,9 @@ export default function ProfilePage() {
   };
 
   return (
-    <AppPage title="Профиль" backLink className="min-h-screen bg-[#F2F2F7] flex flex-col">
+    <AppPage className="min-h-screen bg-[#F2F2F7] flex flex-col">
+      <AppNavbar title="Профиль" />
+
       <Block className="flex-1 overflow-auto px-4 py-4 space-y-4 pb-20">
         <Block className="my-0" strong inset>
           <div className="flex items-center gap-4 mb-4">

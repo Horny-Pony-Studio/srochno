@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Block, Button, Chip, Link, List, ListItem } from "konsta/react";
 import { Clock, Phone, Lock } from "lucide-react";
-import { AppPage, InfoBlock } from "@/src/components";
+import { AppPage, InfoBlock, AppNavbar } from "@/src/components";
 import { getTimeBackground, getTimeColor } from "@/src/utils/time";
 import { MOCK_ORDERS } from "@/src/data/mockOrders";
 import { minutesLeft, takenCount } from "@/src/utils/order";
@@ -46,7 +46,9 @@ export default function OrderDetailPage() {
 
   if (!order) {
     return (
-      <AppPage title="Детали заказа" backLink className="min-h-screen bg-[#F2F2F7] flex flex-col">
+      <AppPage className="min-h-screen bg-[#F2F2F7] flex flex-col">
+        <AppNavbar title="Детали заказа" />
+
         <Block className="my-4">
           <InfoBlock variant="red" icon="⚠️" message="Заказ не найден" />
           <Button className="mt-4" rounded onClick={() => router.push("/orders")}
@@ -64,7 +66,9 @@ export default function OrderDetailPage() {
   const canTake = balance >= pay && takes < 3 && left > 0;
 
   return (
-    <AppPage title="Детали заказа" backLink className="min-h-screen bg-[#F2F2F7] flex flex-col">
+    <AppPage className="min-h-screen bg-[#F2F2F7] flex flex-col">
+      <AppNavbar title="Детали заказа" />
+
       <Block className="flex-1 flex flex-col gap-4 pb-24 my-4 pl-0! pr-0!">
         <Block className="my-0" strong inset>
           <div className={`${getTimeBackground(timeLeft)} rounded-xl p-4`}>
@@ -141,7 +145,6 @@ export default function OrderDetailPage() {
           disabled={!canTake}
           onClick={() => {
             if (!canTake) return;
-            // mock take: deduct + unlock contact
             setContactUnlocked(true);
           }}
         >
