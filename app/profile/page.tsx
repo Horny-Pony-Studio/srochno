@@ -88,15 +88,23 @@ export default function Profile() {
         </Block>
 
         <AppList>
-          <ListItem title="История заказов" link />
-          <ListItem title="Мои категории" link />
-          <ListItem title="Отзывы" link />
-          <ListItem title="Настройки уведомлений" link />
+          <ListItem title="История заказов" link onClick={() => router.push("/history")} />
+          <ListItem title="Мои категории" link onClick={() => router.push("/executor")} />
+          <ListItem title="Отзывы" link onClick={() => {}} />
+          <ListItem title="Настройки уведомлений" link onClick={() => {}} />
         </AppList>
 
         <AppList>
-          <ListItem title="Помощь" link onClick={() => router.push("https://t.me/drygsssss")} />
-          <ListItem title="О сервисе" link onClick={() => router.push("https://t.me/drygsssss")} />
+          <ListItem
+            title="Помощь"
+            link
+            onClick={() => window.open("https://t.me/drygsssss", "_blank")}
+          />
+          <ListItem
+            title="О сервисе"
+            link
+            onClick={() => window.open("https://t.me/drygsssss", "_blank")}
+          />
         </AppList>
       </Block>
     </AppPage>
