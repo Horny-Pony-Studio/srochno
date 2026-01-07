@@ -5,8 +5,11 @@ import { Block, Button, ListItem } from "konsta/react";
 import { Star, Wallet, CreditCard } from "lucide-react";
 import {AppList, AppNavbar, AppPage} from "@/src/components";
 import { PACKAGES } from "@/src/data";
+import {useRouter} from "next/navigation";
 
 export default function Profile() {
+  const router = useRouter();
+
   const rating = 4.8;
   const completedOrders = 127;
   const activeOrders = 3;
@@ -92,8 +95,8 @@ export default function Profile() {
         </AppList>
 
         <AppList>
-          <ListItem title="Помощь" link />
-          <ListItem title="О сервисе" link />
+          <ListItem title="Помощь" link onClick={() => router.push("https://t.me/drygsssss")} />
+          <ListItem title="О сервисе" link onClick={() => router.push("https://t.me/drygsssss")} />
         </AppList>
       </Block>
     </AppPage>
