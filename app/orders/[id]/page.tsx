@@ -94,10 +94,15 @@ export default function OrderDetailPage() {
           </div>
         </Block>
 
-        <List strong inset className="my-0">
-          <ListItem title="Категория" after={order.category} />
-          <ListItem title="Город" after={order.city} />
-        </List>
+        <Block strong inset className="my-0 flex items-center justify-between text-[17px]">
+          <span>Категория</span>
+          <span className={"text-black/55 dark:text-white/55"}>{order.category}</span>
+        </Block>
+
+        <Block strong inset className="my-0 flex items-center justify-between text-[17px]">
+          <span>Город</span>
+          <span className={"text-black/55 dark:text-white/55"}>{order.city}</span>
+        </Block>
 
         <Block className="my-0" strong inset>
           <div className="text-sm text-[#8E8E93] mb-2">Описание</div>

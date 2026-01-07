@@ -24,7 +24,7 @@ export default function AppNavbar({
   const right =
     showRight || navRight ? (
       <Link href={"/profile"} className="px-0 shrink-0">
-        <div className="flex items-center gap-2 sm:gap-3 pl-2 pr-2 sm:pr-4 max-w-[55vw]">
+        <div className="flex items-center gap-2 sm:gap-3 px-3 max-w-[55vw]">
 
           <div className="text-[14px] font-medium text-black whitespace-nowrap">
             {10_000} P
