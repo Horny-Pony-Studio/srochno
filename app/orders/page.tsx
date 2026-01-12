@@ -1,12 +1,11 @@
 "use client";
-import React, { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import React, {useMemo, useState} from "react";
+import {useRouter} from "next/navigation";
 import {Block, ListItem} from "konsta/react";
-import {AppList, AppPage, InfoBlock, OrderCard, Select, AppNavbar} from "@/src/components";
-import {CATEGORIES} from "@/src/data";
-import { CITIES } from "@/src/data";
-import { MOCK_ORDERS } from "@/src/data/mockOrders";
-import { minutesLeft, takenCount } from "@/src/utils/order";
+import {AppList, AppNavbar, AppPage, InfoBlock, OrderCard, Select} from "@/src/components";
+import {CATEGORIES, CITIES} from "@/src/data";
+import {MOCK_ORDERS} from "@/src/data/mockOrders";
+import {minutesLeft, takenCount} from "@/src/utils/order";
 
 export default function OrdersPage() {
   const router = useRouter();
@@ -23,11 +22,9 @@ export default function OrdersPage() {
       ? activeOrders
       : activeOrders.filter((o) => o.category === selectedCategory);
 
-    const byCity = selectedCity === "Все"
+    return selectedCity === "Все"
       ? byCategory
       : byCategory.filter((o) => o.city === selectedCity);
-
-    return byCity;
   }, [selectedCategory, selectedCity]);
 
   return (

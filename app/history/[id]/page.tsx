@@ -57,7 +57,7 @@ export default function HistoryDetailPage() {
 
   return (
     <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
-      <AppNavbar title="История заказа" />
+      <AppNavbar title="История заказа" showRight />
 
       <Block className="flex-1 flex flex-col gap-4 pb-20 my-4 pl-0! pr-0!">
         <Block className="my-0" strong inset>
