@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from "react";
 import {Block, ListItem} from "konsta/react";
 import { Star } from "lucide-react";
-import {AppList, AppNavbar, AppPage, InfoBlock} from "@/src/components";
+import {AppList, AppNavbar, AppPage, InfoBlock, PageTransition} from "@/src/components";
 
 type Review = {
   id: string;
@@ -81,51 +81,57 @@ export default function ReviewsPage() {
   }, [tab]);
 
   return (
-    <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
-      <AppNavbar title="Отзывы" showRight />
+    <PageTransition>
+      <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
+        <AppNavbar title="Отзывы" showRight />
 
-      <Block className="flex-1 pb-20 my-4 pl-0! pr-0! flex flex-col gap-4">
-        {items.length === 0 ? (
-          <InfoBlock
-            className="mx-4"
-            variant="blue"
-            icon="⭐"
-            message="Пока нет отзывов с таким рейтингом."
-          />
-        ) : (
-          <>
-            <AppList>
-              <ListItem title={"Всего"} after={items.length}/>
-            </AppList>
+        <Block className="flex-1 pb-20 my-4 pl-0! pr-0! flex flex-col gap-4">
+          {items.length === 0 ? (
+            <InfoBlock
+              className="mx-4 scale-in"
+              variant="blue"
+              icon="⭐"
+              message="Пока нет отзывов с таким рейтингом."
+            />
+          ) : (
+            <>
+              <div className="card-appear">
+                <AppList>
+                  <ListItem title={"Всего"} after={items.length}/>
+                </AppList>
+              </div>
 
-            {items.map((r) => (
-                <Block key={r.id} className="my-0" strong inset>
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-[#007AFF] rounded-full flex items-center justify-center text-white text-sm shrink-0">
-                      {getInitials(r.authorName)}
-                    </div>
+              {items.map((r, index) => (
+                <div key={r.id} className="stagger-item" style={{ animationDelay: `${index * 0.05}s` }}>
+                  <Block className="my-0 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]" strong inset>
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-[#007AFF] rounded-full flex items-center justify-center text-white text-sm shrink-0 transition-transform duration-300 hover:scale-110">
+                        {getInitials(r.authorName)}
+                      </div>
 
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                        <div className="font-medium truncate">{r.authorName}</div>
-                        <div className="flex items-center gap-1 shrink-0">
-                          <Star className="w-4 h-4 text-[#FF9500] fill-[#FF9500]" />
-                          <span className="text-sm">{r.rating}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <div className="font-medium truncate">{r.authorName}</div>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <Star className="w-4 h-4 text-[#FF9500] fill-[#FF9500]" />
+                            <span className="text-sm">{r.rating}</span>
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="text-sm text-[#8E8E93] mb-2">
-                        {r.category} • {formatDate(r.createdAt)}
-                      </div>
+                        <div className="text-sm text-[#8E8E93] mb-2">
+                          {r.category} • {formatDate(r.createdAt)}
+                        </div>
 
-                      <p className="text-sm leading-relaxed">{r.comment}</p>
+                        <p className="text-sm leading-relaxed">{r.comment}</p>
+                      </div>
                     </div>
-                  </div>
-                </Block>
+                  </Block>
+                </div>
               ))}
-          </>
-        )}
-      </Block>
-    </AppPage>
+            </>
+          )}
+        </Block>
+      </AppPage>
+    </PageTransition>
   );
 }

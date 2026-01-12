@@ -39,7 +39,7 @@ export default function BackButton({
       type="button"
       rounded={rounded}
       outline={outline}
-      className={`flex items-center gap-2 ${className}`}
+      className={`flex items-center gap-2 transition-all duration-200 ${className}`}
       onClick={handleClick}
       color={color}
     >

@@ -3,7 +3,7 @@
 import React from "react";
 import { Block, Button, ListItem } from "konsta/react";
 import { Star, Wallet, CreditCard } from "lucide-react";
-import {AppList, AppNavbar, AppPage} from "@/src/components";
+import {AppList, AppNavbar, AppPage, PageTransition} from "@/src/components";
 import { PACKAGES } from "@/src/data";
 import {useRouter} from "next/navigation";
 
@@ -15,13 +15,14 @@ export default function Profile() {
   const activeOrders = 3;
 
   return (
-    <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
-      <AppNavbar title="Профиль" />
+    <PageTransition>
+      <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
+        <AppNavbar title="Профиль" />
 
-      <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
-        <Block className="my-0" strong inset>
+        <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
+          <Block className="my-0 card-appear" strong inset>
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 bg-[#007AFF] rounded-full flex items-center justify-center text-white text-2xl">
+            <div className="w-16 h-16 bg-[#007AFF] rounded-full flex items-center justify-center text-white text-2xl transition-transform duration-300 hover:scale-110">
               И
             </div>
             <div className="flex-1 min-w-0">
@@ -51,7 +52,7 @@ export default function Profile() {
           </div>
         </Block>
 
-        <Block className="my-0" strong inset>
+        <Block className="my-0 card-appear-delayed" strong inset>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <Wallet className="w-5 h-5 text-[#007AFF]" />
@@ -70,7 +71,7 @@ export default function Profile() {
                   onClick={() => {}}
                   rounded
                   outline={!_package.popular}
-                  className={`relative h-10 overflow-visible ${_package.popular ? "k-color-brand" : "k-color-brand"}`}
+                  className={`relative h-10 overflow-visible transition-all duration-200 hover:scale-105 active:scale-95 ${_package.popular ? "k-color-brand" : "k-color-brand"}`}
                 >
                   {_package.popular && (
                     <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#FF9500] text-white text-xs px-2 py-0.5 rounded-full">
@@ -87,14 +88,17 @@ export default function Profile() {
           </div>
         </Block>
 
-        <AppList>
-          <ListItem title="История заказов" link onClick={() => router.push("/history")} />
-          <ListItem title="Мои категории" link onClick={() => router.push("/executor")} />
-          <ListItem title="Отзывы" link onClick={() => router.push("/reviews")} />
-          <ListItem title="Настройки уведомлений" link onClick={() => {}} />
-        </AppList>
+        <div className="card-appear-delayed" style={{ animationDelay: '0.15s' }}>
+          <AppList>
+            <ListItem title="История заказов" link onClick={() => router.push("/history")} />
+            <ListItem title="Мои категории" link onClick={() => router.push("/executor")} />
+            <ListItem title="Отзывы" link onClick={() => router.push("/reviews")} />
+            <ListItem title="Настройки уведомлений" link onClick={() => {}} />
+          </AppList>
+        </div>
 
-        <AppList>
+        <div className="card-appear-delayed" style={{ animationDelay: '0.2s' }}>
+          <AppList>
           <ListItem
             title="Помощь"
             link
@@ -106,7 +110,9 @@ export default function Profile() {
             onClick={() => window.open("https://t.me/drygsssss", "_blank")}
           />
         </AppList>
+      </div>
       </Block>
     </AppPage>
+    </PageTransition>
   );
 }

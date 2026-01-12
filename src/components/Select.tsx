@@ -35,7 +35,7 @@ export default function Select({
       name={name}
       value={value}
       onChange={(e) => onChangeAction(e.target.value)}
-      className={`bg-transparent text-sm focus:outline-none ${className}`}
+      className={`bg-transparent text-sm focus:outline-none transition-all duration-200 ${className}`}
       aria-label={name || "select"}
       disabled={disabled}
       {...rest}

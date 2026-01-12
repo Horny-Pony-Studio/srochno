@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import {Block, Button, Checkbox, ListItem} from "konsta/react";
-import {AppList, AppListInput, Select, InfoBlock, AppPage, AppNavbar} from "@/src/components";
+import {AppList, AppListInput, Select, InfoBlock, AppPage, AppNavbar, PageTransition} from "@/src/components";
 import {CATEGORIES, CITIES} from "@/src/data";
 import {Plus} from "lucide-react";
 
@@ -16,85 +16,95 @@ export default function CreateOrderPage() {
   };
 
   return (
-    <AppPage className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
-      <AppNavbar showRight title="Создать заявку" />
+    <PageTransition>
+      <AppPage className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
+        <AppNavbar showRight title="Создать заявку" />
 
-      <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
-        <AppList>
-          {CATEGORIES.map((category: string) => (
-            <ListItem
-              label
-              title={category}
-              key={category}
-              media={
-                <Checkbox
-                  component="div"
-                  name="categories-Checkbox"
-                  checked={selectedCategory.includes(category)}
-                  onChange={() => toggleGroupValue(category)}
+        <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
+          <div className="card-appear">
+            <AppList>
+              {CATEGORIES.map((category: string) => (
+                <ListItem
+                  label
+                  title={category}
+                  key={category}
+                  media={
+                    <Checkbox
+                      component="div"
+                      name="categories-Checkbox"
+                      checked={selectedCategory.includes(category)}
+                      onChange={() => toggleGroupValue(category)}
+                    />
+                  }
                 />
-              }
-            />
-          ))}
-        </AppList>
+              ))}
+            </AppList>
+          </div>
 
-        <AppList>
-          <AppListInput
-            inputClassName={"h-28"}
-            type={"textarea"}
-            labelText={"Описание"}
-            placeholder={"Укажите район, ориентиры, что нужно сделать, степень срочности..."}
-            value={description}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
-              setDescription(e.target.value)
-            }
-          />
-        </AppList>
-
-        <AppList>
-          <AppListInput
-            type={"text"}
-            labelText={"Контакт"}
-            placeholder={"Telegram или телефон или MAX для связи"}
-          />
-        </AppList>
-
-        <AppList>
-          <ListItem
-            label
-            title={<span className={"text-sm"}>Город</span>}
-            after={
-              <Select
-                value={city}
-                onChangeAction={setCity}
-                options={CITIES}
-                placeholder="Выберите город"
-                className="w-40"
+          <div className="card-appear-delayed">
+            <AppList>
+              <AppListInput
+                inputClassName={"h-28"}
+                type={"textarea"}
+                labelText={"Описание"}
+                placeholder={"Укажите район, ориентиры, что нужно сделать, степень срочности..."}
+                value={description}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
+                  setDescription(e.target.value)
+                }
               />
-            }
+            </AppList>
+          </div>
+
+          <div className="card-appear-delayed" style={{ animationDelay: '0.15s' }}>
+            <AppList>
+              <AppListInput
+                type={"text"}
+                labelText={"Контакт"}
+                placeholder={"Telegram или телефон или MAX для связи"}
+              />
+            </AppList>
+          </div>
+
+          <div className="card-appear-delayed" style={{ animationDelay: '0.2s' }}>
+            <AppList>
+              <ListItem
+                label
+                title={<span className={"text-sm"}>Город</span>}
+                after={
+                  <Select
+                    value={city}
+                    onChangeAction={setCity}
+                    options={CITIES}
+                    placeholder="Выберите город"
+                    className="w-40"
+                  />
+                }
+              />
+            </AppList>
+          </div>
+
+          <InfoBlock
+            className={"mx-4 scale-in"}
+            variant={"blue"}
+            message={"Заявка будет активна 60 минут. После этого её можно обновить или удалить."}
+            icon={"⏱️"}
           />
-        </AppList>
 
-        <InfoBlock
-          className={"mx-4"}
-          variant={"blue"}
-          message={"Заявка будет активна 60 минут. После этого её можно обновить или удалить."}
-          icon={"⏱️"}
-        />
-
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#C6C6C8] px-4 py-3 safe-area-bottom z-50 pointer-events-auto">
-          <Button
-            type="button"
-            large
-            rounded
-            className="w-full flex items-center justify-center gap-2"
-            onClick={() => {}}
-          >
-            <Plus className="w-5 h-5" />
-            <span>Создать</span>
-          </Button>
-        </div>
-      </Block>
-    </AppPage>
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#C6C6C8] px-4 py-3 safe-area-bottom z-50 pointer-events-auto transition-transform duration-300">
+            <Button
+              type="button"
+              large
+              rounded
+              className="w-full flex items-center justify-center gap-2 transition-all duration-200"
+              onClick={() => {}}
+            >
+              <Plus className="w-5 h-5" />
+              <span>Создать</span>
+            </Button>
+          </div>
+        </Block>
+      </AppPage>
+    </PageTransition>
   );
 }

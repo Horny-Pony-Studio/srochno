@@ -7,7 +7,7 @@ import {Order} from "@/src/models/Order";
 import { minutesLeft, takenCount } from "@/src/utils/order";
 import {getTimeBackground, getTimeColor} from "@/src/utils/time";
 import {useRouter} from "next/navigation";
-import {AppPage, InfoBlock, AppNavbar} from "@/src/components";
+import {AppPage, InfoBlock, AppNavbar, PageTransition} from "@/src/components";
 
 const createdAt = new Date(Date.now() - 8 * 60000).toISOString();
 
@@ -36,26 +36,27 @@ function CustomerPage() {
   }
 
   return (
-    <AppPage className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
-      <AppNavbar title="Мои заявки" showRight />
+    <PageTransition>
+      <AppPage className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
+        <AppNavbar title="Мои заявки" showRight />
 
-      <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
-        {orders.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="w-20 h-20 mx-auto bg-[#E5E5EA] rounded-full flex items-center justify-center mb-4">
-              <span className="text-4xl">📋</span>
+        <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
+          {orders.length === 0 ? (
+            <div className="text-center py-20 scale-in">
+              <div className="w-20 h-20 mx-auto bg-[#E5E5EA] rounded-full flex items-center justify-center mb-4 transition-transform duration-300 hover:scale-110">
+                <span className="text-4xl">📋</span>
+              </div>
+              <p className="text-[#8E8E93] mb-1">У вас пока нет заявок</p>
+              <p className="text-sm text-[#8E8E93]">Создайте первую заявку</p>
             </div>
-            <p className="text-[#8E8E93] mb-1">У вас пока нет заявок</p>
-            <p className="text-sm text-[#8E8E93]">Создайте первую заявку</p>
-          </div>
-        ) : (
-          <List className={"my-0"}>
-            {orders.map((order) => (
-              <Block
-                className={"my-0"}
-                strong inset
-                key={order.id}
-              >
+          ) : (
+            <List className={"my-0"}>
+              {orders.map((order, index) => (
+                <div key={order.id} className="stagger-item" style={{ animationDelay: `${index * 0.05}s` }}>
+                  <Block
+                    className={"my-0 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"}
+                    strong inset
+                  >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <div className="text-sm text-[#8E8E93] mb-1">{order.category}</div>
@@ -92,7 +93,7 @@ function CustomerPage() {
                       e.stopPropagation();
                       onEditOrder(order.id);
                     }}
-                    className={"flex-1 justify-center k-color-brand-yellow"}
+                    className={"flex-1 justify-center k-color-brand-yellow transition-all duration-200"}
                   >
                     <Edit2 className="w-4 h-4"/>
                     <span className="text-sm">Изменить</span>
@@ -106,7 +107,7 @@ function CustomerPage() {
                       e.stopPropagation();
                       onDeleteOrder(order.id);
                     }}
-                    className={"flex-1 justify-center k-color-brand-red"}
+                    className={"flex-1 justify-center k-color-brand-red transition-all duration-200"}
                   >
                     <Trash2 className="w-4 h-4"/>
                     <span className="text-sm">Удалить</span>
@@ -119,24 +120,25 @@ function CustomerPage() {
                   </div>
                 )}
               </Block>
+            </div>
             ))}
           </List>
         )}
 
         <InfoBlock
-          className={"mx-4"}
+          className={"mx-4 scale-in"}
           variant={"blue"}
           message={"Заявка активна 60 минут. После этого её можно обновить или удалить."}
           icon={"⏱️"}
         />
 
         <div
-          className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#C6C6C8] px-4 py-3 safe-area-bottom z-50 pointer-events-auto">
+          className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#C6C6C8] px-4 py-3 safe-area-bottom z-50 pointer-events-auto transition-transform duration-300">
           <Button
             type="button"
             large
             rounded
-            className="w-full flex items-center justify-center gap-2"
+            className="w-full flex items-center justify-center gap-2 transition-all duration-200"
             onClick={() => router.push('/create-order')}
           >
             <Plus className="w-5 h-5"/>
@@ -146,6 +148,7 @@ function CustomerPage() {
       </Block>
 
     </AppPage>
+    </PageTransition>
   )
 }
 
