@@ -11,7 +11,9 @@ export function PageTransition({ children, className = '' }: PageTransitionProps
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    if (typeof window === 'undefined') return;
+    const rafId = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(rafId);
   }, []);
 
   return (
@@ -20,4 +22,3 @@ export function PageTransition({ children, className = '' }: PageTransitionProps
     </div>
   );
 }
-
