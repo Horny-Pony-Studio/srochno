@@ -3,13 +3,13 @@
 /**
  * API Test Page
  *
- * Test page to verify API client is working correctly
- * Can be removed after testing
+ * Comprehensive test page for Orders API
+ * Demonstrates all CRUD operations
  */
 
 import { useState, useEffect } from 'react';
-import { checkHealth, isBackendAvailable, ApiError } from '@/src/lib/api';
-import type { HealthResponse } from '@/src/lib/api';
+import { checkHealth, isBackendAvailable, getOrders, createOrder, getOrder, claimOrder, cancelOrder, ApiError } from '@/src/lib/api';
+import type { HealthResponse, Order } from '@/src/lib/api';
 
 export default function ApiTestPage() {
   const [health, setHealth] = useState<HealthResponse | null>(null);
@@ -17,6 +17,13 @@ export default function ApiTestPage() {
   const [error, setError] = useState<string | null>(null);
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
   const [mounted, setMounted] = useState(false);
+
+  // Orders state
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [newOrderAmount, setNewOrderAmount] = useState('500');
+  const [newOrderCurrency, setNewOrderCurrency] = useState('RUB');
+  const [createdOrderId, setCreatedOrderId] = useState<number | null>(null);
 
   useEffect(() => {
     setMounted(true);
