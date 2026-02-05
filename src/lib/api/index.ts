@@ -33,3 +33,6 @@ export {
 
 // Health API
 export * from './health';
+
+// Orders API
+export * from './orders';
