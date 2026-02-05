@@ -31,6 +31,12 @@ const createAxiosInstance = (): AxiosInstance => {
         config.headers.Authorization = `Bearer ${token}`;
       }
 
+      // Development API key for testing (until Telegram auth is implemented)
+      const devApiKey = process.env.NEXT_PUBLIC_DEV_API_KEY;
+      if (devApiKey && process.env.NODE_ENV === 'development') {
+        config.headers['X-API-Key'] = devApiKey;
+      }
+
       // Log request in development
       if (process.env.NODE_ENV === 'development') {
         console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`, {
