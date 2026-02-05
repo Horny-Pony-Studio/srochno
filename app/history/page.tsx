@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { Block, Chip } from "konsta/react";
-import { AppNavbar, AppPage, InfoBlock, HistoryCard } from "@/src/components";
+import { AppNavbar, AppPage, InfoBlock, HistoryCard, PageTransition } from "@/src/components";
 import type { HistoryCardData, HistoryStatus } from "@/src/components/HistoryCard";
 import { MOCK_ORDERS } from "@/src/data/mockOrders";
 import { minutesLeft, takenCount } from "@/src/utils/order";
@@ -61,46 +61,50 @@ export default function HistoryPage() {
   }, [allItems, tab]);
 
   return (
-    <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
-      <AppNavbar title="История заказов" showRight />
+    <PageTransition>
+      <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
+        <AppNavbar title="История заказов" showRight />
 
-      <Block className="my-3 pl-0! pr-0!">
-        <div className="px-4 overflow-x-auto hide-scrollbar scroll-hint-right">
-          <div className="flex gap-2 w-max pr-4">
-            {filters.map((f) => (
-              <Chip
-                key={f.key}
-                component="button"
-                onClick={() => setTab(f.key)}
-                className={
-                  `text-base p-3
-                  ${tab === f.key
-                    ? "bg-[#007AFF] text-white"
-                    : "bg-white text-[#007AFF] border border-[#007AFF]"}
-                  `
-                }
-              >
-                {f.label}
-              </Chip>
-            ))}
+        <Block className="my-3 pl-0! pr-0!">
+          <div className="px-4 overflow-x-auto hide-scrollbar scroll-hint-right">
+            <div className="flex gap-2 w-max pr-4">
+              {filters.map((f) => (
+                <Chip
+                  key={f.key}
+                  component="button"
+                  onClick={() => setTab(f.key)}
+                  className={
+                    `text-base p-3 transition-all duration-200
+                    ${tab === f.key
+                      ? "bg-[#007AFF] text-white"
+                      : "bg-white text-[#007AFF] border border-[#007AFF]"}
+                    `
+                  }
+                >
+                  {f.label}
+                </Chip>
+              ))}
+            </div>
           </div>
-        </div>
-      </Block>
+        </Block>
 
-      <Block className="flex-1 pb-20 my-0 pl-0! pr-0! flex flex-col gap-3">
-        {items.length === 0 ? (
-          <InfoBlock
-            className="mx-4"
-            variant="blue"
-            icon="📚"
-            message="Пока пусто. Здесь появятся ваши выполненные и отменённые заявки."
-          />
-        ) : (
-          items.map((i) => (
-            <HistoryCard key={i.id} item={i} onClick={() => router.push(`/history/${i.id}`)} />
-          ))
-        )}
-      </Block>
-    </AppPage>
+        <Block className="flex-1 pb-20 my-0 pl-0! pr-0! flex flex-col gap-3">
+          {items.length === 0 ? (
+            <InfoBlock
+              className="mx-4 scale-in"
+              variant="blue"
+              icon="📚"
+              message="Пока пусто. Здесь появятся ваши выполненные и отменённые заявки."
+            />
+          ) : (
+            items.map((i, index) => (
+              <div key={i.id} className="stagger-item" style={{ animationDelay: `${index * 0.05}s` }}>
+                <HistoryCard item={i} onClick={() => router.push(`/history/${i.id}`)} />
+              </div>
+            ))
+          )}
+        </Block>
+      </AppPage>
+    </PageTransition>
   );
 }

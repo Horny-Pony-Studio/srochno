@@ -18,7 +18,12 @@ function OrderCard({ order, onClick, className, footerRight }: Props) {
   const takes = takenCount(order);
 
   return (
-    <Block className={`my-0 ${className ?? ""}`} strong inset onClick={onClick}>
+    <Block
+      className={`my-0 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] ${className ?? ""}`}
+      strong
+      inset
+      onClick={onClick}
+    >
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
           <div className="text-sm text-[#8E8E93] mb-1">{order.category}</div>
@@ -29,7 +34,7 @@ function OrderCard({ order, onClick, className, footerRight }: Props) {
             fillBgIos: getTimeBackground(left),
             fillTextIos: getTimeColor(left),
           }}
-          className="text-sm"
+          className="text-sm transition-all duration-200"
         >
           ⏱️ {left} мин
         </Chip>

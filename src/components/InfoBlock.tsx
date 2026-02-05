@@ -52,7 +52,7 @@ export default function InfoBlock({
 
   return (
     <div
-      className={`${styles.bg} p-4 border ${styles.border} rounded-3xl ${className}`}
+      className={`${styles.bg} p-4 border ${styles.border} rounded-3xl transition-all duration-300 ${className}`}
     >
       <p className={`text-sm ${styles.text} flex items-start gap-2`}>
         {resolvedIcon ? <span className="leading-5">{resolvedIcon}</span> : null}

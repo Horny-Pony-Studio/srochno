@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Block, Button, Chip, ListItem } from "konsta/react";
-import { AppList, AppNavbar, AppPage, InfoBlock } from "@/src/components";
+import { AppList, AppNavbar, AppPage, InfoBlock, PageTransition } from "@/src/components";
 import { MOCK_ORDERS } from "@/src/data/mockOrders";
 import { minutesLeft, takenCount } from "@/src/utils/order";
 
@@ -56,46 +56,50 @@ export default function HistoryDetailPage() {
   const status = expired ? (takes > 0 ? "Выполнен" : "Отменён") : "В работе";
 
   return (
-    <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
-      <AppNavbar title="История заказа" showRight />
+    <PageTransition>
+      <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
+        <AppNavbar title="История заказа" showRight />
 
-      <Block className="flex-1 flex flex-col gap-4 pb-20 my-4 pl-0! pr-0!">
-        <Block className="my-0" strong inset>
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <div className="text-sm text-[#8E8E93] mb-1">{order.category} • {order.city}</div>
-              <p className="whitespace-pre-wrap">{order.description}</p>
+        <Block className="flex-1 flex flex-col gap-4 pb-20 my-4 pl-0! pr-0!">
+          <Block className="my-0 card-appear transition-all duration-200" strong inset>
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="text-sm text-[#8E8E93] mb-1">{order.category} • {order.city}</div>
+                <p className="whitespace-pre-wrap">{order.description}</p>
+              </div>
+              <Chip
+                className={
+                  expired
+                    ? takes > 0
+                      ? "bg-[#E5F8ED] text-[#34C759]"
+                      : "bg-[#FFE5E5] text-[#FF3B30]"
+                    : "bg-[#FFF5E5] text-[#FF9500]"
+                }
+              >
+                {status}
+              </Chip>
             </div>
-            <Chip
-              className={
-                expired
-                  ? takes > 0
-                    ? "bg-[#E5F8ED] text-[#34C759]"
-                    : "bg-[#FFE5E5] text-[#FF3B30]"
-                  : "bg-[#FFF5E5] text-[#FF9500]"
-              }
-            >
-              {status}
-            </Chip>
+
+            <div className="mt-3 text-xs text-[#8E8E93]">Создано: {formatDateTime(order.createdAt)}</div>
+          </Block>
+
+          <div className="card-appear-delayed">
+            <AppList>
+              <ListItem label title="Откликов" after={`${takes}/3`} />
+              <ListItem label title="Таймер" after={expired ? "Истек" : `${left} мин`} />
+            </AppList>
           </div>
 
-          <div className="mt-3 text-xs text-[#8E8E93]">Создано: {formatDateTime(order.createdAt)}</div>
+          {expired && takes > 0 ? (
+            <InfoBlock
+              className="mx-4 scale-in"
+              variant="blue"
+              icon="⭐"
+              message="Дальше тут будет отзыв и оценка (пока мок)."
+            />
+          ) : null}
         </Block>
-
-        <AppList>
-          <ListItem label title="Откликов" after={`${takes}/3`} />
-          <ListItem label title="Таймер" after={expired ? "Истек" : `${left} мин`} />
-        </AppList>
-
-        {expired && takes > 0 ? (
-          <InfoBlock
-            className="mx-4"
-            variant="blue"
-            icon="⭐"
-            message="Дальше тут будет отзыв и оценка (пока мок)."
-          />
-        ) : null}
-      </Block>
-    </AppPage>
+      </AppPage>
+    </PageTransition>
   );
 }

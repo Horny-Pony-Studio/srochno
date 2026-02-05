@@ -44,7 +44,12 @@ function statusChip(status: HistoryStatus, rating?: number) {
 
 export default function HistoryCard({ item, onClick }: Props) {
   return (
-    <Block className="my-0" strong inset onClick={onClick}>
+    <Block
+      className="my-0 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
+      strong
+      inset
+      onClick={onClick}
+    >
       <div className="flex items-start justify-between gap-3 mb-2">
         <div className="min-w-0">
           <div className="text-sm text-[#8E8E93] mb-1">

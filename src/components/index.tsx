@@ -7,6 +7,7 @@ import Select from "./Select";
 import BackButton from "./BackButton";
 import OrderCard from "./OrderCard";
 import HistoryCard from "./HistoryCard";
+import { PageTransition } from "./PageTransition";
 
 export {
   AppList,
@@ -17,5 +18,6 @@ export {
   HistoryCard,
   InfoBlock,
   OrderCard,
+  PageTransition,
   Select,
 };
