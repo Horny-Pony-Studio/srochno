@@ -7,6 +7,16 @@
     --color-brand-yellow: #fdc700;
 }
 
+/* Dark mode support */
+.dark {
+  color-scheme: dark;
+}
+
+/* Smooth theme transitions */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
