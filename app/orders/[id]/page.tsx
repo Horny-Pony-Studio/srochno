@@ -1,16 +1,17 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { Block, Button, Chip, Link, ListItem, Preloader } from "konsta/react";
-import { Clock, Phone, Lock, ArrowLeft } from "lucide-react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useParams } from "next/navigation";
+import { Block, Chip, Link, ListItem, Preloader } from "konsta/react";
+import { Clock, Phone, Lock } from "lucide-react";
 import { AppPage, InfoBlock, AppNavbar, AppList, PageTransition } from "@/src/components";
 import { getTimeBackground, getTimeColor } from "@/src/utils/time";
 import { MOCK_ORDERS } from "@/src/data/mockOrders";
 import { minutesLeft, takenCount } from "@/src/utils/order";
+import { useTelegramBackButton, useTelegramMainButton } from "@/src/hooks/useTelegram";
 
 export default function OrderDetailPage() {
-  const router = useRouter();
+  useTelegramBackButton('/orders');
   const params = useParams<{ id?: string }>();
 
   const orderId = typeof params?.id === "string" ? params.id : "";
@@ -71,19 +72,6 @@ export default function OrderDetailPage() {
           message={"Заказ не найден или взят в исполнение."}
           icon={"⚠️"}
         />
-
-        <div className="fixed bottom-0 left-0 right-0 bg-[--k-color-surface-1] border-t border-ios px-4 py-3 safe-area-bottom z-50 pointer-events-auto">
-          <Button
-            type="button"
-            large
-            rounded
-            className="w-full flex items-center justify-center gap-2"
-            onClick={() => router.push("/orders")}
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span>К списку заказов</span>
-          </Button>
-        </div>
       </AppPage>
     );
   }
@@ -92,6 +80,17 @@ export default function OrderDetailPage() {
   const left = timeLeft;
   const takes = takenCount(order);
   const canTake = balance >= pay && takes < 3 && left > 0;
+
+  const handleTakeOrder = useCallback(() => {
+    if (!canTake) return;
+    setContactUnlocked(true);
+  }, [canTake]);
+
+  useTelegramMainButton(
+    canTake ? `Взять заказ (${pay} ₽)` : 'Недоступно',
+    handleTakeOrder,
+    { isEnabled: canTake }
+  );
 
   return (
     <PageTransition>
@@ -173,21 +172,6 @@ export default function OrderDetailPage() {
             />
           )}
         </Block>
-
-        <div className="fixed bottom-0 left-0 right-0 bg-[--k-color-surface-1] border-t border-ios px-4 py-3 safe-area-bottom z-50 transition-transform duration-300">
-          <Button
-            large
-            rounded
-            disabled={!canTake}
-            onClick={() => {
-              if (!canTake) return;
-              setContactUnlocked(true);
-            }}
-            className="transition-all duration-200"
-          >
-            {canTake ? `Взять заказ (${pay} ₽)` : "Недоступно"}
-          </Button>
-        </div>
 
       </AppPage>
     </PageTransition>

@@ -48,12 +48,14 @@ export default function AppNavbar({
     );
 
   return (
-    <Navbar
-      titleFontSizeIos={titleFontSizeIos}
-      className={className}
-      title={safeTitle}
-      titleClassName={showRight ? "left-4! translate-x-0!" : ""}
-      right={right}
-    />
+    <div style={{ paddingTop: 'var(--content-safe-top)' }}>
+      <Navbar
+        titleFontSizeIos={titleFontSizeIos}
+        className={className}
+        title={safeTitle}
+        titleClassName={showRight ? "left-4! translate-x-0!" : ""}
+        right={right}
+      />
+    </div>
   );
 }

@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { Block, Button, Chip, ListItem } from "konsta/react";
+import { useParams } from "next/navigation";
+import { Block, Chip, ListItem } from "konsta/react";
 import { AppList, AppNavbar, AppPage, InfoBlock, PageTransition } from "@/src/components";
 import { MOCK_ORDERS } from "@/src/data/mockOrders";
 import { minutesLeft, takenCount } from "@/src/utils/order";
+import { useTelegramBackButton } from "@/src/hooks/useTelegram";
 
 function formatDateTime(iso: string) {
   const d = new Date(iso);
@@ -18,7 +19,7 @@ function formatDateTime(iso: string) {
 }
 
 export default function HistoryDetailPage() {
-  const router = useRouter();
+  useTelegramBackButton('/history');
   const params = useParams<{ id?: string }>();
   const id = typeof params?.id === "string" ? params.id : "";
 
@@ -41,11 +42,6 @@ export default function HistoryDetailPage() {
       <AppPage className="min-h-dvh flex flex-col">
         <AppNavbar title="История" showRight />
         <InfoBlock className="mx-4 mt-4" variant="red" icon="⚠️" message="Запись не найдена" />
-        <div className="fixed bottom-0 left-0 right-0 bg-[--k-color-surface-1] border-t border-ios px-4 py-3 safe-area-bottom z-50">
-          <Button large rounded onClick={() => router.push("/history")}>
-            К истории
-          </Button>
-        </div>
       </AppPage>
     );
   }

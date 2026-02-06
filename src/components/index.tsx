@@ -4,7 +4,6 @@ import AppNavbar from "./AppNavbar";
 import AppPage from "./AppPage";
 import InfoBlock from "./InfoBlock";
 import Select from "./Select";
-import BackButton from "./BackButton";
 import OrderCard from "./OrderCard";
 import HistoryCard from "./HistoryCard";
 import { PageTransition } from "./PageTransition";
@@ -14,7 +13,6 @@ export {
   AppListInput,
   AppNavbar,
   AppPage,
-  BackButton,
   HistoryCard,
   InfoBlock,
   OrderCard,
