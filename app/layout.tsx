@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import KonstaProvider from './konstaProvider';
 import { TelegramProvider } from '../src/providers/TelegramProvider';
+import { ThemeProvider } from '../src/providers/ThemeProvider';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -21,7 +22,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <TelegramProvider>
-          <KonstaProvider>{children}</KonstaProvider>
+          <ThemeProvider>
+            <KonstaProvider>{children}</KonstaProvider>
+          </ThemeProvider>
         </TelegramProvider>
       </body>
     </html>
