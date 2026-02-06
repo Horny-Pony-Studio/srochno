@@ -62,7 +62,7 @@ export default function HistoryPage() {
 
   return (
     <PageTransition>
-      <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
+      <AppPage className="min-h-dvh flex flex-col">
         <AppNavbar title="История заказов" showRight />
 
         <Block className="my-3 pl-0! pr-0!">
@@ -76,8 +76,8 @@ export default function HistoryPage() {
                   className={
                     `text-base p-3 transition-all duration-200
                     ${tab === f.key
-                      ? "bg-[#007AFF] text-white"
-                      : "bg-white text-[#007AFF] border border-[#007AFF]"}
+                      ? "bg-primary text-white"
+                      : "bg-transparent text-primary border border-primary"}
                     `
                   }
                 >

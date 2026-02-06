@@ -29,7 +29,7 @@ export default function OrdersPage() {
 
   return (
     <PageTransition>
-      <AppPage className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
+      <AppPage className={"min-h-screen flex flex-col"}>
         <AppNavbar title="Срочные заказы" showRight />
 
         <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
@@ -87,7 +87,7 @@ export default function OrdersPage() {
                         onClick={() => router.push(`/orders/${order.id}`)}
                         footerRight={
                           canShowTake ? (
-                            <div className="bg-[#007AFF] text-white px-4 py-2 rounded-lg text-sm transition-all duration-200 hover:bg-[#0051D5]">
+                            <div className="bg-primary text-white px-4 py-2 rounded-lg text-sm transition-all duration-200 hover:opacity-80">
                               Взять (2 ₽)
                             </div>
                           ) : null

@@ -82,7 +82,7 @@ export default function ReviewsPage() {
 
   return (
     <PageTransition>
-      <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
+      <AppPage className="min-h-dvh flex flex-col">
         <AppNavbar title="Отзывы" showRight />
 
         <Block className="flex-1 pb-20 my-4 pl-0! pr-0! flex flex-col gap-4">
@@ -105,7 +105,7 @@ export default function ReviewsPage() {
                 <div key={r.id} className="stagger-item" style={{ animationDelay: `${index * 0.05}s` }}>
                   <Block className="my-0 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]" strong inset>
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 bg-[#007AFF] rounded-full flex items-center justify-center text-white text-sm shrink-0 transition-transform duration-300 hover:scale-110">
+                      <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white text-sm shrink-0 transition-transform duration-300 hover:scale-110">
                         {getInitials(r.authorName)}
                       </div>
 
@@ -118,7 +118,7 @@ export default function ReviewsPage() {
                           </div>
                         </div>
 
-                        <div className="text-sm text-[#8E8E93] mb-2">
+                        <div className="text-sm opacity-55 mb-2">
                           {r.category} • {formatDate(r.createdAt)}
                         </div>
 

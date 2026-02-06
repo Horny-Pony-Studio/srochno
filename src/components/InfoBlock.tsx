@@ -1,36 +1,26 @@
 "use client";
 
 import React from "react";
+import { Block } from "konsta/react";
 
 type Variant = "red" | "green" | "yellow" | "blue";
 
-const VARIANT_STYLES: Record<
-  Variant,
-  { bg: string; border: string; text: string; icon: string }
-> = {
+const VARIANT_STYLES: Record<Variant, { icon: string; colorClass: string }> = {
   red: {
-    bg: "bg-[#FFE5E5]",
-    border: "border-[#FF3B30]",
-    text: "text-[#FF3B30]",
     icon: "⏱️",
+    colorClass: "k-color-red",
   },
   green: {
-    bg: "bg-[#E6F9F0]",
-    border: "border-[#34C759]",
-    text: "text-[#107F4A]",
     icon: "✅",
+    colorClass: "k-color-green",
   },
   yellow: {
-    bg: "bg-[#FFF7E6]",
-    border: "border-[#FFCC00]",
-    text: "text-[#A66E00]",
     icon: "⚠️",
+    colorClass: "k-color-yellow",
   },
   blue: {
-    bg: "bg-[#E8F0FF]",
-    border: "border-[#007AFF]",
-    text: "text-[#003C7A]",
     icon: "ℹ️",
+    colorClass: "k-color-primary",
   },
 };
 
@@ -51,13 +41,15 @@ export default function InfoBlock({
   const resolvedIcon = icon ?? styles.icon;
 
   return (
-    <div
-      className={`${styles.bg} p-4 border ${styles.border} rounded-3xl transition-all duration-300 ${className}`}
+    <Block
+      strong
+      inset
+      className={`${styles.colorClass} transition-all duration-300 ${className}`}
     >
-      <p className={`text-sm ${styles.text} flex items-start gap-2`}>
+      <p className="text-sm flex items-start gap-2">
         {resolvedIcon ? <span className="leading-5">{resolvedIcon}</span> : null}
-        <span>{children ?? message ?? <>Плашка</>}</span>
+        <span className="opacity-75">{children ?? message ?? <>Плашка</>}</span>
       </p>
-    </div>
+    </Block>
   );
 }

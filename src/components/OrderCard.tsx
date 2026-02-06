@@ -33,8 +33,8 @@ function OrderCard({ order, onClick, className, footerRight }: Props) {
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
-          <div className="text-sm text-[#8E8E93] mb-1">{order.category}</div>
-          <div className="text-xs text-[#8E8E93]">{order.city}</div>
+          <div className="text-sm opacity-55 mb-1">{order.category}</div>
+          <div className="text-xs opacity-55">{order.city}</div>
         </div>
         <Chip
           colors={{
@@ -50,7 +50,7 @@ function OrderCard({ order, onClick, className, footerRight }: Props) {
       <p className="mb-3 line-clamp-2">{order.description}</p>
 
       <div className="flex items-center justify-between">
-        <div className="text-sm text-[#8E8E93]">
+        <div className="text-sm opacity-55">
           {takes > 0 ? `${takes}/3 откликов` : "Нет откликов"}
         </div>
         {footerRight}

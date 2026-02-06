@@ -51,10 +51,10 @@ export default function OrderDetailPage() {
 
   if (!isParamsReady || order === undefined) {
     return (
-      <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
+      <AppPage className="min-h-dvh flex flex-col">
         <AppNavbar showRight title="Детали заказа" />
         <div className="flex-1 flex items-center justify-center py-20">
-          <Preloader className="text-[#007AFF]" />
+          <Preloader className="text-primary" />
         </div>
       </AppPage>
     );
@@ -62,7 +62,7 @@ export default function OrderDetailPage() {
 
   if (order === null) {
     return (
-      <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
+      <AppPage className="min-h-dvh flex flex-col">
         <AppNavbar showRight title="Детали заказа" />
 
         <InfoBlock
@@ -72,7 +72,7 @@ export default function OrderDetailPage() {
           icon={"⚠️"}
         />
 
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#C6C6C8] px-4 py-3 safe-area-bottom z-50 pointer-events-auto">
+        <div className="fixed bottom-0 left-0 right-0 bg-[--k-color-surface-1] border-t border-ios px-4 py-3 safe-area-bottom z-50 pointer-events-auto">
           <Button
             type="button"
             large
@@ -95,7 +95,7 @@ export default function OrderDetailPage() {
 
   return (
     <PageTransition>
-      <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
+      <AppPage className="min-h-dvh flex flex-col">
         <AppNavbar showRight title="Детали заказа" />
 
         <Block className="flex-1 flex flex-col gap-4 pb-24 my-4 pl-0! pr-0!">
@@ -124,34 +124,34 @@ export default function OrderDetailPage() {
           </div>
 
           <Block className="my-0 card-appear-delayed" style={{ animationDelay: '0.2s' }} strong inset>
-            <div className="text-sm text-[#8E8E93] mb-2">Описание</div>
+            <div className="text-sm opacity-55 mb-2">Описание</div>
             <p className="whitespace-pre-wrap">{order.description}</p>
           </Block>
 
           <Block className="my-0 card-appear-delayed" style={{ animationDelay: '0.25s' }} strong inset>
-            <div className="text-sm text-[#8E8E93] mb-2">Контакт</div>
+            <div className="text-sm opacity-55 mb-2">Контакт</div>
             {contactUnlocked ? (
               <div className="flex items-center gap-2 scale-in">
-                <Phone className="w-5 h-5 text-[#007AFF]" />
-                <Link href={`https://t.me/${order.contact.replace("@", "")}`} className="text-[#007AFF]">
+                <Phone className="w-5 h-5 text-primary" />
+                <Link href={`https://t.me/${order.contact.replace("@", "")}`} className="text-primary">
                   {order.contact}
                 </Link>
               </div>
             ) : (
               <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-[#8E8E93]">
+                <div className="flex items-center gap-2 opacity-55">
                   <Lock className="w-5 h-5" />
                   <span>Контакт доступен после оплаты</span>
                 </div>
-                <div className="text-sm text-[#8E8E93]">{pay} ₽</div>
+                <div className="text-sm opacity-55">{pay} ₽</div>
               </div>
             )}
           </Block>
 
           <Block className="my-0 card-appear-delayed" style={{ animationDelay: '0.3s' }} strong inset>
             <div className="flex items-center justify-between">
-              <span className="text-[#8E8E93]">Откликов</span>
-              <Chip className={takenCount(order) >= 3 ? "text-[#FF3B30]" : ""}>{takenCount(order)}/3</Chip>
+              <span className="opacity-55">Откликов</span>
+              <Chip className={takenCount(order) >= 3 ? "text-red-500" : ""}>{takenCount(order)}/3</Chip>
             </div>
           </Block>
 
@@ -174,7 +174,7 @@ export default function OrderDetailPage() {
           )}
         </Block>
 
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#C6C6C8] px-4 py-3 safe-area-bottom z-50 transition-transform duration-300">
+        <div className="fixed bottom-0 left-0 right-0 bg-[--k-color-surface-1] border-t border-ios px-4 py-3 safe-area-bottom z-50 transition-transform duration-300">
           <Button
             large
             rounded
