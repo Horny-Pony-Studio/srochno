@@ -5,6 +5,7 @@ import { Block, Chip } from "konsta/react";
 import { Order } from "@/src/models/Order";
 import { getTimeBackground, getTimeColor } from "@/src/utils/time";
 import { minutesLeft, takenCount } from "@/src/utils/order";
+import { useHaptic } from "@/hooks/useTelegram";
 
 type Props = {
   order: Order;
@@ -16,13 +17,19 @@ type Props = {
 function OrderCard({ order, onClick, className, footerRight }: Props) {
   const left = minutesLeft(order);
   const takes = takenCount(order);
+  const { impact } = useHaptic();
+
+  const handleClick = () => {
+    impact('light');
+    onClick?.();
+  };
 
   return (
     <Block
-      className={`my-0 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] ${className ?? ""}`}
+      className={`my-0 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] cursor-pointer ${className ?? ""}`}
       strong
       inset
-      onClick={onClick}
+      onClick={handleClick}
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
