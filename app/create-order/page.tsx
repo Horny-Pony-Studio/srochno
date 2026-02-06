@@ -17,7 +17,7 @@ export default function CreateOrderPage() {
 
   return (
     <PageTransition>
-      <AppPage className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
+      <AppPage className={"min-h-screen flex flex-col"}>
         <AppNavbar showRight title="Создать заявку" />
 
         <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
@@ -91,7 +91,7 @@ export default function CreateOrderPage() {
             icon={"⏱️"}
           />
 
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#C6C6C8] px-4 py-3 safe-area-bottom z-50 pointer-events-auto transition-transform duration-300">
+          <div className="fixed bottom-0 left-0 right-0 bg-[--k-color-surface-1] border-t border-ios px-4 py-3 safe-area-bottom z-50 pointer-events-auto transition-transform duration-300">
             <Button
               type="button"
               large

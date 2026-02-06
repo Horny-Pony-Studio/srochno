@@ -37,17 +37,17 @@ function CustomerPage() {
 
   return (
     <PageTransition>
-      <AppPage className={"min-h-screen bg-[#F2F2F7] flex flex-col"}>
+      <AppPage className={"min-h-screen flex flex-col"}>
         <AppNavbar title="Мои заявки" showRight />
 
         <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
           {orders.length === 0 ? (
             <div className="text-center py-20 scale-in">
-              <div className="w-20 h-20 mx-auto bg-[#E5E5EA] rounded-full flex items-center justify-center mb-4 transition-transform duration-300 hover:scale-110">
+              <div className="w-20 h-20 mx-auto bg-gray-200 rounded-full flex items-center justify-center mb-4 transition-transform duration-300 hover:scale-110">
                 <span className="text-4xl">📋</span>
               </div>
-              <p className="text-[#8E8E93] mb-1">У вас пока нет заявок</p>
-              <p className="text-sm text-[#8E8E93]">Создайте первую заявку</p>
+              <p className="opacity-55 mb-1">У вас пока нет заявок</p>
+              <p className="text-sm opacity-55">Создайте первую заявку</p>
             </div>
           ) : (
             <List className={"my-0"}>
@@ -59,8 +59,8 @@ function CustomerPage() {
                   >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <div className="text-sm text-[#8E8E93] mb-1">{order.category}</div>
-                    <div className="text-xs text-[#8E8E93]">{order.city}</div>
+                    <div className="text-sm opacity-55 mb-1">{order.category}</div>
+                    <div className="text-xs opacity-55">{order.city}</div>
                   </div>
                   <Chip
                     colors={{
@@ -77,9 +77,9 @@ function CustomerPage() {
                   {order.description}
                 </p>
 
-                <div className="flex items-center justify-between mb-3 pb-3 border-b border-[#C6C6C8]">
-                  <span className="text-sm text-[#8E8E93]">Откликов</span>
-                  <Chip className={takenCount(order) >= 3 ? 'text-[#34C759]' : ''}>
+                <div className="flex items-center justify-between mb-3 pb-3 border-b border-ios">
+                  <span className="text-sm opacity-55">Откликов</span>
+                  <Chip className={takenCount(order) >= 3 ? 'text-green-500' : ''}>
                     {takenCount(order)}/3
                   </Chip>
                 </div>
@@ -115,7 +115,7 @@ function CustomerPage() {
                 </div>
 
                 {!(order.status === 'active' && order.takenBy.length === 0) && order.takenBy.length > 0 && (
-                  <div className="mt-2 text-xs text-[#8E8E93] text-center">
+                  <div className="mt-2 text-xs opacity-55 text-center">
                     Редактирование недоступно после взятия исполнителем
                   </div>
                 )}
@@ -133,7 +133,7 @@ function CustomerPage() {
         />
 
         <div
-          className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#C6C6C8] px-4 py-3 safe-area-bottom z-50 pointer-events-auto transition-transform duration-300">
+          className="fixed bottom-0 left-0 right-0 bg-[--k-color-surface-1] border-t border-ios px-4 py-3 safe-area-bottom z-50 pointer-events-auto transition-transform duration-300">
           <Button
             type="button"
             large

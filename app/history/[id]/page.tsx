@@ -29,7 +29,7 @@ export default function HistoryDetailPage() {
 
   if (!id || order === undefined) {
     return (
-      <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
+      <AppPage className="min-h-dvh flex flex-col">
         <AppNavbar title="История" />
         <div className="flex-1" />
       </AppPage>
@@ -38,10 +38,10 @@ export default function HistoryDetailPage() {
 
   if (order === null) {
     return (
-      <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
+      <AppPage className="min-h-dvh flex flex-col">
         <AppNavbar title="История" showRight />
         <InfoBlock className="mx-4 mt-4" variant="red" icon="⚠️" message="Запись не найдена" />
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#C6C6C8] px-4 py-3 safe-area-bottom z-50">
+        <div className="fixed bottom-0 left-0 right-0 bg-[--k-color-surface-1] border-t border-ios px-4 py-3 safe-area-bottom z-50">
           <Button large rounded onClick={() => router.push("/history")}>
             К истории
           </Button>
@@ -57,30 +57,30 @@ export default function HistoryDetailPage() {
 
   return (
     <PageTransition>
-      <AppPage className="min-h-dvh bg-[#F2F2F7] flex flex-col">
+      <AppPage className="min-h-dvh flex flex-col">
         <AppNavbar title="История заказа" showRight />
 
         <Block className="flex-1 flex flex-col gap-4 pb-20 my-4 pl-0! pr-0!">
           <Block className="my-0 card-appear transition-all duration-200" strong inset>
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <div className="text-sm text-[#8E8E93] mb-1">{order.category} • {order.city}</div>
+                <div className="text-sm opacity-55 mb-1">{order.category} • {order.city}</div>
                 <p className="whitespace-pre-wrap">{order.description}</p>
               </div>
               <Chip
                 className={
                   expired
                     ? takes > 0
-                      ? "bg-[#E5F8ED] text-[#34C759]"
-                      : "bg-[#FFE5E5] text-[#FF3B30]"
-                    : "bg-[#FFF5E5] text-[#FF9500]"
+                      ? "bg-green-100 text-green-600"
+                      : "bg-red-100 text-red-600"
+                    : "bg-orange-100 text-orange-600"
                 }
               >
                 {status}
               </Chip>
             </div>
 
-            <div className="mt-3 text-xs text-[#8E8E93]">Создано: {formatDateTime(order.createdAt)}</div>
+            <div className="mt-3 text-xs opacity-55">Создано: {formatDateTime(order.createdAt)}</div>
           </Block>
 
           <div className="card-appear-delayed">

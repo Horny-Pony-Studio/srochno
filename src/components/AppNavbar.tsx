@@ -18,7 +18,7 @@ export default function AppNavbar({
   title,
   navRight,
   titleFontSizeIos = "text-[20px]",
-  className = "bg-white border-b border-[#C6C6C8] px-0 py-3",
+  className = "bg-[--k-color-surface-1] border-b border-ios px-0 py-3",
   showRight,
 }: Props) {
 
@@ -29,11 +29,11 @@ export default function AppNavbar({
       <Link onClick={() => router.push("profile")} className="px-0 shrink-0 transition-opacity duration-200 hover:opacity-70 active:opacity-50">
         <div className="flex items-center gap-2 sm:gap-3 px-3 max-w-[55vw]">
 
-          <div className="text-[14px] font-medium text-black whitespace-nowrap transition-transform duration-200">
+          <div className="text-[14px] font-medium whitespace-nowrap transition-transform duration-200">
             {10_000} P
           </div>
 
-          <User className="w-6 h-6 text-[#007AFF] transition-transform duration-200 hover:scale-110" />
+          <User className="w-6 h-6 text-primary transition-transform duration-200 hover:scale-110" />
 
           {navRight ? <div className="shrink-0">{navRight}</div> : null}
         </div>
