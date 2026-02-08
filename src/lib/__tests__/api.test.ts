@@ -302,7 +302,7 @@ describe('submitExecutorComplaint', () => {
     const spy = mockFetch({ success: true });
     vi.stubGlobal('fetch', spy);
 
-    await submitExecutorComplaint({ order_id: 'o1', complaint: 'Не отвечал' as 'Не отвечал' });
+    await submitExecutorComplaint({ order_id: 'o1', complaint: 'Не отвечал' as const });
     expect(vi.mocked(fetch).mock.calls[0][0]).toBe('/api/reviews/executor');
   });
 });

@@ -6,7 +6,7 @@ import { secondsLeft } from '@/src/utils/order';
 import { formatTimeLeft } from '@/src/utils/time';
 
 export function useOrderTimer(order: Order | undefined) {
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState(() => Date.now());
   const totalSec = order ? secondsLeft(order, now) : 0;
   const mins = Math.floor(totalSec / 60);
   const isUrgent = mins < 10 && totalSec > 0;

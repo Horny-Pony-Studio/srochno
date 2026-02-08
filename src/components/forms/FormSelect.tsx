@@ -25,7 +25,6 @@ export default function FormSelect({
   placeholder = 'Виберіть...',
   error,
   register,
-  required = false,
   disabled = false,
   info,
 }: FormSelectProps) {

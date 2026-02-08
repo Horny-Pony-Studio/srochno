@@ -21,7 +21,6 @@ export default function FormTextarea({
   placeholder,
   error,
   register,
-  required = false,
   disabled = false,
   rows = 4,
   info,
