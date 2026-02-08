@@ -1,9 +1,9 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import KonstaProvider from './konstaProvider';
-import { TelegramProvider } from '../src/providers/TelegramProvider';
-import { AuthProvider } from '../src/providers/AuthProvider';
-import { QueryProvider } from '../src/providers/QueryProvider';
-import { ThemeProvider } from '../src/providers/ThemeProvider';
+import { TelegramProvider } from '@/providers/TelegramProvider';
+import { AuthProvider } from '@/providers/AuthProvider';
+import { QueryProvider } from '@/providers/QueryProvider';
+import { ThemeProvider } from '@/providers/ThemeProvider';
 import "./globals.css";
 
 const geistSans = Geist({
