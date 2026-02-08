@@ -1,12 +1,12 @@
 "use client";
-import React, {useMemo, useState} from "react";
-import {useRouter} from "next/navigation";
-import {Block, ListItem} from "konsta/react";
-import {AppList, AppNavbar, AppPage, InfoBlock, OrderCard, PageTransition, Select} from "@/src/components";
-import {CATEGORIES, CITIES} from "@/src/data";
-import {MOCK_ORDERS} from "@/src/data/mockOrders";
-import {minutesLeft, takenCount} from "@/src/utils/order";
+import React, { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Block, ListItem, Preloader } from "konsta/react";
+import { AppList, AppNavbar, AppPage, InfoBlock, OrderCard, PageTransition, Select } from "@/src/components";
+import { CATEGORIES, CITIES } from "@/src/data";
+import { minutesLeft, takenCount } from "@/src/utils/order";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
+import { useOrders } from "@/hooks/useOrders";
 
 export default function OrdersPage() {
   const router = useRouter();
@@ -17,17 +17,19 @@ export default function OrdersPage() {
   const categoryOptions = useMemo(() => ["Все", ...CATEGORIES], []);
   const cityOptions = useMemo(() => ["Все", ...CITIES], []);
 
-  const filteredOrders = useMemo(() => {
-    const activeOrders = MOCK_ORDERS.filter((o) => o.status === "active" && minutesLeft(o) > 0);
-
-    const byCategory = selectedCategory === "Все"
-      ? activeOrders
-      : activeOrders.filter((o) => o.category === selectedCategory);
-
-    return selectedCity === "Все"
-      ? byCategory
-      : byCategory.filter((o) => o.city === selectedCity);
+  const filters = useMemo(() => {
+    const f: { category?: string; city?: string; status?: 'active' } = { status: 'active' };
+    if (selectedCategory !== "Все") f.category = selectedCategory;
+    if (selectedCity !== "Все") f.city = selectedCity;
+    return f;
   }, [selectedCategory, selectedCity]);
+
+  const { data: orders, isLoading, isError } = useOrders(filters);
+
+  const activeOrders = useMemo(() => {
+    if (!orders) return [];
+    return orders.filter((o) => minutesLeft(o) > 0);
+  }, [orders]);
 
   return (
     <PageTransition>
@@ -69,7 +71,18 @@ export default function OrdersPage() {
           </AppList>
 
           <Block className="flex-1 flex flex-col gap-4 pb-16 my-0 pl-0! pr-0!">
-            {filteredOrders.length === 0 ? (
+            {isLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <Preloader className="text-primary" />
+              </div>
+            ) : isError ? (
+              <InfoBlock
+                className={"mx-4"}
+                variant={"red"}
+                message={"Не удалось загрузить заказы. Попробуйте позже."}
+                icon={"⚠️"}
+              />
+            ) : activeOrders.length === 0 ? (
               <InfoBlock
                 className={"mx-4"}
                 variant={"blue"}
@@ -77,7 +90,7 @@ export default function OrdersPage() {
               />
             ) : (
               <div className="flex flex-col gap-4">
-                {filteredOrders.map((order, index) => {
+                {activeOrders.map((order, index) => {
                   const takes = takenCount(order);
                   const left = minutesLeft(order);
                   const canShowTake = takes < 3 && left > 0;
