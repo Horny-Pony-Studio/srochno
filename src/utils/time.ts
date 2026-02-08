@@ -12,7 +12,7 @@ export const getTimeColor = (minutes: number) => {
 };
 
 export const getTimeBackground = (minutes: number) => {
-  if (minutes > 40) return 'bg-[#E5F8ED]';
-  if (minutes > 20) return 'bg-[#FFF5E5]';
-  return 'bg-[#FFE5E5]';
+  if (minutes > 40) return 'bg-[#E5F8ED] dark:bg-[#1a3a2a]';
+  if (minutes > 20) return 'bg-[#FFF5E5] dark:bg-[#3a2f1a]';
+  return 'bg-[#FFE5E5] dark:bg-[#3a1a1a]';
 };
