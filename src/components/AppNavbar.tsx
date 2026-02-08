@@ -4,6 +4,7 @@ import React from "react";
 import {Navbar, Link} from "konsta/react";
 import {User} from "lucide-react";
 import {useRouter} from "next/navigation";
+import {useAuth} from "@/providers/AuthProvider";
 
 type Props = {
   title?: React.ReactNode;
@@ -23,6 +24,7 @@ export default function AppNavbar({
 }: Props) {
 
   const router = useRouter()
+  const { user } = useAuth();
 
   const right =
     showRight || navRight ? (
@@ -30,7 +32,7 @@ export default function AppNavbar({
         <div className="flex items-center gap-2 sm:gap-3 px-3 max-w-[55vw]">
 
           <div className="text-[14px] font-medium whitespace-nowrap transition-transform duration-200">
-            {10_000} P
+            {user?.balance ?? 0} ₽
           </div>
 
           <User className="w-6 h-6 text-primary transition-transform duration-200 hover:scale-110" />

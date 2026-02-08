@@ -14,24 +14,23 @@ export const CATEGORIES = [
 // Схема для створення замовлення
 export const createOrderSchema = z.object({
   category: z.enum(CATEGORIES, {
-    required_error: 'Виберіть категорію',
-    invalid_type_error: 'Невірна категорія',
+    message: 'Виберіть категорію',
   }),
   description: z
     .string({
-      required_error: 'Опис обов\'язковий',
+      message: 'Опис обов\'язковий',
     })
     .min(20, 'Опис має містити мінімум 20 символів')
     .max(1000, 'Опис занадто довгий (максимум 1000 символів)'),
   city: z
     .string({
-      required_error: 'Виберіть місто',
+      message: 'Виберіть місто',
     })
     .min(2, 'Назва міста занадто коротка')
     .max(100, 'Назва міста занадто довга'),
   contact: z
     .string({
-      required_error: 'Контакт обов\'язковий',
+      message: 'Контакт обов\'язковий',
     })
     .min(3, 'Контакт занадто короткий')
     .max(100, 'Контакт занадто довгий')

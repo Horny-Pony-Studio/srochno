@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import KonstaProvider from './konstaProvider';
 import { TelegramProvider } from '../src/providers/TelegramProvider';
+import { AuthProvider } from '../src/providers/AuthProvider';
 import { ThemeProvider } from '../src/providers/ThemeProvider';
 import "./globals.css";
 
@@ -20,9 +21,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head />
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <TelegramProvider>
-          <ThemeProvider>
-            <KonstaProvider>{children}</KonstaProvider>
-          </ThemeProvider>
+          <AuthProvider>
+            <ThemeProvider>
+              <KonstaProvider>{children}</KonstaProvider>
+            </ThemeProvider>
+          </AuthProvider>
         </TelegramProvider>
       </body>
     </html>
