@@ -135,7 +135,13 @@ function CustomerPage() {
                         </Button>
                       </div>
 
-                      {!canModify && order.takenBy.length > 0 && (
+                      {order.status === 'closed_no_response' && (
+                        <div className="mt-2 text-xs text-red-500 text-center">
+                          Закрыт автоматически — клиент не ответил
+                        </div>
+                      )}
+
+                      {!canModify && order.takenBy.length > 0 && order.status !== 'closed_no_response' && (
                         <div className="mt-2 text-xs opacity-55 text-center">
                           Редактирование недоступно после взятия исполнителем
                         </div>

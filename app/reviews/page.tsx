@@ -1,62 +1,11 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
-import {Block, ListItem} from "konsta/react";
+import React, { useState } from "react";
+import { Block, Chip, ListItem, Preloader } from "konsta/react";
 import { Star } from "lucide-react";
-import {AppList, AppNavbar, AppPage, InfoBlock, PageTransition} from "@/src/components";
+import { AppList, AppNavbar, AppPage, InfoBlock, PageTransition } from "@/src/components";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
-
-type Review = {
-  id: string;
-  authorName: string;
-  rating: number;
-  comment: string;
-  category: string;
-  createdAt: string;
-};
-
-const MOCK_REVIEWS: Review[] = [
-  {
-    id: "r1",
-    authorName: "Мария К.",
-    rating: 5,
-    comment: "Отличная работа! Быстро приехал, всё починил за 20 минут. Рекомендую.",
-    category: "Сантехника",
-    createdAt: new Date(Date.now() - 2 * 86400_000).toISOString(),
-  },
-  {
-    id: "r2",
-    authorName: "Андрей В.",
-    rating: 4,
-    comment: "Хороший специалист, но немного задержался. В целом доволен результатом.",
-    category: "Электрика",
-    createdAt: new Date(Date.now() - 5 * 86400_000).toISOString(),
-  },
-  {
-    id: "r3",
-    authorName: "Светлана Д.",
-    rating: 5,
-    comment: "Профессионал! Собрал шкаф аккуратно, без царапин. Спасибо!",
-    category: "Сборка/установка",
-    createdAt: new Date(Date.now() - 7 * 86400_000).toISOString(),
-  },
-  {
-    id: "r4",
-    authorName: "Игорь М.",
-    rating: 3,
-    comment: "Работу выполнил, но качество среднее. Пришлось доделывать самому.",
-    category: "Бытовой ремонт",
-    createdAt: new Date(Date.now() - 10 * 86400_000).toISOString(),
-  },
-  {
-    id: "r5",
-    authorName: "Елена П.",
-    rating: 5,
-    comment: "Супер! Очень довольна уборкой, всё блестит. Буду обращаться ещё.",
-    category: "Клининг",
-    createdAt: new Date(Date.now() - 12 * 86400_000).toISOString(),
-  },
-];
+import { useReviews } from "@/src/hooks/useReviews";
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -73,22 +22,62 @@ function getInitials(name: string) {
 
 type FilterTab = "all" | 5 | 4 | 3;
 
+const FILTER_TABS: { key: FilterTab; label: string }[] = [
+  { key: "all", label: "Все" },
+  { key: 5, label: "5★" },
+  { key: 4, label: "4★" },
+  { key: 3, label: "3★" },
+];
+
 export default function ReviewsPage() {
   useTelegramBackButton('/profile');
   const [tab, setTab] = useState<FilterTab>("all");
 
-  const items = useMemo(() => {
-    if (tab === "all") return MOCK_REVIEWS;
-    return MOCK_REVIEWS.filter((r) => r.rating === tab);
-  }, [tab]);
+  const ratingFilter = tab === "all" ? undefined : tab;
+  const { data: reviews, isLoading, isError } = useReviews(
+    ratingFilter != null ? { rating: ratingFilter } : undefined,
+  );
 
   return (
     <PageTransition>
       <AppPage className="min-h-dvh flex flex-col">
         <AppNavbar title="Отзывы" showRight />
 
-        <Block className="flex-1 pb-20 my-4 pl-0! pr-0! flex flex-col gap-4">
-          {items.length === 0 ? (
+        <Block className="my-3 pl-0! pr-0!">
+          <div className="px-4 overflow-x-auto hide-scrollbar scroll-hint-right">
+            <div className="flex gap-2 w-max pr-4">
+              {FILTER_TABS.map((f) => (
+                <Chip
+                  key={String(f.key)}
+                  component="button"
+                  onClick={() => setTab(f.key)}
+                  className={
+                    `text-base p-3 transition-all duration-200
+                    ${tab === f.key
+                      ? "bg-primary text-white"
+                      : "bg-transparent text-primary border border-primary"}`
+                  }
+                >
+                  {f.label}
+                </Chip>
+              ))}
+            </div>
+          </div>
+        </Block>
+
+        <Block className="flex-1 pb-20 my-0 pl-0! pr-0! flex flex-col gap-4">
+          {isLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <Preloader className="text-primary" />
+            </div>
+          ) : isError ? (
+            <InfoBlock
+              className="mx-4"
+              variant="red"
+              icon="⚠️"
+              message="Не удалось загрузить отзывы. Попробуйте позже."
+            />
+          ) : !reviews || reviews.length === 0 ? (
             <InfoBlock
               className="mx-4 scale-in"
               variant="blue"
@@ -99,11 +88,11 @@ export default function ReviewsPage() {
             <>
               <div className="card-appear">
                 <AppList>
-                  <ListItem title={"Всего"} after={items.length}/>
+                  <ListItem title="Всего" after={reviews.length} />
                 </AppList>
               </div>
 
-              {items.map((r, index) => (
+              {reviews.map((r, index) => (
                 <div key={r.id} className="stagger-item" style={{ animationDelay: `${index * 0.05}s` }}>
                   <Block className="my-0 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]" strong inset>
                     <div className="flex items-start gap-3">
@@ -124,7 +113,9 @@ export default function ReviewsPage() {
                           {r.category} • {formatDate(r.createdAt)}
                         </div>
 
-                        <p className="text-sm leading-relaxed">{r.comment}</p>
+                        {r.comment && (
+                          <p className="text-sm leading-relaxed">{r.comment}</p>
+                        )}
                       </div>
                     </div>
                   </Block>

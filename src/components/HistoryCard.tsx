@@ -3,7 +3,7 @@
 import React from "react";
 import { Block, Chip } from "konsta/react";
 
-export type HistoryStatus = "completed" | "cancelled" | "in_progress";
+export type HistoryStatus = "completed" | "cancelled" | "closed_no_response" | "in_progress";
 
 export type HistoryCardData = {
   id: string;
@@ -38,6 +38,18 @@ function statusChip(status: HistoryStatus, rating?: number) {
         }}
       >
         Выполнен{typeof rating === "number" ? ` • ${rating}★` : ""}
+      </Chip>
+    );
+  }
+  if (status === "closed_no_response") {
+    return (
+      <Chip
+        colors={{
+          fillBgIos: 'rgb(var(--k-color-red-light))',
+          fillTextIos: 'rgb(var(--k-color-red))',
+        }}
+      >
+        Нет ответа
       </Chip>
     );
   }

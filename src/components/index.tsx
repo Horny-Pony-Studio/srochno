@@ -6,6 +6,9 @@ import InfoBlock from "./InfoBlock";
 import Select from "./Select";
 import OrderCard from "./OrderCard";
 import HistoryCard from "./HistoryCard";
+import StarRating from "./StarRating";
+import ReviewForm from "./ReviewForm";
+import ComplaintForm from "./ComplaintForm";
 import { PageTransition } from "./PageTransition";
 
 export {
@@ -13,9 +16,12 @@ export {
   AppListInput,
   AppNavbar,
   AppPage,
+  ComplaintForm,
   HistoryCard,
   InfoBlock,
   OrderCard,
   PageTransition,
+  ReviewForm,
   Select,
+  StarRating,
 };
