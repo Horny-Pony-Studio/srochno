@@ -1,6 +1,6 @@
 "use client"
 
-import React, { Suspense, useState, useCallback, useEffect } from "react";
+import React, { Suspense, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Block, Checkbox, ListItem, Preloader } from "konsta/react";
 import { AppList, AppListInput, Select, InfoBlock, AppPage, AppNavbar, PageTransition } from "@/src/components";
@@ -40,14 +40,15 @@ function CreateOrderContent() {
   const [contact, setContact] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (isEditMode && existingOrder) {
-      setSelectedCategory(existingOrder.category);
-      setDescription(existingOrder.description);
-      setCity(existingOrder.city);
-      setContact(existingOrder.contact);
-    }
-  }, [isEditMode, existingOrder]);
+  // Sync form state when existing order loads (React "adjust state during render" pattern)
+  const [syncedOrderId, setSyncedOrderId] = useState<string | null>(null);
+  if (isEditMode && existingOrder && existingOrder.id !== syncedOrderId) {
+    setSyncedOrderId(existingOrder.id);
+    setSelectedCategory(existingOrder.category);
+    setDescription(existingOrder.description);
+    setCity(existingOrder.city);
+    setContact(existingOrder.contact);
+  }
 
   useTelegramBackButton('/customer');
 
