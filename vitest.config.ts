@@ -7,6 +7,18 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
     exclude: ['e2e/**', 'node_modules/**'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      exclude: [
+        'e2e/**',
+        'node_modules/**',
+        '**/*.config.*',
+        '**/*.setup.*',
+        'app/layout.tsx',
+        'app/konstaProvider.tsx',
+      ],
+    },
   },
   resolve: {
     alias: {
