@@ -1,19 +1,28 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useSyncExternalStore, useCallback } from 'react';
 
 type UserRole = 'client' | 'executor' | null;
 
 const STORAGE_KEY = 'user_role';
 
-export function useRole() {
-  const [role, setRoleState] = useState<UserRole>(null);
-  const [isReady, setIsReady] = useState(false);
+const listeners = new Set<() => void>();
 
-  useEffect(() => {
-    setRoleState(localStorage.getItem(STORAGE_KEY) as UserRole);
-    setIsReady(true);
-  }, []);
+function subscribe(callback: () => void) {
+  listeners.add(callback);
+  return () => { listeners.delete(callback); };
+}
+
+function getSnapshot(): UserRole {
+  return localStorage.getItem(STORAGE_KEY) as UserRole;
+}
+
+function getServerSnapshot(): UserRole {
+  return null;
+}
+
+export function useRole() {
+  const role = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const setRole = useCallback((r: UserRole) => {
     if (r) {
@@ -21,8 +30,8 @@ export function useRole() {
     } else {
       localStorage.removeItem(STORAGE_KEY);
     }
-    setRoleState(r);
+    listeners.forEach(cb => cb());
   }, []);
 
-  return { role, setRole, isReady };
+  return { role, setRole, isReady: true };
 }

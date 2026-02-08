@@ -20,7 +20,6 @@ export default function FormInput({
   placeholder,
   error,
   register,
-  required = false,
   disabled = false,
   info,
 }: FormInputProps) {
