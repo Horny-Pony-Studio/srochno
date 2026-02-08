@@ -26,7 +26,7 @@ export default function StarRating({
   const sizeClass = SIZE_MAP[size];
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1" role="radiogroup" aria-label="Рейтинг">
       {[1, 2, 3, 4, 5].map((star) => {
         const filled = star <= value;
         return (
@@ -34,6 +34,8 @@ export default function StarRating({
             key={star}
             type="button"
             disabled={readonly}
+            aria-label={`${star} ${star === 1 ? 'звезда' : star < 5 ? 'звезды' : 'звёзд'}`}
+            aria-pressed={filled}
             onClick={() => {
               if (readonly || !onChange) return;
               selection();
