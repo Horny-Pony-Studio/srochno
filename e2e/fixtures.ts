@@ -146,7 +146,7 @@ async function setupMocks(page: Page) {
 export const test = base.extend<{ mockPage: Page }>({
   mockPage: async ({ page }, use) => {
     await setupMocks(page);
-    await use(page);
+    await use(page); // eslint-disable-line react-hooks/rules-of-hooks
   },
 });
 
