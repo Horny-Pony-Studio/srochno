@@ -6,9 +6,11 @@ import {AppList, AppNavbar, AppPage, InfoBlock, OrderCard, PageTransition, Selec
 import {CATEGORIES, CITIES} from "@/src/data";
 import {MOCK_ORDERS} from "@/src/data/mockOrders";
 import {minutesLeft, takenCount} from "@/src/utils/order";
+import { useTelegramBackButton } from "@/src/hooks/useTelegram";
 
 export default function OrdersPage() {
   const router = useRouter();
+  useTelegramBackButton('/');
   const [selectedCategory, setSelectedCategory] = useState<string>("Все");
   const [selectedCity, setSelectedCity] = useState<string>("Все");
 

@@ -17,9 +17,7 @@ const geistMono = Geist_Mono({
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="uk">
-      <head>
-        <script src="https://telegram.org/js/telegram-web-app.js" async></script>
-      </head>
+      <head />
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <TelegramProvider>
           <ThemeProvider>

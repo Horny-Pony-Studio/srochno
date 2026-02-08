@@ -7,6 +7,31 @@
     --color-brand-yellow: #fdc700;
 }
 
+/* Telegram safe area insets (auto-set by viewport.bindCssVars()) */
+:root {
+  --safe-area-top: var(--tg-viewport-safe-area-inset-top, 0px);
+  --safe-area-bottom: var(--tg-viewport-safe-area-inset-bottom, 0px);
+  --safe-area-left: var(--tg-viewport-safe-area-inset-left, 0px);
+  --safe-area-right: var(--tg-viewport-safe-area-inset-right, 0px);
+  --content-safe-top: var(--tg-viewport-content-safe-area-inset-top, 0px);
+  --content-safe-bottom: var(--tg-viewport-content-safe-area-inset-bottom, 0px);
+  --content-safe-left: var(--tg-viewport-content-safe-area-inset-left, 0px);
+  --content-safe-right: var(--tg-viewport-content-safe-area-inset-right, 0px);
+}
+
+/* Telegram theme color variables (auto-set by Telegram Web App) */
+:root {
+  --tg-bg: var(--tg-theme-bg-color, #ffffff);
+  --tg-text: var(--tg-theme-text-color, #000000);
+  --tg-hint: var(--tg-theme-hint-color, #999999);
+  --tg-link: var(--tg-theme-link-color, #007aff);
+  --tg-button: var(--tg-theme-button-color, #007aff);
+  --tg-button-text: var(--tg-theme-button-text-color, #ffffff);
+  --tg-secondary-bg: var(--tg-theme-secondary-bg-color, #f0f0f0);
+  --tg-header-bg: var(--tg-theme-header-bg-color, #ffffff);
+  --tg-section-bg: var(--tg-theme-section-bg-color, #ffffff);
+}
+
 /* Dark mode support */
 .dark {
   color-scheme: dark;

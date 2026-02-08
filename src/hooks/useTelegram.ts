@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   useLaunchParams,
   initData,
@@ -7,6 +9,10 @@ import {
   mainButton,
   hapticFeedback,
   themeParams,
+  closingBehavior,
+  popup,
+  openLink as sdkOpenLink,
+  openTelegramLink as sdkOpenTelegramLink,
 } from '@telegram-apps/sdk-react';
 
 /**
@@ -21,11 +27,10 @@ export function useTelegram() {
       initData: initData.raw(),
       platform: launchParams.platform,
       version: launchParams.version,
-      themeParams: themeParams.get(),
+      themeParams: themeParams.state(),
       startParam: initData.startParam(),
     };
-  } catch (error) {
-    // Development mode fallback
+  } catch {
     return {
       user: {
         id: 123456789,
@@ -51,79 +56,219 @@ export function useHaptic() {
     impact: (style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft' = 'medium') => {
       try {
         hapticFeedback.impactOccurred(style);
-      } catch (e) {
-        console.warn('Haptic feedback not available');
+      } catch {
+        // Haptic feedback not available
       }
     },
     notification: (type: 'error' | 'success' | 'warning') => {
       try {
         hapticFeedback.notificationOccurred(type);
-      } catch (e) {
-        console.warn('Haptic feedback not available');
+      } catch {
+        // Haptic feedback not available
       }
     },
     selection: () => {
       try {
         hapticFeedback.selectionChanged();
-      } catch (e) {
-        console.warn('Haptic feedback not available');
+      } catch {
+        // Haptic feedback not available
       }
     },
   };
 }
 
 /**
- * BackButton helper
+ * Native Telegram BackButton hook.
+ * Shows the back button on mount, hides on unmount.
+ * If no onClick is provided, navigates to `fallbackPath` or calls router.back().
  */
-export function useBackButton(onClick?: () => void) {
-  try {
-    if (onClick && backButton.onClick.isAvailable()) {
-      backButton.onClick(onClick);
-    }
+export function useTelegramBackButton(fallbackPath?: string) {
+  const router = useRouter();
 
-    return {
-      show: () => backButton.show(),
-      hide: () => backButton.hide(),
-      isVisible: backButton.isVisible(),
-    };
-  } catch (e) {
-    return {
-      show: () => {},
-      hide: () => {},
-      isVisible: false,
-    };
-  }
+  useEffect(() => {
+    try {
+      if (backButton.show.isAvailable()) {
+        backButton.show();
+      }
+
+      const handler = () => {
+        if (fallbackPath) {
+          router.push(fallbackPath);
+        } else {
+          router.back();
+        }
+      };
+
+      let unsub: VoidFunction | undefined;
+      if (backButton.onClick.isAvailable()) {
+        unsub = backButton.onClick(handler);
+      }
+
+      return () => {
+        unsub?.();
+        try {
+          if (backButton.hide.isAvailable()) {
+            backButton.hide();
+          }
+        } catch {
+          // Cleanup
+        }
+      };
+    } catch {
+      // Not in Telegram environment
+      return;
+    }
+  }, [router, fallbackPath]);
 }
 
 /**
- * MainButton helper
+ * Hides the Telegram BackButton (for home page).
  */
-export function useMainButton() {
-  try {
-    return {
-      setText: (text: string) => mainButton.setText(text),
-      onClick: (callback: () => void) => mainButton.onClick(callback),
-      show: () => mainButton.show(),
-      hide: () => mainButton.hide(),
-      enable: () => mainButton.enable(),
-      disable: () => mainButton.disable(),
-      showProgress: () => mainButton.showLoader(),
-      hideProgress: () => mainButton.hideLoader(),
-      isVisible: mainButton.isVisible(),
-      isEnabled: mainButton.isEnabled(),
-    };
-  } catch (e) {
-    return {
-      setText: () => {},
-      onClick: () => {},
-      show: () => {},
-      hide: () => {},
-      enable: () => {},
-      disable: () => {},
-      showProgress: () => {},
-      hideProgress: () => {},
-      isVisible: false,
-      isEnabled: false,
-    };
+export function useHideBackButton() {
+  useEffect(() => {
+    try {
+      if (backButton.hide.isAvailable()) {
+        backButton.hide();
+      }
+    } catch {
+      // Not in Telegram environment
+    }
+  }, []);
+}
+
+/**
+ * Native Telegram MainButton hook.
+ * Shows the MainButton on mount with given text, hides on unmount.
+ */
+export function useTelegramMainButton(
+  text: string,
+  onClick: () => void,
+  options?: {
+    isEnabled?: boolean;
+    isLoading?: boolean;
   }
+) {
+  const isEnabled = options?.isEnabled ?? true;
+  const isLoading = options?.isLoading ?? false;
+
+  useEffect(() => {
+    try {
+      if (mainButton.setParams.isAvailable()) {
+        mainButton.setParams({
+          text,
+          isVisible: true,
+          isEnabled,
+          isLoaderVisible: isLoading,
+        });
+      }
+
+      let unsub: VoidFunction | undefined;
+      if (mainButton.onClick.isAvailable()) {
+        unsub = mainButton.onClick(onClick);
+      }
+
+      return () => {
+        unsub?.();
+        try {
+          if (mainButton.setParams.isAvailable()) {
+            mainButton.setParams({ isVisible: false });
+          }
+        } catch {
+          // Cleanup
+        }
+      };
+    } catch {
+      // Not in Telegram environment
+      return;
+    }
+  }, [text, onClick, isEnabled, isLoading]);
+}
+
+/**
+ * Telegram popup confirm dialog.
+ * Returns a promise that resolves to true (OK) or false (Cancel).
+ */
+export function useTelegramConfirm() {
+  return useCallback(async (message: string): Promise<boolean> => {
+    try {
+      if (popup.show.isAvailable()) {
+        const result = await popup.show({
+          message,
+          buttons: [
+            { id: 'cancel', text: 'Отмена', type: 'destructive' },
+            { id: 'ok', text: 'OK', type: 'default' },
+          ],
+        });
+        return result === 'ok';
+      }
+    } catch {
+      // Fallback
+    }
+    return window.confirm(message);
+  }, []);
+}
+
+/**
+ * Telegram closing confirmation for forms with unsaved data.
+ * Enables/disables the "are you sure?" dialog when user tries to close the Mini App.
+ */
+export function useClosingConfirmation(enabled: boolean) {
+  useEffect(() => {
+    try {
+      if (enabled) {
+        if (closingBehavior.enableConfirmation.isAvailable()) {
+          closingBehavior.enableConfirmation();
+        }
+      } else {
+        if (closingBehavior.disableConfirmation.isAvailable()) {
+          closingBehavior.disableConfirmation();
+        }
+      }
+
+      return () => {
+        try {
+          if (closingBehavior.disableConfirmation.isAvailable()) {
+            closingBehavior.disableConfirmation();
+          }
+        } catch {
+          // Cleanup
+        }
+      };
+    } catch {
+      // Not in Telegram environment
+      return;
+    }
+  }, [enabled]);
+}
+
+/**
+ * Opens a Telegram link via native SDK (t.me links).
+ * Falls back to window.open in dev mode.
+ */
+export function useTelegramLinks() {
+  const openTelegramLink = useCallback((url: string) => {
+    try {
+      if (sdkOpenTelegramLink.isAvailable()) {
+        sdkOpenTelegramLink(url);
+        return;
+      }
+    } catch {
+      // Fallback
+    }
+    window.open(url, '_blank');
+  }, []);
+
+  const openExternalLink = useCallback((url: string) => {
+    try {
+      if (sdkOpenLink.isAvailable()) {
+        sdkOpenLink(url);
+        return;
+      }
+    } catch {
+      // Fallback
+    }
+    window.open(url, '_blank');
+  }, []);
+
+  return { openTelegramLink, openExternalLink };
 }

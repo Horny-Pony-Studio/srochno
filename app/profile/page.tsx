@@ -6,9 +6,12 @@ import { Star, Wallet, CreditCard } from "lucide-react";
 import {AppList, AppNavbar, AppPage, PageTransition} from "@/src/components";
 import { PACKAGES } from "@/src/data";
 import {useRouter} from "next/navigation";
+import { useTelegramBackButton, useTelegramLinks } from "@/src/hooks/useTelegram";
 
 export default function Profile() {
   const router = useRouter();
+  useTelegramBackButton();
+  const { openTelegramLink } = useTelegramLinks();
 
   const rating = 4.8;
   const completedOrders = 127;
@@ -102,12 +105,12 @@ export default function Profile() {
           <ListItem
             title="Помощь"
             link
-            onClick={() => window.open("https://t.me/drygsssss", "_blank")}
+            onClick={() => openTelegramLink("https://t.me/drygsssss")}
           />
           <ListItem
             title="О сервисе"
             link
-            onClick={() => window.open("https://t.me/drygsssss", "_blank")}
+            onClick={() => openTelegramLink("https://t.me/drygsssss")}
           />
         </AppList>
       </div>

@@ -7,6 +7,7 @@ import type { HistoryCardData, HistoryStatus } from "@/src/components/HistoryCar
 import { MOCK_ORDERS } from "@/src/data/mockOrders";
 import { minutesLeft, takenCount } from "@/src/utils/order";
 import { useRouter } from "next/navigation";
+import { useTelegramBackButton } from "@/src/hooks/useTelegram";
 
 function firstLine(text: string) {
   const line = text.split("\n")[0] ?? "";
@@ -29,6 +30,7 @@ function deriveRating(orderId: string, status: HistoryStatus): number | undefine
 
 export default function HistoryPage() {
   const router = useRouter();
+  useTelegramBackButton('/profile');
   const [tab, setTab] = useState<"all" | "completed" | "cancelled" | "in_progress">("all");
 
   const filters: { key: "all" | "completed" | "cancelled" | "in_progress"; label: string }[] = [

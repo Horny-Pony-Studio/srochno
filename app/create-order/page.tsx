@@ -1,15 +1,25 @@
 "use client"
 
-import React, { useState } from "react";
-import {Block, Button, Checkbox, ListItem} from "konsta/react";
+import React, { useState, useCallback } from "react";
+import {Block, Checkbox, ListItem} from "konsta/react";
 import {AppList, AppListInput, Select, InfoBlock, AppPage, AppNavbar, PageTransition} from "@/src/components";
 import {CATEGORIES, CITIES} from "@/src/data";
-import {Plus} from "lucide-react";
+import { useTelegramBackButton, useTelegramMainButton, useClosingConfirmation } from "@/src/hooks/useTelegram";
 
 export default function CreateOrderPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>(CATEGORIES[0]);
   const [description, setDescription] = useState<string>("");
   const [city, setCity] = useState<string>("");
+
+  useTelegramBackButton('/customer');
+
+  const hasUnsavedData = description.length > 0 || city.length > 0;
+  useClosingConfirmation(hasUnsavedData);
+
+  const handleCreate = useCallback(() => {
+    // TODO: submit order
+  }, []);
+  useTelegramMainButton('Создать', handleCreate);
 
   const toggleGroupValue = (value: string) => {
     setSelectedCategory(value);
@@ -91,18 +101,6 @@ export default function CreateOrderPage() {
             icon={"⏱️"}
           />
 
-          <div className="fixed bottom-0 left-0 right-0 bg-[--k-color-surface-1] border-t border-ios px-4 py-3 safe-area-bottom z-50 pointer-events-auto transition-transform duration-300">
-            <Button
-              type="button"
-              large
-              rounded
-              className="w-full flex items-center justify-center gap-2 transition-all duration-200"
-              onClick={() => {}}
-            >
-              <Plus className="w-5 h-5" />
-              <span>Создать</span>
-            </Button>
-          </div>
         </Block>
       </AppPage>
     </PageTransition>

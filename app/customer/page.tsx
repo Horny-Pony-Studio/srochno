@@ -1,18 +1,25 @@
 "use client"
 
-import {useState} from "react";
+import {useState, useCallback} from "react";
 import {Block, List, Button, Chip} from "konsta/react";
-import { Plus, Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2 } from 'lucide-react';
 import {Order} from "@/src/models/Order";
 import { minutesLeft, takenCount } from "@/src/utils/order";
 import {getTimeBackground, getTimeColor} from "@/src/utils/time";
 import {useRouter} from "next/navigation";
 import {AppPage, InfoBlock, AppNavbar, PageTransition} from "@/src/components";
+import { useTelegramBackButton, useTelegramMainButton } from "@/src/hooks/useTelegram";
 
 const createdAt = new Date(Date.now() - 8 * 60000).toISOString();
 
 function CustomerPage() {
   const router = useRouter();
+  useTelegramBackButton('/');
+
+  const handleCreateOrder = useCallback(() => {
+    router.push('/create-order');
+  }, [router]);
+  useTelegramMainButton('Создать заявку', handleCreateOrder);
   const [orders, setOrders] = useState<Order[]>([
     {
       id: '1',
@@ -132,19 +139,6 @@ function CustomerPage() {
           icon={"⏱️"}
         />
 
-        <div
-          className="fixed bottom-0 left-0 right-0 bg-[--k-color-surface-1] border-t border-ios px-4 py-3 safe-area-bottom z-50 pointer-events-auto transition-transform duration-300">
-          <Button
-            type="button"
-            large
-            rounded
-            className="w-full flex items-center justify-center gap-2 transition-all duration-200"
-            onClick={() => router.push('/create-order')}
-          >
-            <Plus className="w-5 h-5"/>
-            <span>Создать заявку</span>
-          </Button>
-        </div>
       </Block>
 
     </AppPage>

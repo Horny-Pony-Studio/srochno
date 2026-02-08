@@ -9,9 +9,11 @@ import {
   List,
 } from "konsta/react";
 import {AppNavbar, PageTransition} from "@/src/components";
+import { useHideBackButton } from "@/src/hooks/useTelegram";
 
 export default function Home() {
   const router = useRouter();
+  useHideBackButton();
 
   return (
     <PageTransition>

@@ -4,6 +4,7 @@ import React, { useMemo, useState } from "react";
 import {Block, ListItem} from "konsta/react";
 import { Star } from "lucide-react";
 import {AppList, AppNavbar, AppPage, InfoBlock, PageTransition} from "@/src/components";
+import { useTelegramBackButton } from "@/src/hooks/useTelegram";
 
 type Review = {
   id: string;
@@ -73,6 +74,7 @@ function getInitials(name: string) {
 type FilterTab = "all" | 5 | 4 | 3;
 
 export default function ReviewsPage() {
+  useTelegramBackButton('/profile');
   const [tab, setTab] = useState<FilterTab>("all");
 
   const items = useMemo(() => {
