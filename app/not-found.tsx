@@ -1,3 +1,5 @@
+'use client';
+
 import { Block, Button } from "konsta/react";
 import { Search } from "lucide-react";
 import { AppNavbar, AppPage } from "@/src/components";

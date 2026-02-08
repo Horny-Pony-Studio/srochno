@@ -1,3 +1,5 @@
+'use client';
+
 import { Block } from "konsta/react";
 import { AppNavbar, AppPage } from "@/src/components";
 
