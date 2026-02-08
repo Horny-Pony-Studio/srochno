@@ -27,4 +27,4 @@ function OrderTimerChip({ order, className }: Props) {
   );
 }
 
-export default OrderTimerChip;
+export default React.memo(OrderTimerChip);

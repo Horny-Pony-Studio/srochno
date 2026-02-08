@@ -50,4 +50,4 @@ function OrderCard({ order, onClick, className, footerRight }: Props) {
   );
 }
 
-export default OrderCard;
+export default React.memo(OrderCard);
