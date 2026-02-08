@@ -41,8 +41,15 @@ function OrderCard({ order, onClick, className, footerRight }: Props) {
       <p className="mb-3 line-clamp-2">{order.description}</p>
 
       <div className="flex items-center justify-between">
-        <div className="text-sm opacity-55">
-          {takes > 0 ? `${takes}/3 откликов` : "Нет откликов"}
+        <div className="flex items-center gap-2">
+          <span className="text-sm opacity-55">
+            {takes > 0 ? `${takes}/3 откликов` : "Нет откликов"}
+          </span>
+          {order.customerResponse && (
+            <span className="text-xs text-green-600 dark:text-green-400">
+              Клиент ответил
+            </span>
+          )}
         </div>
         {footerRight}
       </div>

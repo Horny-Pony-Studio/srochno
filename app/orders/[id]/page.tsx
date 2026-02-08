@@ -3,7 +3,7 @@
 import React, { useCallback, useState } from "react";
 import { useParams } from "next/navigation";
 import { Block, Chip, Link, ListItem, Preloader } from "konsta/react";
-import { Clock, Phone, Lock } from "lucide-react";
+import { Clock, Phone, Lock, CheckCircle } from "lucide-react";
 import { AppPage, InfoBlock, AppNavbar, AppList, PageTransition } from "@/src/components";
 import { getTimeBackground, getTimeColor } from "@/src/utils/time";
 import { takenCount } from "@/src/utils/order";
@@ -157,6 +157,23 @@ export default function OrderDetailPage() {
               <Chip className={takes >= 3 ? "text-red-500" : ""}>{takes}/3</Chip>
             </div>
           </Block>
+
+          {order.customerResponse && (
+            <Block className="my-0 card-appear-delayed" style={{ animationDelay: '0.35s' }} strong inset>
+              <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                <CheckCircle className="w-5 h-5" />
+                <span className="text-sm font-medium">Клиент ответил</span>
+                <span className="text-xs opacity-55 ml-auto">
+                  {new Date(order.customerResponse.respondedAt).toLocaleString('ru-RU', {
+                    day: 'numeric',
+                    month: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </span>
+              </div>
+            </Block>
+          )}
 
           {takeError && (
             <InfoBlock
