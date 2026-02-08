@@ -1,8 +1,8 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Block, ListItem, Preloader } from "konsta/react";
-import { AppList, AppNavbar, AppPage, InfoBlock, OrderCard, PageTransition, Select } from "@/src/components";
+import { AppList, AppNavbar, AppPage, InfoBlock, OrderCard, PageTransition, PullToRefresh, Select } from "@/src/components";
 import { CATEGORIES, CITIES } from "@/src/data";
 import { minutesLeft, takenCount } from "@/src/utils/order";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
@@ -26,6 +26,10 @@ export default function OrdersPage() {
 
   const { data: orders, isLoading, isError, refetch } = useOrders(filters);
 
+  const handleRefresh = useCallback(async () => {
+    await refetch();
+  }, [refetch]);
+
   const activeOrders = useMemo(() => {
     if (!orders) return [];
     return orders.filter((o) => minutesLeft(o) > 0);
@@ -36,6 +40,7 @@ export default function OrdersPage() {
       <AppPage className={"min-h-screen flex flex-col"}>
         <AppNavbar title="Срочные заказы" showRight />
 
+        <PullToRefresh onRefresh={handleRefresh} className="flex-1">
         <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
 
           <AppList>
@@ -116,6 +121,7 @@ export default function OrdersPage() {
             )}
           </Block>
         </Block>
+        </PullToRefresh>
       </AppPage>
     </PageTransition>
   );

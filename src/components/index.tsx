@@ -12,6 +12,7 @@ import ReviewForm from "./ReviewForm";
 import ComplaintForm from "./ComplaintForm";
 import OrderTimerChip from "./OrderTimerChip";
 import { PageTransition } from "./PageTransition";
+import PullToRefresh from "./PullToRefresh";
 import ThemeSelector from "./ThemeSelector";
 
 export {
@@ -26,6 +27,7 @@ export {
   OrderCard,
   OrderTimerChip,
   PageTransition,
+  PullToRefresh,
   ReviewForm,
   Select,
   StarRating,

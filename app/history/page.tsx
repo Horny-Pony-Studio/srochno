@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Block, Chip, Preloader } from "konsta/react";
-import { AppNavbar, AppPage, InfoBlock, HistoryCard, PageTransition } from "@/src/components";
+import { AppNavbar, AppPage, InfoBlock, HistoryCard, PageTransition, PullToRefresh } from "@/src/components";
 import type { HistoryCardData, HistoryStatus } from "@/src/components/HistoryCard";
 import { minutesLeft, takenCount } from "@/src/utils/order";
 import { useRouter } from "next/navigation";
@@ -33,6 +33,10 @@ export default function HistoryPage() {
   const [tab, setTab] = useState<"all" | "completed" | "cancelled" | "in_progress">("all");
 
   const { data: orders, isLoading, isError, refetch } = useOrders();
+
+  const handleRefresh = useCallback(async () => {
+    await refetch();
+  }, [refetch]);
 
   const filterTabs: { key: "all" | "completed" | "cancelled" | "in_progress"; label: string }[] = [
     { key: "all", label: "Все" },
@@ -95,6 +99,7 @@ export default function HistoryPage() {
           </div>
         </Block>
 
+        <PullToRefresh onRefresh={handleRefresh} className="flex-1">
         <Block className="flex-1 pb-20 my-0 pl-0! pr-0! flex flex-col gap-3">
           {isLoading ? (
             <div className="flex items-center justify-center py-20">
@@ -123,6 +128,7 @@ export default function HistoryPage() {
             ))
           )}
         </Block>
+        </PullToRefresh>
       </AppPage>
     </PageTransition>
   );
