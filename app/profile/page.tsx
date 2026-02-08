@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Block, Button, ListItem } from "konsta/react";
 import { Star, Wallet, CreditCard } from "lucide-react";
-import {AppList, AppNavbar, AppPage, InfoBlock, PageTransition} from "@/src/components";
+import {AppList, AppNavbar, AppPage, InfoBlock, PageTransition, ThemeSelector} from "@/src/components";
 import { PACKAGES } from "@/src/data";
 import {useRouter} from "next/navigation";
 import { useTelegramBackButton, useTelegramLinks, useHaptic } from "@/src/hooks/useTelegram";
@@ -134,6 +134,11 @@ export default function Profile() {
         </div>
 
         <div className="card-appear-delayed" style={{ animationDelay: '0.2s' }}>
+          <div className="text-sm font-medium opacity-55 px-4 mb-1">Тема</div>
+          <ThemeSelector />
+        </div>
+
+        <div className="card-appear-delayed" style={{ animationDelay: '0.25s' }}>
           <AppList>
             <ListItem
               title="Помощь"
