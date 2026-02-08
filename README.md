@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Срочно
 
-## Getting Started
+Telegram Mini App для срочных услуг — заказы выполняются за 60 минут.
 
-First, run the development server:
+## Стек
+
+- **Next.js 16** (App Router) + **React 19** + **TypeScript 5.9**
+- **Tailwind CSS 4** + **Konsta UI 5** (iOS/Android компоненты)
+- **Lucide React** (иконки)
+- **TanStack React Query** (data fetching)
+- **React Hook Form** + **Zod** (формы и валидация)
+
+## Быстрый старт
 
 ```bash
+# Установить зависимости
+npm install
+
+# Скопировать переменные окружения
+cp .env.example .env.local
+
+# Запустить dev-сервер (порт 10002)
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Открыть [http://localhost:10002](http://localhost:10002).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Скрипты
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Команда | Описание |
+|---------|----------|
+| `npm run dev` | Dev-сервер на порту 10002 |
+| `npm run build` | Production-сборка |
+| `npm run start` | Production-сервер |
+| `npm run lint` | ESLint |
+| `npm test` | Unit-тесты (Vitest) |
+| `npm run test:watch` | Тесты в watch-режиме |
+| `npm run test:e2e` | E2E-тесты (Playwright) |
 
-## Learn More
+## Структура проекта
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/                  # Next.js страницы (App Router)
+src/
+  components/         # UI-компоненты
+    forms/            # Компоненты форм
+    modals/           # Модальные окна
+  hooks/              # Custom React hooks
+  lib/                # Утилиты, API-клиент, валидация
+  providers/          # Context providers
+  models/             # Доменные модели
+  types/              # TypeScript типы
+  data/               # Статические данные (категории, города)
+  utils/              # Хелперы
+e2e/                  # E2E тесты (Playwright)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Переменные окружения
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+См. [`.env.example`](.env.example) для списка переменных.
