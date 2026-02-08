@@ -1,3 +1,4 @@
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import KonstaProvider from './konstaProvider';
 import { TelegramProvider } from '../src/providers/TelegramProvider';
@@ -5,6 +6,32 @@ import { AuthProvider } from '../src/providers/AuthProvider';
 import { QueryProvider } from '../src/providers/QueryProvider';
 import { ThemeProvider } from '../src/providers/ThemeProvider';
 import "./globals.css";
+
+export const metadata: Metadata = {
+  title: {
+    default: "Срочно — услуги за 60 минут",
+    template: "%s | Срочно",
+  },
+  description: "Telegram Mini App для срочных услуг. Создайте заказ — исполнитель найдётся за минуты.",
+  openGraph: {
+    title: "Срочно — услуги за 60 минут",
+    description: "Создайте заказ — исполнитель найдётся за минуты.",
+    type: "website",
+    locale: "ru_RU",
+  },
+  robots: { index: false, follow: false },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+  ],
+};
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
