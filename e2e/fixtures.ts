@@ -2,9 +2,29 @@ import { test as base, type Page } from '@playwright/test';
 
 // ─── Telegram SDK stub ──────────────────────────────────
 
+// Fake initData query string — AuthProvider reads initData.raw() which the SDK
+// populates from the "tgWebAppData" key inside the launch-params query string.
+// We store a full launch-params string in localStorage under "launchParams" so
+// that @telegram-apps/sdk's init() + initData.restore() picks it up.
+const FAKE_INIT_DATA = 'user=%7B%22id%22%3A1%2C%22first_name%22%3A%22Test%22%7D&auth_date=1700000000&hash=abc123&signature=test_sig';
+
 const TELEGRAM_INIT_SCRIPT = `
   // Stub minimal Telegram WebApp environment so the SDK doesn't crash
   window.__TELEGRAM_MOCK__ = true;
+
+  // Provide TelegramWebviewProxy so the SDK's init() doesn't throw
+  window.TelegramWebviewProxy = {
+    postEvent: function() {}
+  };
+
+  // Provide launch params so @telegram-apps/sdk init() succeeds and
+  // initData.raw() returns a non-empty string for AuthProvider.
+  // The SDK stores/reads launch params in sessionStorage under "tapps/<key>" with JSON.stringify.
+  try {
+    var initData = '${FAKE_INIT_DATA}';
+    var lp = 'tgWebAppPlatform=web&tgWebAppVersion=7.0&tgWebAppThemeParams=' + encodeURIComponent('{}') + '&tgWebAppData=' + encodeURIComponent(initData);
+    sessionStorage.setItem('tapps/launchParams', JSON.stringify(lp));
+  } catch(e) {}
 `;
 
 // ─── Mock API responses ─────────────────────────────────

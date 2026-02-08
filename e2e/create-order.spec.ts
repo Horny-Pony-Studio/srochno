@@ -21,7 +21,7 @@ test.describe('Create order flow', () => {
     await expect(page.getByPlaceholder(/Telegram.*телефон/i)).toBeVisible();
 
     // City selector
-    await expect(page.getByText('Город')).toBeVisible();
+    await expect(page.locator('span', { hasText: /^Город$/ }).first()).toBeVisible();
 
     // Info block about 60-min timer
     await expect(page.getByText(/60 минут/)).toBeVisible();

@@ -11,8 +11,8 @@ test.describe('Profile page', () => {
 
     await expect(page.getByText('Тест Юзер')).toBeVisible();
     await expect(page.getByText('@testuser')).toBeVisible();
-    await expect(page.getByText(String(MOCK_USER.completed_orders))).toBeVisible();
-    await expect(page.getByText(String(MOCK_USER.rating))).toBeVisible();
+    await expect(page.getByText(String(MOCK_USER.completed_orders), { exact: true })).toBeVisible();
+    await expect(page.getByText(String(MOCK_USER.rating), { exact: true })).toBeVisible();
   });
 
   test('displays balance', async ({ mockPage: page }) => {

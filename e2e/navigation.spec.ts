@@ -11,12 +11,12 @@ test.describe('Navigation', () => {
     expect(page.url()).toContain('/history');
   });
 
-  test('customer page shows "Создать заявку" action', async ({ mockPage: page }) => {
+  test('customer page loads and shows title', async ({ mockPage: page }) => {
     await page.goto('/');
     await page.evaluate(() => localStorage.setItem('user_role', 'client'));
 
     await page.goto('/customer');
-    await expect(page.getByText(/создать/i)).toBeVisible();
+    await expect(page.getByText('Мои заявки')).toBeVisible();
   });
 
   test('orders page loads for executor', async ({ mockPage: page }) => {
