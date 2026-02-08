@@ -2,6 +2,7 @@ import AppList from "./AppList";
 import AppListInput from "./AppListInput";
 import AppNavbar from "./AppNavbar";
 import AppPage from "./AppPage";
+import EmptyState from "./EmptyState";
 import InfoBlock from "./InfoBlock";
 import Select from "./Select";
 import OrderCard from "./OrderCard";
@@ -19,6 +20,7 @@ export {
   AppNavbar,
   AppPage,
   ComplaintForm,
+  EmptyState,
   HistoryCard,
   InfoBlock,
   OrderCard,
