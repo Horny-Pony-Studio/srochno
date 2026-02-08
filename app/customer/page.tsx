@@ -5,7 +5,7 @@ import { Block, List, Button, Chip, Preloader } from "konsta/react";
 import { Edit2, Trash2 } from 'lucide-react';
 import { takenCount } from "@/src/utils/order";
 import { useRouter } from "next/navigation";
-import { AppPage, InfoBlock, AppNavbar, OrderTimerChip, PageTransition } from "@/src/components";
+import { AppPage, EmptyState, InfoBlock, AppNavbar, OrderTimerChip, PageTransition } from "@/src/components";
 import { useTelegramBackButton, useTelegramMainButton, useTelegramConfirm, useHaptic } from "@/src/hooks/useTelegram";
 import { useMyOrders, useDeleteOrder } from "@/hooks/useOrders";
 
@@ -59,13 +59,11 @@ function CustomerPage() {
               icon={"⚠️"}
             />
           ) : !orders || orders.length === 0 ? (
-            <div className="text-center py-20 scale-in">
-              <div className="w-20 h-20 mx-auto bg-gray-200 rounded-full flex items-center justify-center mb-4 transition-transform duration-300 hover:scale-110">
-                <span className="text-4xl">📋</span>
-              </div>
-              <p className="opacity-55 mb-1">У вас пока нет заявок</p>
-              <p className="text-sm opacity-55">Создайте первую заявку</p>
-            </div>
+            <EmptyState
+              title="У вас пока нет заявок"
+              description="Создайте первую заявку"
+              className="scale-in"
+            />
           ) : (
             <List className={"my-0"}>
               {orders.map((order, index) => {
