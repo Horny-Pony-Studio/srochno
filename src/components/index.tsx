@@ -11,6 +11,7 @@ import ReviewForm from "./ReviewForm";
 import ComplaintForm from "./ComplaintForm";
 import OrderTimerChip from "./OrderTimerChip";
 import { PageTransition } from "./PageTransition";
+import ThemeSelector from "./ThemeSelector";
 
 export {
   AppList,
@@ -26,4 +27,5 @@ export {
   ReviewForm,
   Select,
   StarRating,
+  ThemeSelector,
 };
