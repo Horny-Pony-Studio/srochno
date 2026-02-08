@@ -24,7 +24,7 @@ export default function OrdersPage() {
     return f;
   }, [selectedCategory, selectedCity]);
 
-  const { data: orders, isLoading, isError } = useOrders(filters);
+  const { data: orders, isLoading, isError, refetch } = useOrders(filters);
 
   const activeOrders = useMemo(() => {
     if (!orders) return [];
@@ -81,6 +81,7 @@ export default function OrdersPage() {
                 variant={"red"}
                 message={"Не удалось загрузить заказы. Попробуйте позже."}
                 icon={"⚠️"}
+                onRetry={() => refetch()}
               />
             ) : activeOrders.length === 0 ? (
               <InfoBlock
