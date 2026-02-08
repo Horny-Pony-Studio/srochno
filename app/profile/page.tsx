@@ -7,15 +7,23 @@ import {AppList, AppNavbar, AppPage, PageTransition} from "@/src/components";
 import { PACKAGES } from "@/src/data";
 import {useRouter} from "next/navigation";
 import { useTelegramBackButton, useTelegramLinks } from "@/src/hooks/useTelegram";
+import { useAuth } from "@/providers/AuthProvider";
 
 export default function Profile() {
   const router = useRouter();
   useTelegramBackButton();
   const { openTelegramLink } = useTelegramLinks();
+  const { user } = useAuth();
 
-  const rating = 4.8;
-  const completedOrders = 127;
-  const activeOrders = 3;
+  const rating = user?.rating ?? 0;
+  const completedOrders = user?.completed_orders ?? 0;
+  const activeOrders = user?.active_orders ?? 0;
+  const balance = user?.balance ?? 0;
+  const displayName = user
+    ? [user.first_name, user.last_name].filter(Boolean).join(' ')
+    : '...';
+  const displayUsername = user?.username ? `@${user.username}` : '';
+  const avatarLetter = user?.first_name?.[0]?.toUpperCase() ?? '?';
 
   return (
     <PageTransition>
@@ -26,11 +34,11 @@ export default function Profile() {
           <Block className="my-0 card-appear" strong inset>
           <div className="flex items-center gap-4 mb-4">
             <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white text-2xl transition-transform duration-300 hover:scale-110">
-              И
+              {avatarLetter}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-lg mb-1 truncate">Иван Петров</div>
-              <div className="text-sm opacity-55 truncate">@ivan_petrov</div>
+              <div className="text-lg mb-1 truncate">{displayName}</div>
+              <div className="text-sm opacity-55 truncate">{displayUsername}</div>
             </div>
           </div>
 
@@ -61,7 +69,7 @@ export default function Profile() {
               <Wallet className="w-5 h-5 text-primary" />
               <span>Баланс</span>
             </div>
-            <div className="text-2xl">{10_000} ₽</div>
+            <div className="text-2xl">{balance} ₽</div>
           </div>
 
           <div className="space-y-2">

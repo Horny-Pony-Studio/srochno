@@ -14,10 +14,18 @@ import {
 } from '@telegram-apps/sdk-react';
 
 export function TelegramProvider({ children }: { children: ReactNode }) {
+  // init() is synchronous and idempotent — call it in the render body
+  // so the SDK is ready before any child useEffect (e.g. AuthProvider) fires.
+  try {
+    init();
+    initData.restore();
+    console.log('[TG] SDK init OK, initData.raw():', initData.raw()?.slice(0, 60));
+  } catch (e) {
+    console.warn('[TG] SDK init failed:', e);
+  }
+
   useEffect(() => {
     try {
-      init();
-
       // Mount mini app and signal ready
       if (miniApp.mountSync.isAvailable()) {
         miniApp.mountSync();

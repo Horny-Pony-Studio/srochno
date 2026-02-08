@@ -5,7 +5,7 @@ export const clientReviewSchema = z.object({
   orderId: z.string(),
   rating: z
     .number({
-      required_error: 'Оцінка обов\'язкова',
+      message: 'Оцінка обов\'язкова',
     })
     .int('Оцінка має бути цілим числом')
     .min(1, 'Мінімальна оцінка - 1 зірка')
@@ -29,7 +29,7 @@ export const COMPLAINT_REASONS = [
 export const executorComplaintSchema = z.object({
   orderId: z.string(),
   complaint: z.enum(COMPLAINT_REASONS, {
-    required_error: 'Виберіть причину скарги',
+    message: 'Виберіть причину скарги',
   }),
   comment: z
     .string()
