@@ -13,8 +13,11 @@ function subscribe(callback: () => void) {
   return () => { listeners.delete(callback); };
 }
 
+const VALID_ROLES = new Set<string>(['client', 'executor']);
+
 function getSnapshot(): UserRole {
-  return localStorage.getItem(STORAGE_KEY) as UserRole;
+  const value = localStorage.getItem(STORAGE_KEY);
+  return value && VALID_ROLES.has(value) ? (value as UserRole) : null;
 }
 
 function getServerSnapshot(): UserRole {
