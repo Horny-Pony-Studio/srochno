@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { Block, Chip } from "konsta/react";
+import { Block } from "konsta/react";
 import { Order } from "@/src/models/Order";
-import { getTimeBackground, getTimeColor } from "@/src/utils/time";
-import { minutesLeft, takenCount } from "@/src/utils/order";
+import { takenCount } from "@/src/utils/order";
 import { useHaptic } from "@/hooks/useTelegram";
+import OrderTimerChip from "./OrderTimerChip";
 
 type Props = {
   order: Order;
@@ -15,7 +15,6 @@ type Props = {
 };
 
 function OrderCard({ order, onClick, className, footerRight }: Props) {
-  const left = minutesLeft(order);
   const takes = takenCount(order);
   const { impact } = useHaptic();
 
@@ -36,15 +35,7 @@ function OrderCard({ order, onClick, className, footerRight }: Props) {
           <div className="text-sm opacity-55 mb-1">{order.category}</div>
           <div className="text-xs opacity-55">{order.city}</div>
         </div>
-        <Chip
-          colors={{
-            fillBgIos: getTimeBackground(left),
-            fillTextIos: getTimeColor(left),
-          }}
-          className="text-sm transition-all duration-200"
-        >
-          ⏱️ {left} мин
-        </Chip>
+        <OrderTimerChip order={order} />
       </div>
 
       <p className="mb-3 line-clamp-2">{order.description}</p>

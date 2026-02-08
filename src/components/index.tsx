@@ -9,6 +9,7 @@ import HistoryCard from "./HistoryCard";
 import StarRating from "./StarRating";
 import ReviewForm from "./ReviewForm";
 import ComplaintForm from "./ComplaintForm";
+import OrderTimerChip from "./OrderTimerChip";
 import { PageTransition } from "./PageTransition";
 
 export {
@@ -20,6 +21,7 @@ export {
   HistoryCard,
   InfoBlock,
   OrderCard,
+  OrderTimerChip,
   PageTransition,
   ReviewForm,
   Select,

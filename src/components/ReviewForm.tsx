@@ -8,6 +8,7 @@ import AppListInput from './AppListInput';
 import { clientReviewSchema } from '@/lib/validation/review.schema';
 import { useSubmitReview } from '@/src/hooks/useReviews';
 import { useHaptic } from '@/src/hooks/useTelegram';
+import { useSubmittedGuard } from '@/src/hooks/useSubmittedGuard';
 
 interface ReviewFormProps {
   orderId: string;
@@ -18,10 +19,10 @@ export default function ReviewForm({ orderId, onSuccess }: ReviewFormProps) {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState(false);
 
   const { notification } = useHaptic();
   const submitMut = useSubmitReview();
+  const { isSubmitted: submitted, markSubmitted } = useSubmittedGuard('review', orderId);
 
   const handleSubmit = () => {
     setError(null);
@@ -48,7 +49,7 @@ export default function ReviewForm({ orderId, onSuccess }: ReviewFormProps) {
       {
         onSuccess: () => {
           notification('success');
-          setSubmitted(true);
+          markSubmitted();
           onSuccess?.();
         },
         onError: () => {
@@ -65,10 +66,8 @@ export default function ReviewForm({ orderId, onSuccess }: ReviewFormProps) {
         className="mx-4 scale-in"
         variant="green"
         icon="⭐"
-      >
-        Спасибо за отзыв! Оценка: {rating}/5
-        {comment.trim() ? ` — «${comment.trim()}»` : ''}
-      </InfoBlock>
+        message="Спасибо за отзыв!"
+      />
     );
   }
 
