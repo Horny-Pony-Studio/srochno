@@ -175,3 +175,13 @@ select {
 .stagger-item:nth-child(9) { animation-delay: 0.45s; }
 .stagger-item:nth-child(10) { animation-delay: 0.5s; }
 
+/* Accessibility: disable animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
