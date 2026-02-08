@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
-const mockMutate = vi.fn();
+const mockMutateAsync = vi.fn();
 
 // Mock Konsta UI — ESM resolution issues in jsdom
 vi.mock('konsta/react', () => ({
@@ -51,7 +51,7 @@ vi.mock('@/src/hooks/useTelegram', () => ({
 
 vi.mock('@/src/hooks/useReviews', () => ({
   useSubmitReview: () => ({
-    mutate: mockMutate,
+    mutateAsync: mockMutateAsync,
     isPending: false,
   }),
 }));
@@ -78,7 +78,8 @@ import ReviewForm from '../ReviewForm';
 
 describe('ReviewForm', () => {
   beforeEach(() => {
-    mockMutate.mockClear();
+    mockMutateAsync.mockClear();
+    mockMutateAsync.mockResolvedValue({ success: true });
   });
 
   it('renders form with star rating and submit button', () => {
@@ -106,7 +107,7 @@ describe('ReviewForm', () => {
     expect(submitBtn).not.toBeDisabled();
   });
 
-  it('calls mutate with correct data on submit', async () => {
+  it('calls mutateAsync with correct data on submit', async () => {
     render(<ReviewForm orderId="order-1" />);
 
     const stars = screen.getAllByRole('button');
@@ -116,14 +117,11 @@ describe('ReviewForm', () => {
     fireEvent.click(submitBtn);
 
     await waitFor(() => {
-      expect(mockMutate).toHaveBeenCalledWith(
-        {
-          order_id: 'order-1',
-          rating: 5,
-          comment: null,
-        },
-        expect.any(Object),
-      );
+      expect(mockMutateAsync).toHaveBeenCalledWith({
+        order_id: 'order-1',
+        rating: 5,
+        comment: null,
+      });
     });
   });
 });

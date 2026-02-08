@@ -70,18 +70,18 @@ describe('getTimeColor', () => {
 
 describe('getTimeBackground', () => {
   it('returns green bg for > 40 minutes', () => {
-    expect(getTimeBackground(41)).toBe('bg-[#E5F8ED]');
-    expect(getTimeBackground(60)).toBe('bg-[#E5F8ED]');
+    expect(getTimeBackground(41)).toBe('bg-[#E5F8ED] dark:bg-[#1a3a2a]');
+    expect(getTimeBackground(60)).toBe('bg-[#E5F8ED] dark:bg-[#1a3a2a]');
   });
 
   it('returns orange bg for 21-40 minutes', () => {
-    expect(getTimeBackground(21)).toBe('bg-[#FFF5E5]');
-    expect(getTimeBackground(40)).toBe('bg-[#FFF5E5]');
+    expect(getTimeBackground(21)).toBe('bg-[#FFF5E5] dark:bg-[#3a2f1a]');
+    expect(getTimeBackground(40)).toBe('bg-[#FFF5E5] dark:bg-[#3a2f1a]');
   });
 
   it('returns red bg for <= 20 minutes', () => {
-    expect(getTimeBackground(20)).toBe('bg-[#FFE5E5]');
-    expect(getTimeBackground(0)).toBe('bg-[#FFE5E5]');
+    expect(getTimeBackground(20)).toBe('bg-[#FFE5E5] dark:bg-[#3a1a1a]');
+    expect(getTimeBackground(0)).toBe('bg-[#FFE5E5] dark:bg-[#3a1a1a]');
   });
 
   it('matches color thresholds (same boundaries)', () => {

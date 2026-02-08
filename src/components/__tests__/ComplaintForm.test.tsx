@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
-const mockMutate = vi.fn();
+const mockMutateAsync = vi.fn();
 
 // Mock Konsta UI — ESM resolution issues in jsdom
 vi.mock('konsta/react', () => ({
@@ -77,7 +77,7 @@ vi.mock('@/src/hooks/useTelegram', () => ({
 
 vi.mock('@/src/hooks/useReviews', () => ({
   useSubmitComplaint: () => ({
-    mutate: mockMutate,
+    mutateAsync: mockMutateAsync,
     isPending: false,
   }),
 }));
@@ -115,7 +115,8 @@ import ComplaintForm from '../ComplaintForm';
 
 describe('ComplaintForm', () => {
   beforeEach(() => {
-    mockMutate.mockClear();
+    mockMutateAsync.mockClear();
+    mockMutateAsync.mockResolvedValue({ success: true });
   });
 
   it('renders form with complaint reasons and submit button', () => {
@@ -144,7 +145,7 @@ describe('ComplaintForm', () => {
     expect(submitBtn).not.toBeDisabled();
   });
 
-  it('calls mutate with correct data on submit', async () => {
+  it('calls mutateAsync with correct data on submit', async () => {
     render(<ComplaintForm orderId="order-1" />);
 
     const radio = screen.getAllByRole('radio')[0];
@@ -154,14 +155,11 @@ describe('ComplaintForm', () => {
     fireEvent.click(submitBtn);
 
     await waitFor(() => {
-      expect(mockMutate).toHaveBeenCalledWith(
-        {
-          order_id: 'order-1',
-          complaint: 'Не відповідав',
-          comment: null,
-        },
-        expect.any(Object),
-      );
+      expect(mockMutateAsync).toHaveBeenCalledWith({
+        order_id: 'order-1',
+        complaint: 'Не відповідав',
+        comment: null,
+      });
     });
   });
 });
