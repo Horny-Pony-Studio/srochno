@@ -3,10 +3,9 @@
 import { useCallback } from "react";
 import { Block, List, Button, Chip, Preloader } from "konsta/react";
 import { Edit2, Trash2 } from 'lucide-react';
-import { minutesLeft, takenCount } from "@/src/utils/order";
-import { getTimeBackground, getTimeColor } from "@/src/utils/time";
+import { takenCount } from "@/src/utils/order";
 import { useRouter } from "next/navigation";
-import { AppPage, InfoBlock, AppNavbar, PageTransition } from "@/src/components";
+import { AppPage, InfoBlock, AppNavbar, OrderTimerChip, PageTransition } from "@/src/components";
 import { useTelegramBackButton, useTelegramMainButton, useTelegramConfirm, useHaptic } from "@/src/hooks/useTelegram";
 import { useMyOrders, useDeleteOrder } from "@/hooks/useOrders";
 
@@ -83,15 +82,7 @@ function CustomerPage() {
                           <div className="text-sm opacity-55 mb-1">{order.category}</div>
                           <div className="text-xs opacity-55">{order.city}</div>
                         </div>
-                        <Chip
-                          colors={{
-                            fillBgIos: getTimeBackground(minutesLeft(order)),
-                            fillTextIos: getTimeColor(minutesLeft(order)),
-                          }}
-                          className="text-sm"
-                        >
-                          ⏱️ {minutesLeft(order)} мин
-                        </Chip>
+                        <OrderTimerChip order={order} />
                       </div>
 
                       <p className="mb-3 line-clamp-2">

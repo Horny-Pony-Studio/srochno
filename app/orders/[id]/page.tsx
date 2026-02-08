@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useParams } from "next/navigation";
 import { Block, Chip, Link, ListItem, Preloader } from "konsta/react";
 import { Clock, Phone, Lock } from "lucide-react";
 import { AppPage, InfoBlock, AppNavbar, AppList, PageTransition } from "@/src/components";
 import { getTimeBackground, getTimeColor } from "@/src/utils/time";
-import { minutesLeft, takenCount } from "@/src/utils/order";
+import { takenCount } from "@/src/utils/order";
+import { useOrderTimer } from "@/src/hooks/useOrderTimer";
 import { useTelegramBackButton, useTelegramMainButton, useHaptic } from "@/src/hooks/useTelegram";
 import { useOrder, useTakeOrder } from "@/hooks/useOrders";
 import { useAuth } from "@/src/providers/AuthProvider";
@@ -28,23 +29,11 @@ export default function OrderDetailPage() {
   const [revealedContact, setRevealedContact] = useState<string | null>(null);
   const [takeError, setTakeError] = useState<string | null>(null);
 
-  const [minuteTick, setMinuteTick] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setMinuteTick((x) => x + 1);
-    }, 60_000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const timeLeft = useMemo(() => {
-    void minuteTick;
-    return order ? minutesLeft(order) : 0;
-  }, [order, minuteTick]);
+  const timer = useOrderTimer(order);
 
   const pay = 2;
   const takes = order ? takenCount(order) : 0;
-  const canTake = !contactUnlocked && balance >= pay && takes < 3 && timeLeft > 0;
+  const canTake = !contactUnlocked && balance >= pay && takes < 3 && !timer.isExpired;
 
   const handleTakeOrder = useCallback(() => {
     if (!canTake || !orderId || takeOrderMut.isPending) return;
@@ -114,13 +103,13 @@ export default function OrderDetailPage() {
 
         <Block className="flex-1 flex flex-col gap-4 pb-24 my-4 pl-0! pr-0!">
           <Block className="my-0 card-appear" strong inset>
-            <div className={`${getTimeBackground(timeLeft)} rounded-xl p-4 transition-all duration-300`}>
+            <div className={`${getTimeBackground(timer.minutes)} rounded-xl p-4 transition-all duration-300`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Clock className={`w-5 h-5 ${getTimeColor(timeLeft)} transition-colors duration-300`} />
-                  <span className={`${getTimeColor(timeLeft)} transition-colors duration-300`}>Осталось времени</span>
+                  <Clock className={`w-5 h-5 ${getTimeColor(timer.minutes)} transition-colors duration-300`} />
+                  <span className={`${getTimeColor(timer.minutes)} transition-colors duration-300`}>Осталось времени</span>
                 </div>
-                <div className={`text-2xl ${getTimeColor(timeLeft)} transition-colors duration-300`}>{timeLeft} мин</div>
+                <div className={`text-2xl ${getTimeColor(timer.minutes)} transition-colors duration-300`}>{timer.display}</div>
               </div>
             </div>
           </Block>

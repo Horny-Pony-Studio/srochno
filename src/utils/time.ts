@@ -1,3 +1,10 @@
+export function formatTimeLeft(totalSeconds: number): string {
+  const mins = Math.floor(totalSeconds / 60);
+  if (mins >= 10) return `${mins} мин`;
+  const secs = totalSeconds % 60;
+  return `${mins}:${String(secs).padStart(2, '0')}`;
+}
+
 export const getTimeColor = (minutes: number) => {
   if (minutes > 40) return 'text-[#34C759]';
   if (minutes > 20) return 'text-[#FF9500]';

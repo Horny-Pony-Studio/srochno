@@ -7,12 +7,14 @@ import {AppList, AppNavbar, AppPage, PageTransition} from "@/src/components";
 import { PACKAGES } from "@/src/data";
 import {useRouter} from "next/navigation";
 import { useTelegramBackButton, useTelegramLinks } from "@/src/hooks/useTelegram";
+import { useRole } from "@/src/hooks/useRole";
 import { useAuth } from "@/providers/AuthProvider";
 
 export default function Profile() {
   const router = useRouter();
   useTelegramBackButton();
   const { openTelegramLink } = useTelegramLinks();
+  const { setRole } = useRole();
   const { user } = useAuth();
 
   const rating = user?.rating ?? 0;
@@ -104,24 +106,32 @@ export default function Profile() {
             <ListItem title="История заказов" link onClick={() => router.push("/history")} />
             <ListItem title="Мои категории" link onClick={() => router.push("/executor")} />
             <ListItem title="Отзывы" link onClick={() => router.push("/reviews")} />
-            <ListItem title="Настройки уведомлений" link onClick={() => {}} />
+            <ListItem title="Настройки уведомлений" link onClick={() => router.push("/executor")} />
           </AppList>
         </div>
 
         <div className="card-appear-delayed" style={{ animationDelay: '0.2s' }}>
           <AppList>
-          <ListItem
-            title="Помощь"
-            link
-            onClick={() => openTelegramLink("https://t.me/drygsssss")}
-          />
-          <ListItem
-            title="О сервисе"
-            link
-            onClick={() => openTelegramLink("https://t.me/drygsssss")}
-          />
-        </AppList>
-      </div>
+            <ListItem
+              title="Помощь"
+              link
+              onClick={() => openTelegramLink("https://t.me/drygsssss")}
+            />
+            <ListItem
+              title="О сервисе"
+              link
+              onClick={() => openTelegramLink("https://t.me/drygsssss")}
+            />
+            <ListItem
+              title="Сменить роль"
+              link
+              onClick={() => {
+                setRole(null);
+                router.push("/");
+              }}
+            />
+          </AppList>
+        </div>
       </Block>
     </AppPage>
     </PageTransition>

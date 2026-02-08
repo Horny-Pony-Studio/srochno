@@ -18,6 +18,12 @@ export function isExpired(order: Order, nowMs: number = Date.now()): boolean {
   return minutesLeft(order, nowMs) <= 0 || order.status === "expired";
 }
 
+export function secondsLeft(order: Order, nowMs: number = Date.now()): number {
+  const createdMs = Date.parse(order.createdAt);
+  const expiresMs = createdMs + order.expiresInMinutes * 60_000;
+  return Math.max(0, Math.ceil((expiresMs - nowMs) / 1000));
+}
+
 export function isAutoClosedNoResponse(order: Order, nowMs: number = Date.now()): boolean {
   if (order.status === "closed_no_response") return true;
   if (order.customerResponse) return false;
