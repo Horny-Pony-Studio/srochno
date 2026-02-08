@@ -30,12 +30,14 @@ export default function InfoBlock({
   children,
   message,
   icon,
+  onRetry,
 }: {
   className?: string;
   variant?: Variant;
   children?: React.ReactNode;
   message?: React.ReactNode;
   icon?: React.ReactNode;
+  onRetry?: () => void;
 }) {
   const styles = VARIANT_STYLES[variant] || VARIANT_STYLES.red;
   const resolvedIcon = icon ?? styles.icon;
@@ -50,6 +52,14 @@ export default function InfoBlock({
         {resolvedIcon ? <span className="leading-5">{resolvedIcon}</span> : null}
         <span className="opacity-75">{children ?? message ?? <>Плашка</>}</span>
       </p>
+      {onRetry && (
+        <button
+          onClick={onRetry}
+          className="mt-2 text-sm underline opacity-75 hover:opacity-100 transition-opacity"
+        >
+          Попробовать снова
+        </button>
+      )}
     </Block>
   );
 }

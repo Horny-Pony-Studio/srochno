@@ -15,7 +15,7 @@ function CustomerPage() {
   const { notification } = useHaptic();
   const confirm = useTelegramConfirm();
 
-  const { data: orders, isLoading, isError } = useMyOrders();
+  const { data: orders, isLoading, isError, refetch } = useMyOrders();
   const deleteMut = useDeleteOrder();
 
   const handleCreateOrder = useCallback(() => {
@@ -57,6 +57,7 @@ function CustomerPage() {
               variant={"red"}
               message={"Не удалось загрузить заявки. Попробуйте позже."}
               icon={"⚠️"}
+              onRetry={() => refetch()}
             />
           ) : !orders || orders.length === 0 ? (
             <div className="text-center py-20 scale-in">

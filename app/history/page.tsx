@@ -32,7 +32,7 @@ export default function HistoryPage() {
   useTelegramBackButton('/profile');
   const [tab, setTab] = useState<"all" | "completed" | "cancelled" | "in_progress">("all");
 
-  const { data: orders, isLoading, isError } = useOrders();
+  const { data: orders, isLoading, isError, refetch } = useOrders();
 
   const filterTabs: { key: "all" | "completed" | "cancelled" | "in_progress"; label: string }[] = [
     { key: "all", label: "Все" },
@@ -106,6 +106,7 @@ export default function HistoryPage() {
               variant="red"
               icon="⚠️"
               message="Не удалось загрузить историю. Попробуйте позже."
+              onRetry={() => refetch()}
             />
           ) : items.length === 0 ? (
             <InfoBlock
