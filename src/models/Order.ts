@@ -1,4 +1,4 @@
-export type OrderStatus = "active" | "expired" | "deleted" | "closed_no_response";
+export type OrderStatus = "active" | "expired" | "deleted" | "closed_no_response" | "completed";
 
 export interface ExecutorTake {
   executorId: string;

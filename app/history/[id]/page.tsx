@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React from "react";
 import { useParams } from "next/navigation";
-import { Block, Chip, ListItem } from "konsta/react";
+import { Block, Chip, ListItem, Preloader } from "konsta/react";
 import { AppList, AppNavbar, AppPage, InfoBlock, PageTransition } from "@/src/components";
-import { MOCK_ORDERS } from "@/src/data/mockOrders";
 import { minutesLeft, takenCount } from "@/src/utils/order";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
+import { useOrder } from "@/hooks/useOrders";
 
 function formatDateTime(iso: string) {
   const d = new Date(iso);
@@ -23,21 +23,20 @@ export default function HistoryDetailPage() {
   const params = useParams<{ id?: string }>();
   const id = typeof params?.id === "string" ? params.id : "";
 
-  const order = useMemo(() => {
-    if (!id) return undefined;
-    return MOCK_ORDERS.find((o) => o.id === id) ?? null;
-  }, [id]);
+  const { data: order, isLoading, isError } = useOrder(id || undefined);
 
-  if (!id || order === undefined) {
+  if (isLoading || !id) {
     return (
       <AppPage className="min-h-dvh flex flex-col">
-        <AppNavbar title="История" />
-        <div className="flex-1" />
+        <AppNavbar title="История" showRight />
+        <div className="flex-1 flex items-center justify-center py-20">
+          <Preloader className="text-primary" />
+        </div>
       </AppPage>
     );
   }
 
-  if (order === null) {
+  if (isError || !order) {
     return (
       <AppPage className="min-h-dvh flex flex-col">
         <AppNavbar title="История" showRight />
@@ -48,8 +47,14 @@ export default function HistoryDetailPage() {
 
   const left = minutesLeft(order);
   const takes = takenCount(order);
-  const expired = left <= 0;
-  const status = expired ? (takes > 0 ? "Выполнен" : "Отменён") : "В работе";
+  const expired = left <= 0 || order.status === 'expired' || order.status === 'completed';
+  const status = order.status === 'completed'
+    ? "Выполнен"
+    : order.status === 'deleted' || order.status === 'closed_no_response'
+    ? "Отменён"
+    : expired
+    ? (takes > 0 ? "Выполнен" : "Отменён")
+    : "В работе";
 
   return (
     <PageTransition>
@@ -65,10 +70,10 @@ export default function HistoryDetailPage() {
               </div>
               <Chip
                 className={
-                  expired
-                    ? takes > 0
-                      ? "bg-green-100 text-green-600"
-                      : "bg-red-100 text-red-600"
+                  status === "Выполнен"
+                    ? "bg-green-100 text-green-600"
+                    : status === "Отменён"
+                    ? "bg-red-100 text-red-600"
                     : "bg-orange-100 text-orange-600"
                 }
               >

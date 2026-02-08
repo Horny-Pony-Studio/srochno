@@ -1,20 +1,24 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { Block, Chip } from "konsta/react";
+import { Block, Chip, Preloader } from "konsta/react";
 import { AppNavbar, AppPage, InfoBlock, HistoryCard, PageTransition } from "@/src/components";
 import type { HistoryCardData, HistoryStatus } from "@/src/components/HistoryCard";
-import { MOCK_ORDERS } from "@/src/data/mockOrders";
 import { minutesLeft, takenCount } from "@/src/utils/order";
 import { useRouter } from "next/navigation";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
+import { useOrders } from "@/hooks/useOrders";
+import type { Order } from "@/src/models/Order";
 
 function firstLine(text: string) {
   const line = text.split("\n")[0] ?? "";
   return line.length > 70 ? `${line.slice(0, 70)}…` : line;
 }
 
-function deriveHistoryStatus(order: (typeof MOCK_ORDERS)[number]): HistoryStatus {
+function deriveHistoryStatus(order: Order): HistoryStatus {
+  if (order.status === 'completed') return 'completed';
+  if (order.status === 'deleted' || order.status === 'closed_no_response') return 'cancelled';
+
   const left = minutesLeft(order);
   if (left <= 0) {
     return takenCount(order) > 0 ? "completed" : "cancelled";
@@ -22,18 +26,14 @@ function deriveHistoryStatus(order: (typeof MOCK_ORDERS)[number]): HistoryStatus
   return "in_progress";
 }
 
-function deriveRating(orderId: string, status: HistoryStatus): number | undefined {
-  if (status !== "completed") return undefined;
-  const n = Number(orderId) || 1;
-  return 3 + (n % 3);
-}
-
 export default function HistoryPage() {
   const router = useRouter();
   useTelegramBackButton('/profile');
   const [tab, setTab] = useState<"all" | "completed" | "cancelled" | "in_progress">("all");
 
-  const filters: { key: "all" | "completed" | "cancelled" | "in_progress"; label: string }[] = [
+  const { data: orders, isLoading, isError } = useOrders();
+
+  const filterTabs: { key: "all" | "completed" | "cancelled" | "in_progress"; label: string }[] = [
     { key: "all", label: "Все" },
     { key: "in_progress", label: "В работе" },
     { key: "completed", label: "Выполнены" },
@@ -41,7 +41,8 @@ export default function HistoryPage() {
   ];
 
   const allItems = useMemo<HistoryCardData[]>(() => {
-    return MOCK_ORDERS
+    if (!orders) return [];
+    return orders
       .map((o) => {
         const status = deriveHistoryStatus(o);
         return {
@@ -51,11 +52,11 @@ export default function HistoryPage() {
           city: o.city,
           createdAt: o.createdAt,
           status,
-          rating: deriveRating(o.id, status),
+          rating: undefined,
         };
       })
       .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
-  }, []);
+  }, [orders]);
 
   const items = useMemo(() => {
     if (tab === "all") return allItems;
@@ -70,7 +71,7 @@ export default function HistoryPage() {
         <Block className="my-3 pl-0! pr-0!">
           <div className="px-4 overflow-x-auto hide-scrollbar scroll-hint-right">
             <div className="flex gap-2 w-max pr-4">
-              {filters.map((f) => (
+              {filterTabs.map((f) => (
                 <Chip
                   key={f.key}
                   component="button"
@@ -91,7 +92,18 @@ export default function HistoryPage() {
         </Block>
 
         <Block className="flex-1 pb-20 my-0 pl-0! pr-0! flex flex-col gap-3">
-          {items.length === 0 ? (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <Preloader className="text-primary" />
+            </div>
+          ) : isError ? (
+            <InfoBlock
+              className="mx-4"
+              variant="red"
+              icon="⚠️"
+              message="Не удалось загрузить историю. Попробуйте позже."
+            />
+          ) : items.length === 0 ? (
             <InfoBlock
               className="mx-4 scale-in"
               variant="blue"

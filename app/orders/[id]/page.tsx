@@ -6,37 +6,29 @@ import { Block, Chip, Link, ListItem, Preloader } from "konsta/react";
 import { Clock, Phone, Lock } from "lucide-react";
 import { AppPage, InfoBlock, AppNavbar, AppList, PageTransition } from "@/src/components";
 import { getTimeBackground, getTimeColor } from "@/src/utils/time";
-import { MOCK_ORDERS } from "@/src/data/mockOrders";
 import { minutesLeft, takenCount } from "@/src/utils/order";
-import { useTelegramBackButton, useTelegramMainButton } from "@/src/hooks/useTelegram";
+import { useTelegramBackButton, useTelegramMainButton, useHaptic } from "@/src/hooks/useTelegram";
+import { useOrder, useTakeOrder } from "@/hooks/useOrders";
+import { useAuth } from "@/src/providers/AuthProvider";
+import { ApiRequestError } from "@/lib/api";
 
 export default function OrderDetailPage() {
   useTelegramBackButton('/orders');
   const params = useParams<{ id?: string }>();
+  const { notification } = useHaptic();
+  const { user, refetchUser } = useAuth();
 
   const orderId = typeof params?.id === "string" ? params.id : "";
-  const isParamsReady = orderId.length > 0;
+  const balance = user?.balance ?? 0;
 
-  const balance = 128;
+  const { data: order, isLoading, isError } = useOrder(orderId || undefined);
+  const takeOrderMut = useTakeOrder();
 
-  const [contactUnlocked, setContactUnlocked] = useState<boolean>(false);
+  const [contactUnlocked, setContactUnlocked] = useState(false);
+  const [revealedContact, setRevealedContact] = useState<string | null>(null);
+  const [takeError, setTakeError] = useState<string | null>(null);
 
-  const order = useMemo(() => {
-    if (!isParamsReady) return undefined;
-
-    const base = MOCK_ORDERS.find((o) => o.id === orderId);
-    if (!base) return null;
-
-    return {
-      ...base,
-      price: 2,
-      description:
-        base.description +
-        "\n\nАдрес: ул. Ленина 45, подъезд 2, квартира 15. Вода капает постоянно, нужно заменить прокладку или сам кран.",
-    };
-  }, [isParamsReady, orderId]);
-
-  const [minuteTick, setMinuteTick] = useState<number>(0);
+  const [minuteTick, setMinuteTick] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -50,7 +42,45 @@ export default function OrderDetailPage() {
     return order ? minutesLeft(order) : 0;
   }, [order, minuteTick]);
 
-  if (!isParamsReady || order === undefined) {
+  const pay = 2;
+  const takes = order ? takenCount(order) : 0;
+  const canTake = !contactUnlocked && balance >= pay && takes < 3 && timeLeft > 0;
+
+  const handleTakeOrder = useCallback(() => {
+    if (!canTake || !orderId || takeOrderMut.isPending) return;
+
+    setTakeError(null);
+    takeOrderMut.mutate(orderId, {
+      onSuccess: (res) => {
+        setContactUnlocked(true);
+        setRevealedContact(res.contact);
+        notification('success');
+        refetchUser();
+      },
+      onError: (err) => {
+        notification('error');
+        if (err instanceof ApiRequestError) {
+          if (err.status === 409) {
+            setTakeError('Максимальное количество откликов уже достигнуто.');
+          } else if (err.status === 402) {
+            setTakeError('Недостаточно средств на балансе.');
+          } else {
+            setTakeError(err.detail);
+          }
+        } else {
+          setTakeError('Не удалось взять заказ. Попробуйте позже.');
+        }
+      },
+    });
+  }, [canTake, orderId, takeOrderMut, notification, refetchUser]);
+
+  useTelegramMainButton(
+    canTake ? `Взять заказ (${pay} ₽)` : 'Недоступно',
+    handleTakeOrder,
+    { isEnabled: canTake, isLoading: takeOrderMut.isPending },
+  );
+
+  if (isLoading || !orderId) {
     return (
       <AppPage className="min-h-dvh flex flex-col">
         <AppNavbar showRight title="Детали заказа" />
@@ -61,36 +91,21 @@ export default function OrderDetailPage() {
     );
   }
 
-  if (order === null) {
+  if (isError || !order) {
     return (
       <AppPage className="min-h-dvh flex flex-col">
         <AppNavbar showRight title="Детали заказа" />
-
         <InfoBlock
           className={"mx-4 mt-4"}
           variant={"red"}
-          message={"Заказ не найден или взят в исполнение."}
+          message={"Заказ не найден или произошла ошибка загрузки."}
           icon={"⚠️"}
         />
       </AppPage>
     );
   }
 
-  const pay = order.price;
-  const left = timeLeft;
-  const takes = takenCount(order);
-  const canTake = balance >= pay && takes < 3 && left > 0;
-
-  const handleTakeOrder = useCallback(() => {
-    if (!canTake) return;
-    setContactUnlocked(true);
-  }, [canTake]);
-
-  useTelegramMainButton(
-    canTake ? `Взять заказ (${pay} ₽)` : 'Недоступно',
-    handleTakeOrder,
-    { isEnabled: canTake }
-  );
+  const displayContact = revealedContact ?? order.contact;
 
   return (
     <PageTransition>
@@ -132,8 +147,8 @@ export default function OrderDetailPage() {
             {contactUnlocked ? (
               <div className="flex items-center gap-2 scale-in">
                 <Phone className="w-5 h-5 text-primary" />
-                <Link href={`https://t.me/${order.contact.replace("@", "")}`} className="text-primary">
-                  {order.contact}
+                <Link href={`https://t.me/${displayContact.replace("@", "")}`} className="text-primary">
+                  {displayContact}
                 </Link>
               </div>
             ) : (
@@ -150,9 +165,18 @@ export default function OrderDetailPage() {
           <Block className="my-0 card-appear-delayed" style={{ animationDelay: '0.3s' }} strong inset>
             <div className="flex items-center justify-between">
               <span className="opacity-55">Откликов</span>
-              <Chip className={takenCount(order) >= 3 ? "text-red-500" : ""}>{takenCount(order)}/3</Chip>
+              <Chip className={takes >= 3 ? "text-red-500" : ""}>{takes}/3</Chip>
             </div>
           </Block>
+
+          {takeError && (
+            <InfoBlock
+              className="mx-4 scale-in"
+              variant="red"
+              icon="⚠️"
+              message={takeError}
+            />
+          )}
 
           {!contactUnlocked && !canTake && balance < pay && (
             <InfoBlock
@@ -163,7 +187,7 @@ export default function OrderDetailPage() {
             />
           )}
 
-          {takenCount(order) >= 3 && (
+          {takes >= 3 && (
             <InfoBlock
               className="mx-4 scale-in"
               variant="red"
