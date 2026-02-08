@@ -1,14 +1,15 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Block, Button, ListItem } from "konsta/react";
 import { Star, Wallet, CreditCard } from "lucide-react";
-import {AppList, AppNavbar, AppPage, PageTransition} from "@/src/components";
+import {AppList, AppNavbar, AppPage, InfoBlock, PageTransition} from "@/src/components";
 import { PACKAGES } from "@/src/data";
 import {useRouter} from "next/navigation";
-import { useTelegramBackButton, useTelegramLinks } from "@/src/hooks/useTelegram";
+import { useTelegramBackButton, useTelegramLinks, useHaptic } from "@/src/hooks/useTelegram";
 import { useRole } from "@/src/hooks/useRole";
 import { useAuth } from "@/providers/AuthProvider";
+import { useRechargeBalance } from "@/src/hooks/useBalance";
 
 export default function Profile() {
   const router = useRouter();
@@ -16,6 +17,23 @@ export default function Profile() {
   const { openTelegramLink } = useTelegramLinks();
   const { setRole } = useRole();
   const { user } = useAuth();
+  const { notification } = useHaptic();
+  const rechargeMut = useRechargeBalance();
+  const [rechargeError, setRechargeError] = useState<string | null>(null);
+
+  const handleRecharge = (amount: number) => {
+    setRechargeError(null);
+    rechargeMut.mutate(
+      { amount },
+      {
+        onSuccess: () => notification('success'),
+        onError: () => {
+          notification('error');
+          setRechargeError('Не удалось пополнить баланс. Попробуйте позже.');
+        },
+      },
+    );
+  };
 
   const rating = user?.rating ?? 0;
   const completedOrders = user?.completed_orders ?? 0;
@@ -81,7 +99,8 @@ export default function Profile() {
               {PACKAGES.map((_package) => (
                 <Button
                   key={_package.amount}
-                  onClick={() => {}}
+                  onClick={() => handleRecharge(_package.amount)}
+                  disabled={rechargeMut.isPending}
                   rounded
                   outline={!_package.popular}
                   className={`relative h-10 overflow-visible transition-all duration-200 hover:scale-105 active:scale-95 ${_package.popular ? "k-color-brand" : "k-color-brand"}`}
@@ -98,6 +117,10 @@ export default function Profile() {
                 </Button>
               ))}
             </div>
+
+            {rechargeError && (
+              <InfoBlock className="mt-2" variant="red" icon="⚠️" message={rechargeError} />
+            )}
           </div>
         </Block>
 

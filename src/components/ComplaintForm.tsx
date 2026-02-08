@@ -10,6 +10,7 @@ import {
 } from '@/lib/validation/review.schema';
 import { useSubmitComplaint } from '@/src/hooks/useReviews';
 import { useHaptic } from '@/src/hooks/useTelegram';
+import { useSubmittedGuard } from '@/src/hooks/useSubmittedGuard';
 import type { ComplaintReason } from '@/types/api';
 
 interface ComplaintFormProps {
@@ -21,10 +22,10 @@ export default function ComplaintForm({ orderId, onSuccess }: ComplaintFormProps
   const [reason, setReason] = useState<string>('');
   const [comment, setComment] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState(false);
 
   const { notification, selection } = useHaptic();
   const submitMut = useSubmitComplaint();
+  const { isSubmitted: submitted, markSubmitted } = useSubmittedGuard('complaint', orderId);
 
   const handleSubmit = () => {
     setError(null);
@@ -51,7 +52,7 @@ export default function ComplaintForm({ orderId, onSuccess }: ComplaintFormProps
       {
         onSuccess: () => {
           notification('success');
-          setSubmitted(true);
+          markSubmitted();
           onSuccess?.();
         },
         onError: () => {

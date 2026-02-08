@@ -3,10 +3,11 @@
 import React from "react";
 import { useParams } from "next/navigation";
 import { Block, Chip, ListItem, Preloader } from "konsta/react";
-import { AppList, AppNavbar, AppPage, InfoBlock, PageTransition, ReviewForm } from "@/src/components";
+import { AppList, AppNavbar, AppPage, ComplaintForm, InfoBlock, PageTransition, ReviewForm } from "@/src/components";
 import { minutesLeft, takenCount } from "@/src/utils/order";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
 import { useOrder } from "@/hooks/useOrders";
+import { useRole } from "@/src/hooks/useRole";
 
 function formatDateTime(iso: string) {
   const d = new Date(iso);
@@ -20,6 +21,7 @@ function formatDateTime(iso: string) {
 
 export default function HistoryDetailPage() {
   useTelegramBackButton('/history');
+  const { role } = useRole();
   const params = useParams<{ id?: string }>();
   const id = typeof params?.id === "string" ? params.id : "";
 
@@ -95,7 +97,11 @@ export default function HistoryDetailPage() {
 
           {expired && takes > 0 ? (
             <div className="scale-in">
-              <ReviewForm orderId={id} />
+              {role === 'executor' ? (
+                <ComplaintForm orderId={id} />
+              ) : (
+                <ReviewForm orderId={id} />
+              )}
             </div>
           ) : null}
         </Block>
