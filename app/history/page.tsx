@@ -17,7 +17,8 @@ function firstLine(text: string) {
 
 function deriveHistoryStatus(order: Order): HistoryStatus {
   if (order.status === 'completed') return 'completed';
-  if (order.status === 'deleted' || order.status === 'closed_no_response') return 'cancelled';
+  if (order.status === 'closed_no_response') return 'closed_no_response';
+  if (order.status === 'deleted') return 'cancelled';
 
   const left = minutesLeft(order);
   if (left <= 0) {
@@ -60,6 +61,9 @@ export default function HistoryPage() {
 
   const items = useMemo(() => {
     if (tab === "all") return allItems;
+    if (tab === "cancelled") {
+      return allItems.filter((i) => i.status === "cancelled" || i.status === "closed_no_response");
+    }
     return allItems.filter((i) => i.status === tab);
   }, [allItems, tab]);
 

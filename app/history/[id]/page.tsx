@@ -3,7 +3,7 @@
 import React from "react";
 import { useParams } from "next/navigation";
 import { Block, Chip, ListItem, Preloader } from "konsta/react";
-import { AppList, AppNavbar, AppPage, InfoBlock, PageTransition } from "@/src/components";
+import { AppList, AppNavbar, AppPage, InfoBlock, PageTransition, ReviewForm } from "@/src/components";
 import { minutesLeft, takenCount } from "@/src/utils/order";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
 import { useOrder } from "@/hooks/useOrders";
@@ -50,7 +50,9 @@ export default function HistoryDetailPage() {
   const expired = left <= 0 || order.status === 'expired' || order.status === 'completed';
   const status = order.status === 'completed'
     ? "Выполнен"
-    : order.status === 'deleted' || order.status === 'closed_no_response'
+    : order.status === 'closed_no_response'
+    ? "Закрыт (нет ответа)"
+    : order.status === 'deleted'
     ? "Отменён"
     : expired
     ? (takes > 0 ? "Выполнен" : "Отменён")
@@ -72,7 +74,7 @@ export default function HistoryDetailPage() {
                 className={
                   status === "Выполнен"
                     ? "bg-green-100 text-green-600"
-                    : status === "Отменён"
+                    : status === "Отменён" || status === "Закрыт (нет ответа)"
                     ? "bg-red-100 text-red-600"
                     : "bg-orange-100 text-orange-600"
                 }
@@ -92,12 +94,9 @@ export default function HistoryDetailPage() {
           </div>
 
           {expired && takes > 0 ? (
-            <InfoBlock
-              className="mx-4 scale-in"
-              variant="blue"
-              icon="⭐"
-              message="Дальше тут будет отзыв и оценка (пока мок)."
-            />
+            <div className="scale-in">
+              <ReviewForm orderId={id} />
+            </div>
           ) : null}
         </Block>
       </AppPage>
