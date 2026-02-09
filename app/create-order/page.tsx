@@ -217,7 +217,6 @@ function CreateOrderContent() {
 
         </Block>
 
-        <toast.Toast />
       </AppPage>
     </PageTransition>
   );

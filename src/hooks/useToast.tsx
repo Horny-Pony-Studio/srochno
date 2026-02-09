@@ -1,60 +1,30 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
-import ToastStack, { type ToastType, type ToastItem } from '@/components/Toast';
+import { useMemo } from 'react';
+import { addToast } from '@/lib/toast-store';
+import type { ToastType } from '@/components/Toast';
 
-interface ToastOptions {
-  message: string;
-  type?: ToastType;
-  duration?: number;
-}
-
+/**
+ * Returns stable toast action functions.
+ * Does NOT hold any state — toast rendering is handled
+ * by ToastContainer in the app layout.
+ */
 export function useToast() {
-  const [toasts, setToasts] = useState<ToastItem[]>([]);
-  const idRef = useRef(0);
-
-  const show = useCallback((opts: ToastOptions) => {
-    const id = ++idRef.current;
-    const item: ToastItem = {
-      id,
-      message: opts.message,
-      type: opts.type ?? 'info',
-      duration: opts.duration ?? 3000,
-    };
-    setToasts((prev) => [...prev, item]);
-  }, []);
-
-  const dismiss = useCallback((id: number) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
-  }, []);
-
-  const success = useCallback((message: string, duration?: number) => {
-    show({ message, type: 'success', duration });
-  }, [show]);
-
-  const error = useCallback((message: string, duration?: number) => {
-    show({ message, type: 'error', duration });
-  }, [show]);
-
-  const warning = useCallback((message: string, duration?: number) => {
-    show({ message, type: 'warning', duration });
-  }, [show]);
-
-  const info = useCallback((message: string, duration?: number) => {
-    show({ message, type: 'info', duration });
-  }, [show]);
-
-  const ToastComponent = useCallback(
-    () => <ToastStack toasts={toasts} onDismiss={dismiss} />,
-    [toasts, dismiss],
-  );
-
-  return {
-    show,
-    success,
-    error,
-    warning,
-    info,
-    Toast: ToastComponent,
-  };
+  return useMemo(() => ({
+    show(opts: { message: string; type?: ToastType; duration?: number }) {
+      addToast(opts.message, opts.type ?? 'info', opts.duration ?? 3000);
+    },
+    success(message: string, duration?: number) {
+      addToast(message, 'success', duration ?? 3000);
+    },
+    error(message: string, duration?: number) {
+      addToast(message, 'error', duration ?? 3000);
+    },
+    warning(message: string, duration?: number) {
+      addToast(message, 'warning', duration ?? 3000);
+    },
+    info(message: string, duration?: number) {
+      addToast(message, 'info', duration ?? 3000);
+    },
+  }), []);
 }

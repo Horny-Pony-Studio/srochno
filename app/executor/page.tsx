@@ -153,7 +153,6 @@ export default function ExecutorPreferencesPage() {
           />
         </Block>
 
-        <toast.Toast />
       </AppPage>
     </PageTransition>
   );

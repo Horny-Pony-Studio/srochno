@@ -148,7 +148,6 @@ export default function Profile() {
         </div>
       </Block>
 
-      <toast.Toast />
     </AppPage>
     </PageTransition>
   );

@@ -193,7 +193,6 @@ export default function OrderDetailPage() {
           )}
         </Block>
 
-        <toast.Toast />
       </AppPage>
     </PageTransition>
   );
