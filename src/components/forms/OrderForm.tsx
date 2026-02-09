@@ -7,7 +7,6 @@ import { createOrderSchema, type CreateOrderInput, CATEGORIES } from '@/lib/vali
 import FormInput from './FormInput';
 import FormTextarea from './FormTextarea';
 import FormSelect from './FormSelect';
-import { useHaptic } from '@/hooks/useTelegram';
 import { useState } from 'react';
 
 export interface OrderFormProps {
@@ -23,7 +22,6 @@ export default function OrderForm({
   isLoading = false,
   submitLabel = 'Створити заявку',
 }: OrderFormProps) {
-  const { impact, notification } = useHaptic();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -42,11 +40,8 @@ export default function OrderForm({
   const onSubmitHandler = async (data: CreateOrderInput) => {
     try {
       setIsSubmitting(true);
-      impact('medium');
       await onSubmit(data);
-      notification('success');
     } catch (error) {
-      notification('error');
       console.error('Form submission error:', error);
     } finally {
       setIsSubmitting(false);

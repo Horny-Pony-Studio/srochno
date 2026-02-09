@@ -6,13 +6,12 @@ import { Edit2, Trash2, X } from 'lucide-react';
 import { takenCount } from "@/src/utils/order";
 import { useRouter } from "next/navigation";
 import { AppPage, EmptyState, InfoBlock, AppNavbar, OrderTimerChip, PageTransition } from "@/src/components";
-import { useTelegramBackButton, useTelegramMainButton, useTelegramConfirm, useHaptic } from "@/src/hooks/useTelegram";
+import { useTelegramBackButton, useTelegramMainButton, useTelegramConfirm } from "@/src/hooks/useTelegram";
 import { useMyOrders, useDeleteOrder, useCloseOrder } from "@/hooks/useOrders";
 
 function CustomerPage() {
   const router = useRouter();
   useTelegramBackButton('/');
-  const { notification } = useHaptic();
   const confirm = useTelegramConfirm();
 
   const { data: orders, isLoading, isError, refetch } = useMyOrders();
@@ -31,30 +30,14 @@ function CustomerPage() {
   const onDeleteOrder = useCallback(async (orderId: string) => {
     const ok = await confirm('Удалить заявку?');
     if (!ok) return;
-
-    deleteMut.mutate(orderId, {
-      onSuccess: () => {
-        notification('success');
-      },
-      onError: () => {
-        notification('error');
-      },
-    });
-  }, [confirm, deleteMut, notification]);
+    deleteMut.mutate(orderId);
+  }, [confirm, deleteMut]);
 
   const onCloseOrder = useCallback(async (orderId: string) => {
     const ok = await confirm('Закрыть заявку?');
     if (!ok) return;
-
-    closeMut.mutate(orderId, {
-      onSuccess: () => {
-        notification('success');
-      },
-      onError: () => {
-        notification('error');
-      },
-    });
-  }, [confirm, closeMut, notification]);
+    closeMut.mutate(orderId);
+  }, [confirm, closeMut]);
 
   return (
     <PageTransition>

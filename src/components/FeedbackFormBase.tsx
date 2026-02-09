@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { Block, Button } from 'konsta/react';
 import InfoBlock from './InfoBlock';
 import AppListInput from './AppListInput';
-import { useHaptic } from '@/src/hooks/useTelegram';
 import { useSubmittedGuard } from '@/src/hooks/useSubmittedGuard';
 
 interface FeedbackFormBaseProps {
@@ -38,7 +37,6 @@ export default function FeedbackFormBase({
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
 
-  const { notification } = useHaptic();
   const { isSubmitted, markSubmitted } = useSubmittedGuard(type, orderId);
 
   const handleSubmit = async () => {
@@ -47,10 +45,8 @@ export default function FeedbackFormBase({
 
     try {
       await onSubmit(comment.trim());
-      notification('success');
       markSubmitted();
     } catch {
-      notification('error');
       setError(errorMessage);
     } finally {
       setIsPending(false);

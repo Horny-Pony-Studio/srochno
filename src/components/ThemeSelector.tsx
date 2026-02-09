@@ -3,7 +3,6 @@
 import { List, ListItem, Radio } from 'konsta/react';
 import { Sun, Moon, Monitor } from 'lucide-react';
 import { useTheme, type ThemePreference } from '@/providers/ThemeProvider';
-import { useHaptic } from '@/hooks/useTelegram';
 
 const THEME_OPTIONS: Array<{
   value: ThemePreference;
@@ -33,12 +32,6 @@ const THEME_OPTIONS: Array<{
 
 export default function ThemeSelector() {
   const { preference, setPreference } = useTheme();
-  const { impact } = useHaptic();
-
-  const handleChange = (value: ThemePreference) => {
-    impact('light');
-    setPreference(value);
-  };
 
   return (
     <List strongIos insetIos>
@@ -54,10 +47,10 @@ export default function ThemeSelector() {
                 component="div"
                 value={option.value}
                 checked={preference === option.value}
-                onChange={() => handleChange(option.value)}
+                onChange={() => setPreference(option.value)}
               />
             }
-            onClick={() => handleChange(option.value)}
+            onClick={() => setPreference(option.value)}
           >
             <div className="flex items-center gap-3">
               <Icon className="w-5 h-5 text-gray-500 dark:text-gray-400" />

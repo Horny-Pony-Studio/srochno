@@ -108,7 +108,6 @@ export {
   viewport,
   themeParams,
   initData,
-  hapticFeedback,
   miniApp,
   closingBehavior,
   swipeBehavior,

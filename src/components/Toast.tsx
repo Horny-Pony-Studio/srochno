@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { CheckCircle, XCircle, AlertCircle, Info, X } from 'lucide-react';
-import { useHaptic } from '@/hooks/useTelegram';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
@@ -41,21 +40,11 @@ function SingleToast({
   onDismiss: (id: number) => void;
   onMeasure: (id: number, height: number) => void;
 }) {
-  const { notification } = useHaptic();
-  const hapticFired = useRef(false);
   const [exiting, setExiting] = useState(false);
 
   const measureRef = useCallback((node: HTMLDivElement | null) => {
     if (node) onMeasure(item.id, node.offsetHeight);
   }, [item.id, onMeasure]);
-
-  useEffect(() => {
-    if (hapticFired.current) return;
-    hapticFired.current = true;
-    if (item.type === 'success') notification('success');
-    else if (item.type === 'error') notification('error');
-    else if (item.type === 'warning') notification('warning');
-  }, [item.type, notification]);
 
   const handleClose = useCallback(() => {
     if (exiting) return;

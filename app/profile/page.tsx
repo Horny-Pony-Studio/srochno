@@ -6,7 +6,7 @@ import { Star, Wallet, CreditCard } from "lucide-react";
 import {AppList, AppNavbar, AppPage, PageTransition, ThemeSelector} from "@/src/components";
 import { PACKAGES } from "@/src/data";
 import {useRouter} from "next/navigation";
-import { useTelegramBackButton, useTelegramLinks, useHaptic } from "@/src/hooks/useTelegram";
+import { useTelegramBackButton, useTelegramLinks } from "@/src/hooks/useTelegram";
 import { useAuth } from "@/providers/AuthProvider";
 import { useRechargeBalance } from "@/src/hooks/useBalance";
 import { useToast } from "@/hooks/useToast";
@@ -16,7 +16,6 @@ export default function Profile() {
   useTelegramBackButton();
   const { openTelegramLink } = useTelegramLinks();
   const { user } = useAuth();
-  const { notification } = useHaptic();
   const toast = useToast();
   const rechargeMut = useRechargeBalance();
 
@@ -24,7 +23,6 @@ export default function Profile() {
     rechargeMut.mutate(
       { amount },
       {
-        onSuccess: () => notification('success'),
         onError: () => {
           toast.error('Не удалось пополнить баланс. Попробуйте позже.');
         },
