@@ -1,70 +1,30 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import Toast, { type ToastType } from '@/components/Toast';
+import { useMemo } from 'react';
+import { addToast } from '@/lib/toast-store';
+import type { ToastType } from '@/components/Toast';
 
-interface ToastOptions {
-  message: string;
-  type?: ToastType;
-  duration?: number;
-}
-
+/**
+ * Returns stable toast action functions.
+ * Does NOT hold any state — toast rendering is handled
+ * by ToastContainer in the app layout.
+ */
 export function useToast() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [options, setOptions] = useState<ToastOptions>({
-    message: '',
-    type: 'info',
-    duration: 3000,
-  });
-
-  const show = useCallback((opts: ToastOptions) => {
-    setOptions({
-      duration: 3000,
-      type: 'info',
-      ...opts,
-    });
-    setIsOpen(true);
-  }, []);
-
-  const success = useCallback((message: string, duration?: number) => {
-    show({ message, type: 'success', duration });
-  }, [show]);
-
-  const error = useCallback((message: string, duration?: number) => {
-    show({ message, type: 'error', duration });
-  }, [show]);
-
-  const warning = useCallback((message: string, duration?: number) => {
-    show({ message, type: 'warning', duration });
-  }, [show]);
-
-  const info = useCallback((message: string, duration?: number) => {
-    show({ message, type: 'info', duration });
-  }, [show]);
-
-  const handleClose = useCallback(() => {
-    setIsOpen(false);
-  }, []);
-
-  const ToastComponent = useCallback(
-    () => (
-      <Toast
-        opened={isOpen}
-        message={options.message}
-        type={options.type}
-        duration={options.duration}
-        onClose={handleClose}
-      />
-    ),
-    [isOpen, options, handleClose]
-  );
-
-  return {
-    show,
-    success,
-    error,
-    warning,
-    info,
-    Toast: ToastComponent,
-  };
+  return useMemo(() => ({
+    show(opts: { message: string; type?: ToastType; duration?: number }) {
+      addToast(opts.message, opts.type ?? 'info', opts.duration ?? 3000);
+    },
+    success(message: string, duration?: number) {
+      addToast(message, 'success', duration ?? 3000);
+    },
+    error(message: string, duration?: number) {
+      addToast(message, 'error', duration ?? 3000);
+    },
+    warning(message: string, duration?: number) {
+      addToast(message, 'warning', duration ?? 3000);
+    },
+    info(message: string, duration?: number) {
+      addToast(message, 'info', duration ?? 3000);
+    },
+  }), []);
 }

@@ -12,12 +12,14 @@ import { useTelegramBackButton, useTelegramMainButton, useHaptic } from "@/src/h
 import { useOrder, useTakeOrder } from "@/hooks/useOrders";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { ApiRequestError } from "@/lib/api";
+import { useToast } from "@/hooks/useToast";
 
 export default function OrderDetailPage() {
   useTelegramBackButton('/orders');
   const params = useParams<{ id?: string }>();
   const { notification } = useHaptic();
   const { user, refetchUser } = useAuth();
+  const toast = useToast();
 
   const orderId = typeof params?.id === "string" ? params.id : "";
   const balance = user?.balance ?? 0;
@@ -27,7 +29,6 @@ export default function OrderDetailPage() {
 
   const [contactUnlocked, setContactUnlocked] = useState(false);
   const [revealedContact, setRevealedContact] = useState<string | null>(null);
-  const [takeError, setTakeError] = useState<string | null>(null);
 
   const timer = useOrderTimer(order);
 
@@ -38,7 +39,6 @@ export default function OrderDetailPage() {
   const handleTakeOrder = useCallback(() => {
     if (!canTake || !orderId || takeOrderMut.isPending) return;
 
-    setTakeError(null);
     takeOrderMut.mutate(orderId, {
       onSuccess: (res) => {
         setContactUnlocked(true);
@@ -47,21 +47,20 @@ export default function OrderDetailPage() {
         refetchUser();
       },
       onError: (err) => {
-        notification('error');
         if (err instanceof ApiRequestError) {
           if (err.status === 409) {
-            setTakeError('Максимальное количество откликов уже достигнуто.');
+            toast.error('Максимальное количество откликов уже достигнуто.');
           } else if (err.status === 402) {
-            setTakeError('Недостаточно средств на балансе.');
+            toast.error('Недостаточно средств на балансе.');
           } else {
-            setTakeError(err.detail);
+            toast.error(err.detail);
           }
         } else {
-          setTakeError('Не удалось взять заказ. Попробуйте позже.');
+          toast.error('Не удалось взять заказ. Попробуйте позже.');
         }
       },
     });
-  }, [canTake, orderId, takeOrderMut, notification, refetchUser]);
+  }, [canTake, orderId, takeOrderMut, notification, refetchUser, toast]);
 
   useTelegramMainButton(
     canTake ? `Взять заказ (${pay} ₽)` : 'Недоступно',
@@ -173,15 +172,6 @@ export default function OrderDetailPage() {
                 </span>
               </div>
             </Block>
-          )}
-
-          {takeError && (
-            <InfoBlock
-              className="mx-4 scale-in"
-              variant="red"
-              icon="⚠️"
-              message={takeError}
-            />
           )}
 
           {!contactUnlocked && !canTake && balance < pay && (

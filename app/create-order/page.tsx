@@ -8,6 +8,7 @@ import { CATEGORIES, CITIES } from "@/src/data";
 import { useTelegramBackButton, useTelegramMainButton, useClosingConfirmation, useHaptic } from "@/src/hooks/useTelegram";
 import { useOrder, useCreateOrder, useUpdateOrder } from "@/hooks/useOrders";
 import { createOrderSchema } from "@/src/lib/validation/order.schema";
+import { useToast } from "@/hooks/useToast";
 
 export default function CreateOrderPage() {
   return (
@@ -28,6 +29,7 @@ function CreateOrderContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { notification } = useHaptic();
+  const toast = useToast();
 
   const editId = searchParams.get('edit');
   const isEditMode = !!editId;
@@ -38,7 +40,6 @@ function CreateOrderContent() {
   const [description, setDescription] = useState("");
   const [city, setCity] = useState("");
   const [contact, setContact] = useState("");
-  const [formError, setFormError] = useState<string | null>(null);
 
   // Sync form state when existing order loads (React "adjust state during render" pattern)
   const [syncedOrderId, setSyncedOrderId] = useState<string | null>(null);
@@ -60,8 +61,6 @@ function CreateOrderContent() {
   const isPending = createMut.isPending || updateMut.isPending;
 
   const handleSubmit = useCallback(() => {
-    setFormError(null);
-
     const data = {
       category: selectedCategory,
       description,
@@ -72,8 +71,7 @@ function CreateOrderContent() {
     const result = createOrderSchema.safeParse(data);
     if (!result.success) {
       const firstError = result.error.issues[0]?.message ?? 'Проверьте данные формы';
-      setFormError(firstError);
-      notification('error');
+      toast.error(firstError);
       return;
     }
 
@@ -93,8 +91,7 @@ function CreateOrderContent() {
             router.push('/customer');
           },
           onError: () => {
-            notification('error');
-            setFormError('Не удалось сохранить изменения. Попробуйте позже.');
+            toast.error('Не удалось сохранить изменения. Попробуйте позже.');
           },
         },
       );
@@ -105,12 +102,11 @@ function CreateOrderContent() {
           router.push('/customer');
         },
         onError: () => {
-          notification('error');
-          setFormError('Не удалось создать заявку. Попробуйте позже.');
+          toast.error('Не удалось создать заявку. Попробуйте позже.');
         },
       });
     }
-  }, [selectedCategory, description, city, contact, isEditMode, editId, createMut, updateMut, notification, router]);
+  }, [selectedCategory, description, city, contact, isEditMode, editId, createMut, updateMut, notification, router, toast]);
 
   const mainButtonText = isEditMode ? 'Сохранить' : 'Создать';
   useTelegramMainButton(mainButtonText, handleSubmit, {
@@ -209,15 +205,6 @@ function CreateOrderContent() {
             </AppList>
           </div>
 
-          {formError && (
-            <InfoBlock
-              className={"mx-4 scale-in"}
-              variant={"red"}
-              message={formError}
-              icon={"⚠️"}
-            />
-          )}
-
           <InfoBlock
             className={"mx-4 scale-in"}
             variant={"blue"}
@@ -229,6 +216,7 @@ function CreateOrderContent() {
           />
 
         </Block>
+
       </AppPage>
     </PageTransition>
   );

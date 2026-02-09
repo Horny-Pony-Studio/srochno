@@ -175,6 +175,43 @@ select {
 .stagger-item:nth-child(9) { animation-delay: 0.45s; }
 .stagger-item:nth-child(10) { animation-delay: 0.5s; }
 
+/* Toast animations */
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-slide-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+
+.toast-item {
+  animation: toast-slide-in 300ms ease-out both;
+}
+
+.toast-item[data-exiting="true"] {
+  animation: toast-slide-out 250ms ease-in both;
+}
+
+/* Isolate toast from global transition rules */
+.toast-item,
+.toast-item *  {
+  transition: none !important;
+}
+
 /* Accessibility: disable animations for users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,

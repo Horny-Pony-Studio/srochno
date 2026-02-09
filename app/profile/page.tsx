@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Block, Button, ListItem } from "konsta/react";
 import { Star, Wallet, CreditCard } from "lucide-react";
-import {AppList, AppNavbar, AppPage, InfoBlock, PageTransition, ThemeSelector} from "@/src/components";
+import {AppList, AppNavbar, AppPage, PageTransition, ThemeSelector} from "@/src/components";
 import { PACKAGES } from "@/src/data";
 import {useRouter} from "next/navigation";
 import { useTelegramBackButton, useTelegramLinks, useHaptic } from "@/src/hooks/useTelegram";
 import { useAuth } from "@/providers/AuthProvider";
 import { useRechargeBalance } from "@/src/hooks/useBalance";
+import { useToast } from "@/hooks/useToast";
 
 export default function Profile() {
   const router = useRouter();
@@ -16,18 +17,16 @@ export default function Profile() {
   const { openTelegramLink } = useTelegramLinks();
   const { user } = useAuth();
   const { notification } = useHaptic();
+  const toast = useToast();
   const rechargeMut = useRechargeBalance();
-  const [rechargeError, setRechargeError] = useState<string | null>(null);
 
   const handleRecharge = (amount: number) => {
-    setRechargeError(null);
     rechargeMut.mutate(
       { amount },
       {
         onSuccess: () => notification('success'),
         onError: () => {
-          notification('error');
-          setRechargeError('Не удалось пополнить баланс. Попробуйте позже.');
+          toast.error('Не удалось пополнить баланс. Попробуйте позже.');
         },
       },
     );
@@ -116,9 +115,6 @@ export default function Profile() {
               ))}
             </div>
 
-            {rechargeError && (
-              <InfoBlock className="mt-2" variant="red" icon="⚠️" message={rechargeError} />
-            )}
           </div>
         </Block>
 
@@ -151,6 +147,7 @@ export default function Profile() {
           </AppList>
         </div>
       </Block>
+
     </AppPage>
     </PageTransition>
   );
