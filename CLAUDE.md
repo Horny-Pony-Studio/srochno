@@ -35,6 +35,40 @@
 - Кожна задача = нова гілка від `main`
 - Назви: lowercase, через дефіс, коротко і зрозуміло
 
+### Release Workflow
+
+Проект використовує **semantic versioning** з pre-release тегами.
+
+**Цикл розробки:**
+1. Нові гілки створюються від останнього тегу (`git describe --tags --abbrev=0`)
+2. Робота ведеться в feature/bugfix/refactor гілках → PR в `main`
+3. Після мерджу PR — створюється новий реліз/тег
+
+**Типи релізів:**
+| Тег | Коли | Приклад |
+|-----|------|---------|
+| `vX.Y.Z-alpha.N` | Рання розробка, нестабільно | `v0.2.0-alpha.1` |
+| `vX.Y.Z-beta.N` | Фіча готова, потрібне тестування | `v0.1.0-beta.2` |
+| `vX.Y.Z` | Стабільний реліз | `v0.1.0` |
+
+**Створення релізу:**
+```bash
+# Знайти останній тег
+git describe --tags --abbrev=0
+
+# Створити тег на main
+git tag -a vX.Y.Z-beta.N -m "vX.Y.Z-beta.N: короткий опис"
+git push origin vX.Y.Z-beta.N
+
+# Створити GitHub Release (pre-release для alpha/beta)
+gh release create vX.Y.Z-beta.N --prerelease --title "vX.Y.Z-beta.N" --generate-notes
+```
+
+**Правила:**
+- Гілки завжди від останнього тегу, не від довільного коміту в main
+- Changelog в релізі групується по категоріях (Features, Fixes, Refactoring, Tests, Chore)
+- Bumping версії: patch (фікси), minor (нові фічі), major (breaking changes)
+
 ### Коміти
 
 Формат: **Conventional Commits**
