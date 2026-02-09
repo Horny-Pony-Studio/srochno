@@ -7,7 +7,7 @@ import { AppList, AppNavbar, AppPage, ComplaintForm, InfoBlock, PageTransition, 
 import { minutesLeft, takenCount } from "@/src/utils/order";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
 import { useOrder } from "@/hooks/useOrders";
-import { useRole } from "@/src/hooks/useRole";
+import { useAuth } from "@/providers/AuthProvider";
 
 function formatDateTime(iso: string) {
   const d = new Date(iso);
@@ -21,7 +21,7 @@ function formatDateTime(iso: string) {
 
 export default function HistoryDetailPage() {
   useTelegramBackButton('/history');
-  const { role } = useRole();
+  const { user } = useAuth();
   const params = useParams<{ id?: string }>();
   const id = typeof params?.id === "string" ? params.id : "";
 
@@ -97,7 +97,7 @@ export default function HistoryDetailPage() {
 
           {expired && takes > 0 ? (
             <div className="scale-in">
-              {role === 'executor' ? (
+              {order.takenBy.some(t => t.executorId === String(user?.id)) ? (
                 <ComplaintForm orderId={id} />
               ) : (
                 <ReviewForm orderId={id} />
