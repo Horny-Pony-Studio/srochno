@@ -223,14 +223,10 @@ select {
   }
 }
 
-/* Accessibility: focus-visible styles for keyboard navigation */
-:focus-visible {
-  outline: 2px solid var(--color-brand-primary, #007aff);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-/* Remove default focus outline for mouse/touch users */
-:focus:not(:focus-visible) {
-  outline: none;
+/* Telegram Mini App — no keyboard navigation, disable all focus styles */
+*:focus,
+*:focus-visible,
+*:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
 }
