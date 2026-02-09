@@ -10,7 +10,6 @@ import { updatePreferences, updateNotificationSettings } from "@/lib/api";
 import {
   useTelegramBackButton,
   useTelegramMainButton,
-  useHaptic,
   useClosingConfirmation,
 } from "@/src/hooks/useTelegram";
 import { useToast } from "@/hooks/useToast";
@@ -22,7 +21,6 @@ const FREQUENCY_OPTIONS = [
 
 export default function ExecutorPreferencesPage() {
   const router = useRouter();
-  const { notification, selection } = useHaptic();
   const toast = useToast();
   useTelegramBackButton("/profile");
 
@@ -35,24 +33,22 @@ export default function ExecutorPreferencesPage() {
   useClosingConfirmation(isDirty);
 
   const toggleCategory = useCallback((cat: string) => {
-    selection();
     setSelectedCategories((prev) => {
       const next = new Set(prev);
       if (next.has(cat)) next.delete(cat);
       else next.add(cat);
       return next;
     });
-  }, [selection]);
+  }, []);
 
   const toggleCity = useCallback((city: string) => {
-    selection();
     setSelectedCities((prev) => {
       const next = new Set(prev);
       if (next.has(city)) next.delete(city);
       else next.add(city);
       return next;
     });
-  }, [selection]);
+  }, []);
 
   const handleSave = useCallback(async () => {
     if (saving) return;
@@ -68,14 +64,13 @@ export default function ExecutorPreferencesPage() {
           frequency: Number(frequency),
         }),
       ]);
-      notification("success");
       router.push("/orders");
     } catch {
       toast.error("Не удалось сохранить настройки. Попробуйте позже.");
     } finally {
       setSaving(false);
     }
-  }, [saving, selectedCategories, selectedCities, frequency, notification, router, toast]);
+  }, [saving, selectedCategories, selectedCities, frequency, router, toast]);
 
   const canSave = useMemo(
     () => selectedCategories.size > 0 && selectedCities.size > 0,

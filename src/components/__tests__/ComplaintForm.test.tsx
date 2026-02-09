@@ -67,14 +67,6 @@ vi.mock('konsta/react', () => ({
   ),
 }));
 
-vi.mock('@/src/hooks/useTelegram', () => ({
-  useHaptic: () => ({
-    selection: vi.fn(),
-    impact: vi.fn(),
-    notification: vi.fn(),
-  }),
-}));
-
 vi.mock('@/src/hooks/useReviews', () => ({
   useSubmitComplaint: () => ({
     mutateAsync: mockMutateAsync,

@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Star } from 'lucide-react';
-import { useHaptic } from '@/src/hooks/useTelegram';
 
 interface StarRatingProps {
   value: number;
@@ -22,7 +21,6 @@ export default function StarRating({
   readonly = false,
   size = 'md',
 }: StarRatingProps) {
-  const { selection } = useHaptic();
   const sizeClass = SIZE_MAP[size];
 
   return (
@@ -38,7 +36,6 @@ export default function StarRating({
             aria-pressed={filled}
             onClick={() => {
               if (readonly || !onChange) return;
-              selection();
               onChange(star);
             }}
             className={`p-0.5 transition-transform duration-150 ${

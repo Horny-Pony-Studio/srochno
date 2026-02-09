@@ -7,7 +7,6 @@ import {
   initData,
   backButton,
   mainButton,
-  hapticFeedback,
   themeParams,
   closingBehavior,
   popup,
@@ -46,35 +45,6 @@ export function useTelegram() {
       startParam: undefined,
     };
   }
-}
-
-/**
- * Haptic feedback helper
- */
-export function useHaptic() {
-  return {
-    impact: (style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft' = 'medium') => {
-      try {
-        hapticFeedback.impactOccurred(style);
-      } catch {
-        // Haptic feedback not available
-      }
-    },
-    notification: (type: 'error' | 'success' | 'warning') => {
-      try {
-        hapticFeedback.notificationOccurred(type);
-      } catch {
-        // Haptic feedback not available
-      }
-    },
-    selection: () => {
-      try {
-        hapticFeedback.selectionChanged();
-      } catch {
-        // Haptic feedback not available
-      }
-    },
-  };
 }
 
 /**

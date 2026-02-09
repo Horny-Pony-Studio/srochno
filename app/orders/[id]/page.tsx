@@ -8,7 +8,7 @@ import { AppPage, InfoBlock, AppNavbar, AppList, PageTransition } from "@/src/co
 import { getTimeBackground, getTimeColor } from "@/src/utils/time";
 import { takenCount } from "@/src/utils/order";
 import { useOrderTimer } from "@/src/hooks/useOrderTimer";
-import { useTelegramBackButton, useTelegramMainButton, useHaptic } from "@/src/hooks/useTelegram";
+import { useTelegramBackButton, useTelegramMainButton } from "@/src/hooks/useTelegram";
 import { useOrder, useTakeOrder } from "@/hooks/useOrders";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { ApiRequestError } from "@/lib/api";
@@ -17,7 +17,6 @@ import { useToast } from "@/hooks/useToast";
 export default function OrderDetailPage() {
   useTelegramBackButton('/orders');
   const params = useParams<{ id?: string }>();
-  const { notification } = useHaptic();
   const { user, refetchUser } = useAuth();
   const toast = useToast();
 
@@ -43,7 +42,6 @@ export default function OrderDetailPage() {
       onSuccess: (res) => {
         setContactUnlocked(true);
         setRevealedContact(res.contact);
-        notification('success');
         refetchUser();
       },
       onError: (err) => {
@@ -60,7 +58,7 @@ export default function OrderDetailPage() {
         }
       },
     });
-  }, [canTake, orderId, takeOrderMut, notification, refetchUser, toast]);
+  }, [canTake, orderId, takeOrderMut, refetchUser, toast]);
 
   useTelegramMainButton(
     canTake ? `Взять заказ (${pay} ₽)` : 'Недоступно',

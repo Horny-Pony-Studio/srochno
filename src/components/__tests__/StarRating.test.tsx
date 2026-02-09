@@ -2,15 +2,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import StarRating from '../StarRating';
 
-// Mock Telegram haptic hook
-vi.mock('@/src/hooks/useTelegram', () => ({
-  useHaptic: () => ({
-    selection: vi.fn(),
-    impact: vi.fn(),
-    notification: vi.fn(),
-  }),
-}));
-
 describe('StarRating', () => {
   it('renders 5 star buttons', () => {
     render(<StarRating value={0} />);

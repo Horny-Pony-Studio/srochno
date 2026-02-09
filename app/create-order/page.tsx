@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Block, Checkbox, ListItem, Preloader } from "konsta/react";
 import { AppList, AppListInput, Select, InfoBlock, AppPage, AppNavbar, PageTransition } from "@/src/components";
 import { CATEGORIES, CITIES } from "@/src/data";
-import { useTelegramBackButton, useTelegramMainButton, useClosingConfirmation, useHaptic } from "@/src/hooks/useTelegram";
+import { useTelegramBackButton, useTelegramMainButton, useClosingConfirmation } from "@/src/hooks/useTelegram";
 import { useOrder, useCreateOrder, useUpdateOrder } from "@/hooks/useOrders";
 import { createOrderSchema } from "@/src/lib/validation/order.schema";
 import { useToast } from "@/hooks/useToast";
@@ -28,7 +28,6 @@ export default function CreateOrderPage() {
 function CreateOrderContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { notification } = useHaptic();
   const toast = useToast();
 
   const editId = searchParams.get('edit');
@@ -87,7 +86,6 @@ function CreateOrderContent() {
         },
         {
           onSuccess: () => {
-            notification('success');
             router.push('/customer');
           },
           onError: () => {
@@ -98,7 +96,6 @@ function CreateOrderContent() {
     } else {
       createMut.mutate(data, {
         onSuccess: () => {
-          notification('success');
           router.push('/customer');
         },
         onError: () => {
@@ -106,7 +103,7 @@ function CreateOrderContent() {
         },
       });
     }
-  }, [selectedCategory, description, city, contact, isEditMode, editId, createMut, updateMut, notification, router, toast]);
+  }, [selectedCategory, description, city, contact, isEditMode, editId, createMut, updateMut, router, toast]);
 
   const mainButtonText = isEditMode ? 'Сохранить' : 'Создать';
   useTelegramMainButton(mainButtonText, handleSubmit, {

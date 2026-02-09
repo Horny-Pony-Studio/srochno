@@ -1,8 +1,6 @@
 'use client';
 
 import { Actions, ActionsGroup, ActionsButton, ActionsLabel } from 'konsta/react';
-import { useHaptic } from '@/hooks/useTelegram';
-
 export interface ActionSheetAction {
   label: string;
   onClick: () => void;
@@ -25,21 +23,13 @@ export default function ActionSheet({
   message,
   actions,
 }: ActionSheetProps) {
-  const { impact } = useHaptic();
-
   const handleAction = (action: ActionSheetAction) => {
-    impact('medium');
     action.onClick();
     onClose();
   };
 
-  const handleClose = () => {
-    impact('light');
-    onClose();
-  };
-
   return (
-    <Actions opened={opened} onBackdropClick={handleClose}>
+    <Actions opened={opened} onBackdropClick={onClose}>
       <ActionsGroup>
         {(title || message) && (
           <ActionsLabel>
@@ -63,7 +53,7 @@ export default function ActionSheet({
         ))}
       </ActionsGroup>
       <ActionsGroup>
-        <ActionsButton onClick={handleClose} bold>
+        <ActionsButton onClick={onClose} bold>
           Скасувати
         </ActionsButton>
       </ActionsGroup>

@@ -8,7 +8,6 @@ import {
   executorComplaintSchema,
 } from '@/lib/validation/review.schema';
 import { useSubmitComplaint } from '@/src/hooks/useReviews';
-import { useHaptic } from '@/src/hooks/useTelegram';
 import type { ComplaintReason } from '@/types/api';
 
 interface ComplaintFormProps {
@@ -18,7 +17,6 @@ interface ComplaintFormProps {
 
 export default function ComplaintForm({ orderId, onSuccess }: ComplaintFormProps) {
   const [reason, setReason] = useState<string>('');
-  const { selection } = useHaptic();
   const submitMut = useSubmitComplaint();
 
   return (
@@ -61,10 +59,7 @@ export default function ComplaintForm({ orderId, onSuccess }: ComplaintFormProps
             media={
               <Radio
                 checked={reason === r}
-                onChange={() => {
-                  selection();
-                  setReason(r);
-                }}
+                onChange={() => setReason(r)}
               />
             }
           />
