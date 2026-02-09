@@ -138,7 +138,7 @@ describe('useMyOrders', () => {
     vi.clearAllMocks();
   });
 
-  it('fetches and filters orders for current user', async () => {
+  it('fetches and filters out deleted orders', async () => {
     const rawOrders = [
       { id: '1', contact: '+380', status: 'active' },
       { id: '2', contact: '', status: 'active' },
@@ -152,9 +152,9 @@ describe('useMyOrders', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    // Only order with non-empty contact and non-deleted status passes
-    expect(result.current.data).toHaveLength(1);
-    expect(result.current.data![0]).toHaveProperty('id', '1');
+    // Only deleted orders are filtered out
+    expect(result.current.data).toHaveLength(2);
+    expect(result.current.data!.map(o => o.id)).toEqual(['1', '2']);
   });
 });
 
