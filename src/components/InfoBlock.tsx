@@ -46,7 +46,7 @@ export default function InfoBlock({
     <Block
       strong
       inset
-      className={`${styles.colorClass} transition-all duration-300 ${className}`}
+      className={`my-0 ${styles.colorClass} transition-all duration-300 ${className}`}
     >
       <p className="text-sm flex items-start gap-2">
         {resolvedIcon ? <span className="leading-5">{resolvedIcon}</span> : null}

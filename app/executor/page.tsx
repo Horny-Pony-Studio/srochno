@@ -13,6 +13,7 @@ import {
   useHaptic,
   useClosingConfirmation,
 } from "@/src/hooks/useTelegram";
+import { useToast } from "@/hooks/useToast";
 
 const FREQUENCY_OPTIONS = [
   { value: "5", label: "Каждые 5 мин" },
@@ -22,13 +23,13 @@ const FREQUENCY_OPTIONS = [
 export default function ExecutorPreferencesPage() {
   const router = useRouter();
   const { notification, selection } = useHaptic();
+  const toast = useToast();
   useTelegramBackButton("/profile");
 
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [selectedCities, setSelectedCities] = useState<Set<string>>(new Set());
   const [frequency, setFrequency] = useState("5");
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const isDirty = selectedCategories.size > 0 || selectedCities.size > 0;
   useClosingConfirmation(isDirty);
@@ -56,7 +57,6 @@ export default function ExecutorPreferencesPage() {
   const handleSave = useCallback(async () => {
     if (saving) return;
     setSaving(true);
-    setError(null);
 
     try {
       await Promise.all([
@@ -71,12 +71,11 @@ export default function ExecutorPreferencesPage() {
       notification("success");
       router.push("/orders");
     } catch {
-      notification("error");
-      setError("Не удалось сохранить настройки. Попробуйте позже.");
+      toast.error("Не удалось сохранить настройки. Попробуйте позже.");
     } finally {
       setSaving(false);
     }
-  }, [saving, selectedCategories, selectedCities, frequency, notification, router]);
+  }, [saving, selectedCategories, selectedCities, frequency, notification, router, toast]);
 
   const canSave = useMemo(
     () => selectedCategories.size > 0 && selectedCities.size > 0,
@@ -146,15 +145,6 @@ export default function ExecutorPreferencesPage() {
             />
           </Block>
 
-          {error && (
-            <InfoBlock
-              className="mx-4 scale-in"
-              variant="red"
-              icon="⚠️"
-              message={error}
-            />
-          )}
-
           <InfoBlock
             className="mx-4 card-appear-delayed"
             variant="blue"
@@ -162,6 +152,8 @@ export default function ExecutorPreferencesPage() {
             message="Выберите категории и города, чтобы получать уведомления о новых заказах."
           />
         </Block>
+
+        <toast.Toast />
       </AppPage>
     </PageTransition>
   );
