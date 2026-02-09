@@ -37,7 +37,6 @@ import {
   useOrder,
   useMyOrders,
   useCreateOrder,
-  useDeleteOrder,
   useTakeOrder,
   orderKeys,
 } from '../useOrders';
@@ -49,8 +48,10 @@ function createWrapper() {
       mutations: { retry: false },
     },
   });
-  return ({ children }: { children: React.ReactNode }) =>
-    React.createElement(QueryClientProvider, { client: qc }, children);
+  function Wrapper({ children }: { children: React.ReactNode }) {
+    return React.createElement(QueryClientProvider, { client: qc }, children);
+  }
+  return Wrapper;
 }
 
 describe('orderKeys', () => {
@@ -174,7 +175,6 @@ describe('useCreateOrder', () => {
       description: 'Fix pipe',
       city: 'Kyiv',
       contact: '+380',
-      expires_in_minutes: 60,
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -183,7 +183,6 @@ describe('useCreateOrder', () => {
       description: 'Fix pipe',
       city: 'Kyiv',
       contact: '+380',
-      expires_in_minutes: 60,
     });
   });
 });

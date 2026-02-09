@@ -9,7 +9,6 @@ vi.mock('@telegram-apps/sdk-react', () => ({
 }));
 
 import { ThemeProvider, useTheme } from '../ThemeProvider';
-import type { ThemePreference } from '../ThemeProvider';
 
 function TestConsumer() {
   const { theme, preference, setPreference } = useTheme();
