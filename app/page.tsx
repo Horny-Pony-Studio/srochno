@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import {
   Page,
@@ -10,28 +10,10 @@ import {
 } from "konsta/react";
 import {AppNavbar, PageTransition} from "@/src/components";
 import { useHideBackButton } from "@/src/hooks/useTelegram";
-import { useRole } from "@/src/hooks/useRole";
 
 export default function Home() {
   const router = useRouter();
   useHideBackButton();
-  const { role, setRole, isReady } = useRole();
-
-  useEffect(() => {
-    if (!isReady) return;
-    if (role === 'client') router.replace('/customer');
-    else if (role === 'executor') router.replace('/orders');
-  }, [role, isReady, router]);
-
-  const handleClient = () => {
-    setRole('client');
-    router.push('/customer');
-  };
-
-  const handleExecutor = () => {
-    setRole('executor');
-    router.push('/orders');
-  };
 
   return (
     <PageTransition>
@@ -51,7 +33,7 @@ export default function Home() {
 
           <List className="w-full max-w-md">
             <Block
-              onClick={handleClient}
+              onClick={() => router.push('/customer')}
               strong
               inset
               className="my-4 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] card-appear-delayed"
@@ -66,7 +48,7 @@ export default function Home() {
             </Block>
 
             <Block
-              onClick={handleExecutor}
+              onClick={() => router.push('/orders')}
               strong
               inset
               className="my-4 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] card-appear-delayed"

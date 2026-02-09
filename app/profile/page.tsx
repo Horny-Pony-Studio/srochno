@@ -7,7 +7,6 @@ import {AppList, AppNavbar, AppPage, InfoBlock, PageTransition, ThemeSelector} f
 import { PACKAGES } from "@/src/data";
 import {useRouter} from "next/navigation";
 import { useTelegramBackButton, useTelegramLinks, useHaptic } from "@/src/hooks/useTelegram";
-import { useRole } from "@/src/hooks/useRole";
 import { useAuth } from "@/providers/AuthProvider";
 import { useRechargeBalance } from "@/src/hooks/useBalance";
 
@@ -15,7 +14,6 @@ export default function Profile() {
   const router = useRouter();
   useTelegramBackButton();
   const { openTelegramLink } = useTelegramLinks();
-  const { setRole } = useRole();
   const { user } = useAuth();
   const { notification } = useHaptic();
   const rechargeMut = useRechargeBalance();
@@ -149,14 +147,6 @@ export default function Profile() {
               title="О сервисе"
               link
               onClick={() => openTelegramLink("https://t.me/drygsssss")}
-            />
-            <ListItem
-              title="Сменить роль"
-              link
-              onClick={() => {
-                setRole(null);
-                router.push("/");
-              }}
             />
           </AppList>
         </div>
