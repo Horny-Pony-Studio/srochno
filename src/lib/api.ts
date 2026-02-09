@@ -179,6 +179,12 @@ export function takeOrder(orderId: string): Promise<ExecutorTakeResponse> {
   });
 }
 
+export function closeOrder(orderId: string): Promise<void> {
+  return request<void>(`/api/orders/${orderId}/close`, {
+    method: 'POST',
+  });
+}
+
 // ─── Reviews ─────────────────────────────────────────────
 
 export function submitClientReview(

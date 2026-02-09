@@ -9,6 +9,7 @@ const mockGetOrder = vi.fn();
 const mockCreateOrder = vi.fn();
 const mockDeleteOrder = vi.fn();
 const mockTakeOrder = vi.fn();
+const mockCloseOrder = vi.fn();
 
 vi.mock('@/lib/api', () => ({
   getOrders: (...args: unknown[]) => mockGetOrders(...args),
@@ -17,6 +18,7 @@ vi.mock('@/lib/api', () => ({
   updateOrder: vi.fn(),
   deleteOrder: (...args: unknown[]) => mockDeleteOrder(...args),
   takeOrder: (...args: unknown[]) => mockTakeOrder(...args),
+  closeOrder: (...args: unknown[]) => mockCloseOrder(...args),
 }));
 
 vi.mock('@/lib/mappers', () => ({
@@ -38,6 +40,7 @@ import {
   useMyOrders,
   useCreateOrder,
   useTakeOrder,
+  useCloseOrder,
   orderKeys,
 } from '../useOrders';
 
@@ -203,5 +206,24 @@ describe('useTakeOrder', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(mockTakeOrder).toHaveBeenCalledWith('order-5');
+  });
+});
+
+describe('useCloseOrder', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('calls closeOrder API with order id', async () => {
+    mockCloseOrder.mockResolvedValue(undefined);
+
+    const { result } = renderHook(() => useCloseOrder(), {
+      wrapper: createWrapper(),
+    });
+
+    result.current.mutate('order-7');
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(mockCloseOrder).toHaveBeenCalledWith('order-7');
   });
 });

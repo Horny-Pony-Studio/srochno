@@ -2,12 +2,12 @@
 
 import { useCallback } from "react";
 import { Block, List, Button, Chip, Preloader } from "konsta/react";
-import { Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2, X } from 'lucide-react';
 import { takenCount } from "@/src/utils/order";
 import { useRouter } from "next/navigation";
 import { AppPage, EmptyState, InfoBlock, AppNavbar, OrderTimerChip, PageTransition } from "@/src/components";
 import { useTelegramBackButton, useTelegramMainButton, useTelegramConfirm, useHaptic } from "@/src/hooks/useTelegram";
-import { useMyOrders, useDeleteOrder } from "@/hooks/useOrders";
+import { useMyOrders, useDeleteOrder, useCloseOrder } from "@/hooks/useOrders";
 
 function CustomerPage() {
   const router = useRouter();
@@ -17,6 +17,7 @@ function CustomerPage() {
 
   const { data: orders, isLoading, isError, refetch } = useMyOrders();
   const deleteMut = useDeleteOrder();
+  const closeMut = useCloseOrder();
 
   const handleCreateOrder = useCallback(() => {
     router.push('/create-order');
@@ -40,6 +41,20 @@ function CustomerPage() {
       },
     });
   }, [confirm, deleteMut, notification]);
+
+  const onCloseOrder = useCallback(async (orderId: string) => {
+    const ok = await confirm('Закрыть заявку?');
+    if (!ok) return;
+
+    closeMut.mutate(orderId, {
+      onSuccess: () => {
+        notification('success');
+      },
+      onError: () => {
+        notification('error');
+      },
+    });
+  }, [confirm, closeMut, notification]);
 
   return (
     <PageTransition>
@@ -123,6 +138,21 @@ function CustomerPage() {
                           <Trash2 className="w-4 h-4"/>
                           <span className="text-sm">Удалить</span>
                         </Button>
+                        {order.status === 'active' && order.takenBy.length > 0 && (
+                          <Button
+                            rounded
+                            outline
+                            disabled={closeMut.isPending}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onCloseOrder(order.id);
+                            }}
+                            className={"flex-1 justify-center k-color-brand-red transition-all duration-200"}
+                          >
+                            <X className="w-4 h-4"/>
+                            <span className="text-sm">Закрыть</span>
+                          </Button>
+                        )}
                       </div>
 
                       {order.status === 'closed_no_response' && (
