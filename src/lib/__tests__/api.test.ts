@@ -12,6 +12,7 @@ import {
   updateOrder,
   deleteOrder,
   takeOrder,
+  closeOrder,
   submitClientReview,
   submitExecutorComplaint,
   getReviews,
@@ -282,6 +283,23 @@ describe('takeOrder', () => {
     const result = await takeOrder('order-1');
     expect(spy.mock.calls[0][0]).toBe('/api/orders/order-1/take');
     expect(result.success).toBe(true);
+  });
+});
+
+describe('closeOrder', () => {
+  it('calls POST /api/orders/:id/close', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      status: 204,
+      statusText: 'No Content',
+      json: () => Promise.reject(new Error('no body')),
+    }));
+
+    await closeOrder('order-1');
+    expect(fetch).toHaveBeenCalledOnce();
+    const [url, init] = vi.mocked(fetch).mock.calls[0];
+    expect(url).toBe('/api/orders/order-1/close');
+    expect(init?.method).toBe('POST');
   });
 });
 
