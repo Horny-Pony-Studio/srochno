@@ -134,16 +134,18 @@ export default function ExecutorPreferencesPage() {
           <BlockTitle className="card-appear-delayed" style={{ animationDelay: "0.1s" }}>
             Частота уведомлений
           </BlockTitle>
-          <Block className="my-0 card-appear-delayed" style={{ animationDelay: "0.1s" }} strong inset>
-            <Select
-              value={frequency}
-              onChangeAction={setFrequency}
-              options={FREQUENCY_OPTIONS}
-              placeholder="Выберите частоту"
-              name="frequency"
-              className="w-full"
-            />
-          </Block>
+          <div className="card-appear-delayed" style={{ animationDelay: "0.1s" }}>
+            <Block strong inset className={"my-0"}>
+              <Select
+                value={frequency}
+                onChangeAction={setFrequency}
+                options={FREQUENCY_OPTIONS}
+                placeholder="Выберите частоту"
+                name="frequency"
+                className="w-full"
+              />
+            </Block>
+          </div>
 
           <InfoBlock
             className="mx-4 card-appear-delayed"
