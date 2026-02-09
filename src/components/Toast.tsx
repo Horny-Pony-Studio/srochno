@@ -99,6 +99,7 @@ export default function ToastStack({ toasts, onDismiss }: ToastStackProps) {
   if (typeof document === 'undefined' || toasts.length === 0) return null;
 
   const reversed = [...toasts].reverse();
+  const visible = reversed.slice(0, 3);
 
   return createPortal(
     <div
@@ -108,7 +109,7 @@ export default function ToastStack({ toasts, onDismiss }: ToastStackProps) {
       }}
     >
       <div className="relative pointer-events-auto mx-auto max-w-sm" style={{ minHeight: 56 }}>
-        {reversed.map((item, i) => (
+        {visible.map((item, i) => (
           <SingleToast
             key={item.id}
             item={item}
