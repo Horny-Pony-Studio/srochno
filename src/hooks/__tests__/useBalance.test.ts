@@ -25,8 +25,10 @@ function createWrapper() {
       mutations: { retry: false },
     },
   });
-  return ({ children }: { children: React.ReactNode }) =>
-    React.createElement(QueryClientProvider, { client: qc }, children);
+  function Wrapper({ children }: { children: React.ReactNode }) {
+    return React.createElement(QueryClientProvider, { client: qc }, children);
+  }
+  return Wrapper;
 }
 
 describe('useRechargeBalance', () => {
@@ -41,12 +43,12 @@ describe('useRechargeBalance', () => {
       wrapper: createWrapper(),
     });
 
-    result.current.mutate({ amount: 100, payment_method: 'card' });
+    result.current.mutate({ amount: 100, method: 'card' });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(mockRecharge).toHaveBeenCalledWith({
       amount: 100,
-      payment_method: 'card',
+      method: 'card',
     });
   });
 
@@ -57,7 +59,7 @@ describe('useRechargeBalance', () => {
       wrapper: createWrapper(),
     });
 
-    result.current.mutate({ amount: 200, payment_method: 'card' });
+    result.current.mutate({ amount: 200, method: 'card' });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(mockRefetchUser).toHaveBeenCalled();
@@ -70,7 +72,7 @@ describe('useRechargeBalance', () => {
       wrapper: createWrapper(),
     });
 
-    result.current.mutate({ amount: 100, payment_method: 'card' });
+    result.current.mutate({ amount: 100, method: 'card' });
 
     await waitFor(() => expect(result.current.isError).toBe(true));
     expect(result.current.error).toBeInstanceOf(Error);

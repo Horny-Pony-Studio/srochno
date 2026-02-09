@@ -32,18 +32,20 @@ function createWrapper() {
       mutations: { retry: false },
     },
   });
-  return ({ children }: { children: React.ReactNode }) =>
-    React.createElement(QueryClientProvider, { client: qc }, children);
+  function Wrapper({ children }: { children: React.ReactNode }) {
+    return React.createElement(QueryClientProvider, { client: qc }, children);
+  }
+  return Wrapper;
 }
 
 describe('reviewKeys', () => {
   it('generates correct key hierarchy', () => {
     expect(reviewKeys.all).toEqual(['reviews']);
     expect(reviewKeys.lists()).toEqual(['reviews', 'list']);
-    expect(reviewKeys.list({ order_id: '1' })).toEqual([
+    expect(reviewKeys.list({ rating: 5 })).toEqual([
       'reviews',
       'list',
-      { order_id: '1' },
+      { rating: 5 },
     ]);
   });
 });
@@ -75,12 +77,12 @@ describe('useReviews', () => {
     mockGetReviews.mockResolvedValue([]);
 
     const { result } = renderHook(
-      () => useReviews({ order_id: 'o-1' }),
+      () => useReviews({ rating: 5 }),
       { wrapper: createWrapper() },
     );
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(mockGetReviews).toHaveBeenCalledWith({ order_id: 'o-1' });
+    expect(mockGetReviews).toHaveBeenCalledWith({ rating: 5 });
   });
 });
 
@@ -125,14 +127,14 @@ describe('useSubmitComplaint', () => {
 
     result.current.mutate({
       order_id: 'order-2',
-      complaint: 'Не відповідав',
+      complaint: 'Не отвечал',
       comment: null,
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(mockSubmitComplaint).toHaveBeenCalledWith({
       order_id: 'order-2',
-      complaint: 'Не відповідав',
+      complaint: 'Не отвечал',
       comment: null,
     });
   });
