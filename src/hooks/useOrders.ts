@@ -10,6 +10,7 @@ import {
   updateOrder,
   deleteOrder,
   takeOrder,
+  closeOrder,
   type OrderListParams,
 } from '@/lib/api';
 import type {
@@ -123,6 +124,19 @@ export function useTakeOrder() {
     onSuccess: (_res: ExecutorTakeResponse, id: string) => {
       qc.invalidateQueries({ queryKey: orderKeys.detail(id) });
       qc.invalidateQueries({ queryKey: orderKeys.lists() });
+    },
+  });
+}
+
+export function useCloseOrder() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => closeOrder(id),
+    onSuccess: (_res: void, id: string) => {
+      qc.invalidateQueries({ queryKey: orderKeys.detail(id) });
+      qc.invalidateQueries({ queryKey: orderKeys.lists() });
+      qc.invalidateQueries({ queryKey: orderKeys.my() });
     },
   });
 }
