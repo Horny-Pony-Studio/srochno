@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import Toast, { type ToastType } from '@/components/Toast';
+import { useState, useCallback, useRef } from 'react';
+import ToastStack, { type ToastType, type ToastItem } from '@/components/Toast';
 
 interface ToastOptions {
   message: string;
@@ -10,20 +10,22 @@ interface ToastOptions {
 }
 
 export function useToast() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [options, setOptions] = useState<ToastOptions>({
-    message: '',
-    type: 'info',
-    duration: 3000,
-  });
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const idRef = useRef(0);
 
   const show = useCallback((opts: ToastOptions) => {
-    setOptions({
-      duration: 3000,
-      type: 'info',
-      ...opts,
-    });
-    setIsOpen(true);
+    const id = ++idRef.current;
+    const item: ToastItem = {
+      id,
+      message: opts.message,
+      type: opts.type ?? 'info',
+      duration: opts.duration ?? 3000,
+    };
+    setToasts((prev) => [...prev, item]);
+  }, []);
+
+  const dismiss = useCallback((id: number) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
   const success = useCallback((message: string, duration?: number) => {
@@ -42,21 +44,9 @@ export function useToast() {
     show({ message, type: 'info', duration });
   }, [show]);
 
-  const handleClose = useCallback(() => {
-    setIsOpen(false);
-  }, []);
-
   const ToastComponent = useCallback(
-    () => (
-      <Toast
-        opened={isOpen}
-        message={options.message}
-        type={options.type}
-        duration={options.duration}
-        onClose={handleClose}
-      />
-    ),
-    [isOpen, options, handleClose]
+    () => <ToastStack toasts={toasts} onDismiss={dismiss} />,
+    [toasts, dismiss],
   );
 
   return {
