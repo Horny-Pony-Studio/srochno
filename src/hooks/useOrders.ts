@@ -65,11 +65,7 @@ export function useMyOrders() {
       const res = await getOrders();
       const all = mapOrders(res.orders);
       if (!user) return all;
-      return all.filter(
-        (o) =>
-          o.contact !== '' &&
-          o.status !== 'deleted',
-      );
+      return all.filter((o) => o.status !== 'deleted');
     },
     enabled: !!user,
   });
