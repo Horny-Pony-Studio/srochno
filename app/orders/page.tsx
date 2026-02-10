@@ -4,12 +4,14 @@ import { useRouter } from "next/navigation";
 import { Block, ListItem, Preloader } from "konsta/react";
 import { AppList, AppNavbar, AppPage, InfoBlock, OrderCard, PageTransition, PullToRefresh, Select } from "@/src/components";
 import { CATEGORIES, CITIES } from "@/src/data";
-import { minutesLeft, takenCount } from "@/src/utils/order";
+import { isTakenByUser, minutesLeft, takenCount } from "@/src/utils/order";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
 import { useOrders } from "@/hooks/useOrders";
+import { useAuth } from "@/providers/AuthProvider";
 
 export default function OrdersPage() {
   const router = useRouter();
+  const { user } = useAuth();
   useTelegramBackButton('/');
   const [selectedCategory, setSelectedCategory] = useState<string>("Все");
   const [selectedCity, setSelectedCity] = useState<string>("Все");
@@ -32,8 +34,12 @@ export default function OrdersPage() {
 
   const activeOrders = useMemo(() => {
     if (!orders) return [];
-    return orders.filter((o) => minutesLeft(o) > 0);
-  }, [orders]);
+    return orders.filter((o) => {
+      if (minutesLeft(o) <= 0) return false;
+      if (user && isTakenByUser(o, user.id)) return false;
+      return true;
+    });
+  }, [orders, user]);
 
   return (
     <PageTransition>
