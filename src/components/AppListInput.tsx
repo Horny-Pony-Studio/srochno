@@ -29,4 +29,4 @@ const AppListInput = forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
 
 AppListInput.displayName = "AppListInput";
 
-export default AppListInput;
+export default React.memo(AppListInput);

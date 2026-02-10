@@ -16,7 +16,7 @@ type Props = Omit<
   className?: string;
 };
 
-export default function Select({
+function Select({
   value,
   onChangeAction,
   options,
@@ -50,3 +50,4 @@ export default function Select({
   );
 }
 
+export default React.memo(Select);
