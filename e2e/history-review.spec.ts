@@ -36,6 +36,27 @@ test.describe('History detail — review/complaint flow', () => {
     await page.goto('/');
     await page.evaluate(() => localStorage.setItem('user_role', 'executor'));
 
+    // Override mock so expired order has executor_id matching MOCK_USER.id (1)
+    await page.route('**/api/orders/order-expired', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'order-expired',
+          category: 'Сантехника',
+          description: 'Нужен сантехник срочно, район Центральный',
+          city: 'Москва',
+          contact: '@testuser',
+          created_at: new Date(Date.now() - 61 * 60_000).toISOString(),
+          expires_in_minutes: 60,
+          status: 'expired',
+          taken_by: [{ executor_id: 1, taken_at: new Date(Date.now() - 50 * 60_000).toISOString() }],
+          customer_responded_at: null,
+          city_locked: false,
+        }),
+      }),
+    );
+
     await page.goto('/history/order-expired');
 
     await expect(page.getByText('Пожаловаться на клиента')).toBeVisible();
