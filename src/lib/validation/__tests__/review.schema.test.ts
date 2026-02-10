@@ -108,9 +108,9 @@ describe('COMPLAINT_REASONS', () => {
   });
 
   it('includes key reasons', () => {
-    expect(COMPLAINT_REASONS).toContain('Не відповідав');
-    expect(COMPLAINT_REASONS).toContain('Відмінив замовлення');
-    expect(COMPLAINT_REASONS).toContain('Інше');
+    expect(COMPLAINT_REASONS).toContain('Не отвечал');
+    expect(COMPLAINT_REASONS).toContain('Отменил заказ');
+    expect(COMPLAINT_REASONS).toContain('Другое');
   });
 });
 
@@ -119,7 +119,7 @@ describe('COMPLAINT_REASONS', () => {
 describe('executorComplaintSchema', () => {
   const validComplaint = {
     orderId: 'order-456',
-    complaint: 'Не відповідав' as const,
+    complaint: 'Не отвечал' as const,
   };
 
   it('passes with valid complaint reason', () => {
@@ -130,7 +130,7 @@ describe('executorComplaintSchema', () => {
   it('passes with complaint and comment', () => {
     const result = executorComplaintSchema.safeParse({
       ...validComplaint,
-      comment: 'Клієнт не відповідав протягом 30 хвилин',
+      comment: 'Клиент не отвечал в течение 30 минут',
     });
     expect(result.success).toBe(true);
   });
@@ -171,7 +171,7 @@ describe('executorComplaintSchema', () => {
 
   it('requires orderId', () => {
     const result = executorComplaintSchema.safeParse({
-      complaint: 'Не відповідав',
+      complaint: 'Не отвечал',
     });
     expect(result.success).toBe(false);
   });
