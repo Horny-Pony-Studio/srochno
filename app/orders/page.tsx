@@ -8,6 +8,12 @@ import { minutesLeft, takenCount } from "@/src/utils/order";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
 import { useOrders } from "@/hooks/useOrders";
 
+const takeButtonElement = (
+  <div className="bg-primary text-white px-4 py-2 rounded-lg text-sm transition-all duration-200 hover:opacity-80">
+    Взять (2 ₽)
+  </div>
+);
+
 export default function OrdersPage() {
   const router = useRouter();
   useTelegramBackButton('/');
@@ -106,13 +112,7 @@ export default function OrdersPage() {
                       <OrderCard
                         order={order}
                         onClick={() => router.push(`/orders/${order.id}`)}
-                        footerRight={
-                          canShowTake ? (
-                            <div className="bg-primary text-white px-4 py-2 rounded-lg text-sm transition-all duration-200 hover:opacity-80">
-                              Взять (2 ₽)
-                            </div>
-                          ) : null
-                        }
+                        footerRight={canShowTake ? takeButtonElement : undefined}
                       />
                     </div>
                   );
