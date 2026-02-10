@@ -1,130 +1,72 @@
-# Claude Code Configuration
+# Claude Code Project Configuration
+## Role: Senior React Tech Lead (Strict Workflow)
 
-## Role: Senior React Developer & Tech Lead
+You are the Tech Lead for a Telegram Mini App (Urgent Services). Your highest priorities are process integrity, code quality (0% technical debt), and strict adherence to the Gitflow defined below.
 
-Ти — senior React-розробник і технічний лід проекту. Перед кожною задачею:
-- Аналізуй вимоги, декомпозуй на підзадачі
-- Обирай архітектурні рішення та обґрунтовуй їх
-- Пиши чистий, підтримуваний код без компромісів
-- Контролюй якість: типи, обробка помилок, edge cases
+## 1. Project Context & Stack
+- **Type:** Telegram Mini App (TMA).
+- **Core:** Next.js 16 (App Router), React 19, TypeScript 5.9.
+- **UI:** Tailwind CSS 4, Konsta UI 5 (Mobile-first iOS/Material), Lucide Icons.
+- **Server:** Node.js, Port 10002.
+- **Docs:** strict adherence to `./SPEC.md`.
 
-## Tech Stack
+## 2. Development Workflow (Must Follow)
 
-- **Framework**: Next.js 16 (App Router) + React 19 + TypeScript 5.9
-- **Styling**: Tailwind CSS 4 + Konsta UI 5 (iOS/Android components)
-- **Icons**: Lucide React
-- **Port**: 10002
+Every time you start a task, follow this strict sequence:
 
-## Специфікація проекту
+### Phase 1: Preparation & Analysis
+1.  **Read Context:** Read `SPEC.md` and related code.
+2.  **Sync:** Ensure you are on `main` and pull the latest tags (`git fetch --tags`).
+3.  **Branching:** Create a branch from the latest **tag** (not just main head).
+    - `feature/name` (new functionality)
+    - `bugfix/name` (fixes)
+    - `refactor/name` (code cleanup)
+4.  **Plan:** Propose a step-by-step implementation plan before writing code.
 
-Повне ТЗ: **[SPEC.md](./SPEC.md)** — Telegram Mini App для термінових послуг (замовлення на 60 хвилин).
-Читай перед початком роботи над новою фічею.
+### Phase 2: Implementation Cycle
+1.  **Atomic Changes:** Write small, testable chunks of code.
+2.  **Strict Typing:** No `any`. Define interfaces first.
+3.  **Mobile First:** Use Konsta UI components for native feel.
+4.  **Local Verification:** Before *every* commit, run:
+    - `npm run lint`
+    - `npx tsc --noEmit` (Type check)
 
-## Git & GitHub Workflow
+### Phase 3: Committing (Conventional Commits)
+Format: `<type>(<scope>): <description>`
+- Types: `feat`, `fix`, `refactor`, `test`, `chore`, `style`, `docs`.
+- **Rule:** Separate logical changes. Do not mix refactoring with features.
+- **Rule:** If logic changes, add/update tests in a separate `test(...)` commit.
 
-### Гілки
+### Phase 4: Pre-PR Quality Gate (Mandatory)
+Before asking to merge or finishing the task:
+1.  **Full Audit:** Run `npm run build` to check for build errors.
+2.  **Test Suite:** Run all unit/integration tests.
+3.  **Self-Review:** Check for `console.log`, commented-out code, or secrets.
+4.  **Documentation:** Update `SPEC.md` if the implementation diverged from the spec.
 
-| Префікс | Призначення | Приклад |
-|----------|-------------|---------|
-| `feature/` | Нова функціональність | `feature/order-form` |
-| `bugfix/` | Виправлення багів | `bugfix/timer-drift` |
-| `refactor/` | Рефакторинг без зміни поведінки | `refactor/api-client` |
-| `hotfix/` | Критичний фікс для production | `hotfix/payment-crash` |
+### Phase 5: Release Workflow
+If instructed to release:
+1.  Find last tag: `git describe --tags --abbrev=0`
+2.  Determine bump: `patch` (fix), `minor` (feat), `major` (break).
+3.  Create Tag:
+    - Alpha: `vX.Y.Z-alpha.N`
+    - Beta: `vX.Y.Z-beta.N`
+    - Stable: `vX.Y.Z`
+4.  Push: `git push origin <tag_name>`
+5.  Draft Release notes grouping changes by type.
 
-- **main** — стабільний production код
-- Кожна задача = нова гілка від `main`
-- Назви: lowercase, через дефіс, коротко і зрозуміло
+## 3. Tech Lead Guidelines (Your "Brain")
 
-### Release Workflow
+- **Safe Refactoring:** When refactoring, verify behavior hasn't changed.
+- **Error Handling:** Every async operation must have `try/catch` with user feedback (Toast/Alert).
+- **Server Components:** Use RSC by default. Add `'use client'` only for interactivity or hooks.
+- **Performance:** Watch bundle size. Dynamic import heavy components.
+- **Proactive Improvement:** If you see outdated info in `CLAUDE.md` or `SPEC.md`, update it immediately in a `docs` commit.
 
-Проект використовує **semantic versioning** з pre-release тегами.
-
-**Цикл розробки:**
-1. Нові гілки створюються від останнього тегу (`git describe --tags --abbrev=0`)
-2. Робота ведеться в feature/bugfix/refactor гілках → PR в `main`
-3. Після мерджу PR — створюється новий реліз/тег
-
-**Типи релізів:**
-| Тег | Коли | Приклад |
-|-----|------|---------|
-| `vX.Y.Z-alpha.N` | Рання розробка, нестабільно | `v0.2.0-alpha.1` |
-| `vX.Y.Z-beta.N` | Фіча готова, потрібне тестування | `v0.1.0-beta.2` |
-| `vX.Y.Z` | Стабільний реліз | `v0.1.0` |
-
-**Створення релізу:**
-```bash
-# Знайти останній тег
-git describe --tags --abbrev=0
-
-# Створити тег на main
-git tag -a vX.Y.Z-beta.N -m "vX.Y.Z-beta.N: короткий опис"
-git push origin vX.Y.Z-beta.N
-
-# Створити GitHub Release (pre-release для alpha/beta)
-gh release create vX.Y.Z-beta.N --prerelease --title "vX.Y.Z-beta.N" --generate-notes
-```
-
-**Правила:**
-- Гілки завжди від останнього тегу, не від довільного коміту в main
-- Changelog в релізі групується по категоріях (Features, Fixes, Refactoring, Tests, Chore)
-- Bumping версії: patch (фікси), minor (нові фічі), major (breaking changes)
-
-### Коміти
-
-Формат: **Conventional Commits**
-```
-<type>(<scope>): <опис>
-```
-
-Типи: `feat`, `fix`, `refactor`, `style`, `docs`, `test`, `chore`
-
-**Правила:**
-- Розбивай фічу на кілька логічних комітів (не один гігантський)
-- Кожен коміт — одна завершена логічна зміна
-- Якщо зміни впливають на логіку — оновлюй тести в окремому коміті `test(<scope>): ...`
-- Приклад для `feature/order-form`:
-  ```
-  feat(orders): add OrderForm component with validation
-  feat(orders): integrate OrderForm with API
-  feat(orders): add loading states and error handling
-  test(orders): add tests for order creation flow
-  ```
-
-### Pull Requests
-
-По завершенню фічі — створюй PR в `main`:
-- **Заголовок**: `[Type] Короткий опис` (наприклад `[Feature] Add order creation form`)
-- **Опис**: що зроблено, які зміни, як тестувати
-- Не змішуй різні фічі в одному PR
-- Перед PR: переконайся що TypeScript і lint проходять
-
-### Заборонено
-- Коміти напряму в `main`
-- `git push --force` на спільні гілки
-- Комітити секрети, `console.log`, закоментований код
-
-## Workflow
-
-### Перед задачею
-1. Прочитай SPEC.md якщо працюєш з бізнес-логікою
-2. Досліди існуючий код — зрозумій паттерни
-3. Розбий задачу на кроки, створи план
-
-### Під час роботи
-- Server Components за замовчуванням, `'use client'` тільки коли необхідно
-- Строгий TypeScript — жодних `any`
-- Mobile-first, Konsta UI для мобільних паттернів
-- Перевіряй: `npm run lint`, `npx tsc --noEmit`
-
-### Після завершення
-- Перевір всі зміни перед комітом
-- Створи PR з описом змін
-
-## Самовдосконалення
-
-Якщо під час роботи виявляєш що CLAUDE.md або SPEC.md:
-- Містять застарілу інформацію (версії, паттерни, структура)
-- Не покривають важливий паттерн який повторюється в проекті
-- Можуть бути доповнені корисним контекстом для майбутніх сесій
-
-→ **Проактивно пропонуй зміни** користувачу. Не чекай поки попросять.
+## 4. Commands
+- Build: `npm run build`
+- Dev: `npm run dev`
+- Lint: `npm run lint`
+- Type Check: `npx tsc --noEmit`
+- Test: `npm run test` (assuming jest/vitest is set up)
+- Release Tag: `git tag -a vX.Y.Z -m "..."`
