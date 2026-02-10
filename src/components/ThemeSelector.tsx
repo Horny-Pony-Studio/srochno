@@ -5,8 +5,8 @@ import { useTheme, type ThemePreference } from '@/providers/ThemeProvider';
 
 const THEME_OPTIONS: Array<{ value: ThemePreference; label: string }> = [
   { value: 'auto', label: 'Авто' },
-  { value: 'light', label: 'Світла' },
-  { value: 'dark', label: 'Темна' },
+  { value: 'light', label: 'Светлая' },
+  { value: 'dark', label: 'Тёмная' },
 ];
 
 export default function ThemeSelector() {

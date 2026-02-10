@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-// Категорії згідно ТЗ
+// Категории согласно ТЗ
 export const CATEGORIES = [
   'Сантехника',
   'Электрика',
@@ -11,36 +11,36 @@ export const CATEGORIES = [
   'Другое',
 ] as const;
 
-// Схема для створення замовлення
+// Схема для создания заказа
 export const createOrderSchema = z.object({
   category: z.enum(CATEGORIES, {
-    message: 'Виберіть категорію',
+    message: 'Выберите категорию',
   }),
   description: z
     .string({
-      message: 'Опис обов\'язковий',
+      message: 'Описание обязательно',
     })
-    .min(20, 'Опис має містити мінімум 20 символів')
-    .max(1000, 'Опис занадто довгий (максимум 1000 символів)'),
+    .min(20, 'Описание должно содержать минимум 20 символов')
+    .max(1000, 'Описание слишком длинное (максимум 1000 символов)'),
   city: z
     .string({
-      message: 'Виберіть місто',
+      message: 'Выберите город',
     })
-    .min(2, 'Назва міста занадто коротка')
-    .max(100, 'Назва міста занадто довга'),
+    .min(2, 'Название города слишком короткое')
+    .max(100, 'Название города слишком длинное'),
   contact: z
     .string({
-      message: 'Контакт обов\'язковий',
+      message: 'Контакт обязателен',
     })
-    .min(3, 'Контакт занадто короткий')
-    .max(100, 'Контакт занадто довгий'),
+    .min(3, 'Контакт слишком короткий')
+    .max(100, 'Контакт слишком длинный'),
 });
 
-// Схема для редагування замовлення
+// Схема для редактирования заказа
 export const updateOrderSchema = createOrderSchema.partial({
-  city: true, // Місто не можна змінювати
+  city: true, // Город нельзя менять
 });
 
-// TypeScript типи з схем
+// TypeScript типы из схем
 export type CreateOrderInput = z.infer<typeof createOrderSchema>;
 export type UpdateOrderInput = z.infer<typeof updateOrderSchema>;
