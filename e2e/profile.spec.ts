@@ -46,16 +46,6 @@ test.describe('Profile page', () => {
 
     await expect(page.getByText('История заказов')).toBeVisible();
     await expect(page.getByText('Отзывы')).toBeVisible();
-    await expect(page.getByText('Сменить роль')).toBeVisible();
-  });
-
-  test('"Сменить роль" clears role and navigates to /', async ({ mockPage: page }) => {
-    await page.goto('/profile');
-
-    await page.getByText('Сменить роль').click();
-    await page.waitForURL('**/');
-
-    const role = await page.evaluate(() => localStorage.getItem('user_role'));
-    expect(role).toBeNull();
+    await expect(page.getByText('Заказы в работе')).toBeVisible();
   });
 });

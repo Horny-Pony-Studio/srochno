@@ -102,74 +102,38 @@ describe('createOrderSchema', () => {
     });
   });
 
-  // Contact — Telegram username
-  describe('contact — Telegram username', () => {
-    it('accepts valid @username', () => {
+  // Contact — free format
+  describe('contact', () => {
+    it('accepts Telegram username', () => {
       const result = createOrderSchema.safeParse({ ...validOrder, contact: '@myuser' });
       expect(result.success).toBe(true);
     });
 
-    it('accepts @username with underscores and digits', () => {
-      const result = createOrderSchema.safeParse({ ...validOrder, contact: '@user_name_123' });
+    it('accepts phone number in any format', () => {
+      const formats = ['+380991234567', '0991234567', '+7-900-123-45-67', '89001234567'];
+      for (const contact of formats) {
+        const result = createOrderSchema.safeParse({ ...validOrder, contact });
+        expect(result.success).toBe(true);
+      }
+    });
+
+    it('accepts free-form text contact', () => {
+      const result = createOrderSchema.safeParse({ ...validOrder, contact: 'Viber: 099 123 4567' });
       expect(result.success).toBe(true);
-    });
-
-    it('rejects @username shorter than 5 chars after @', () => {
-      const result = createOrderSchema.safeParse({ ...validOrder, contact: '@abcd' });
-      expect(result.success).toBe(false);
-    });
-
-    it('rejects @username longer than 32 chars after @', () => {
-      const result = createOrderSchema.safeParse({
-        ...validOrder,
-        contact: '@' + 'a'.repeat(33),
-      });
-      expect(result.success).toBe(false);
-    });
-
-    it('accepts @username exactly 5 chars after @', () => {
-      const result = createOrderSchema.safeParse({ ...validOrder, contact: '@abcde' });
-      expect(result.success).toBe(true);
-    });
-
-    it('accepts @username exactly 32 chars after @', () => {
-      const result = createOrderSchema.safeParse({
-        ...validOrder,
-        contact: '@' + 'a'.repeat(32),
-      });
-      expect(result.success).toBe(true);
-    });
-  });
-
-  // Contact — Russian phone
-  describe('contact — phone number', () => {
-    it('accepts +7XXXXXXXXXX format', () => {
-      const result = createOrderSchema.safeParse({ ...validOrder, contact: '+79001234567' });
-      expect(result.success).toBe(true);
-    });
-
-    it('accepts 8XXXXXXXXXX format', () => {
-      const result = createOrderSchema.safeParse({ ...validOrder, contact: '89001234567' });
-      expect(result.success).toBe(true);
-    });
-
-    it('accepts phone with dashes', () => {
-      const result = createOrderSchema.safeParse({ ...validOrder, contact: '+7-900-123-45-67' });
-      expect(result.success).toBe(true);
-    });
-
-    it('accepts phone with parentheses', () => {
-      const result = createOrderSchema.safeParse({ ...validOrder, contact: '+7(900)1234567' });
-      expect(result.success).toBe(true);
-    });
-
-    it('rejects invalid contact format', () => {
-      const result = createOrderSchema.safeParse({ ...validOrder, contact: 'not-a-contact' });
-      expect(result.success).toBe(false);
     });
 
     it('rejects empty contact', () => {
       const result = createOrderSchema.safeParse({ ...validOrder, contact: '' });
+      expect(result.success).toBe(false);
+    });
+
+    it('rejects contact < 3 chars', () => {
+      const result = createOrderSchema.safeParse({ ...validOrder, contact: 'ab' });
+      expect(result.success).toBe(false);
+    });
+
+    it('rejects contact > 100 chars', () => {
+      const result = createOrderSchema.safeParse({ ...validOrder, contact: 'a'.repeat(101) });
       expect(result.success).toBe(false);
     });
   });

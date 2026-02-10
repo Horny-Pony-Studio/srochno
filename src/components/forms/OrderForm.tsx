@@ -20,7 +20,7 @@ export default function OrderForm({
   onSubmit,
   defaultValues,
   isLoading = false,
-  submitLabel = 'Створити заявку',
+  submitLabel = 'Создать заявку',
 }: OrderFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -52,17 +52,17 @@ export default function OrderForm({
     <form onSubmit={handleSubmit(onSubmitHandler)} className="space-y-4">
       <List strongIos insetIos>
         <FormSelect
-          label="Категорія"
+          label="Категория"
           options={CATEGORIES.map((cat) => cat)}
-          placeholder="Оберіть категорію послуги"
+          placeholder="Выберите категорию услуги"
           register={register('category')}
           error={errors.category?.message}
           required
         />
 
         <FormTextarea
-          label="Опис"
-          placeholder="Опишіть проблему, вкажіть район, орієнтири, рівень терміновості..."
+          label="Описание"
+          placeholder="Опишите проблему, укажите район, ориентиры, степень срочности..."
           register={register('description')}
           error={errors.description?.message}
           rows={6}
@@ -72,9 +72,9 @@ export default function OrderForm({
         />
 
         <FormInput
-          label="Місто"
+          label="Город"
           type="text"
-          placeholder="Наприклад: Київ"
+          placeholder="Например: Москва"
           register={register('city')}
           error={errors.city?.message}
           required
@@ -83,10 +83,10 @@ export default function OrderForm({
         <FormInput
           label="Контакт"
           type="text"
-          placeholder="@username або +380XXXXXXXXX"
+          placeholder="Telegram, телефон, Viber и т.д."
           register={register('contact')}
           error={errors.contact?.message}
-          info="Telegram username або номер телефону"
+          info="Любой удобный способ связи"
           required
         />
       </List>
@@ -98,11 +98,11 @@ export default function OrderForm({
           disabled={!isValid || isSubmitting || isLoading}
           className="w-full"
         >
-          {isSubmitting || isLoading ? 'Створення...' : submitLabel}
+          {isSubmitting || isLoading ? 'Создание...' : submitLabel}
         </Button>
 
         <p className="text-xs text-gray-500 text-center mt-3">
-          ⏱️ Заявка буде активна протягом 60 хвилин
+          ⏱️ Заявка будет активна в течение 60 минут
         </p>
       </div>
     </form>
