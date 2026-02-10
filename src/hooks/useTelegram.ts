@@ -63,7 +63,7 @@ export function useTelegramBackButton(fallbackPath?: string) {
 
       const handler = () => {
         if (fallbackPath) {
-          router.push(fallbackPath);
+          router.replace(fallbackPath);
         } else {
           router.back();
         }
