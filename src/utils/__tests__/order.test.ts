@@ -4,6 +4,7 @@ import {
   secondsLeft,
   takenCount,
   isExpired,
+  isTakenByUser,
   isAutoClosedNoResponse,
   ORDER_LIFETIME_MINUTES,
   NO_RESPONSE_CLOSE_MINUTES,
@@ -200,6 +201,49 @@ describe('isExpired', () => {
     const createdAt = new Date(now - 60 * 60_000).toISOString();
     const order = makeOrder({ createdAt });
     expect(isExpired(order, now)).toBe(true);
+  });
+});
+
+// ─── isTakenByUser ─────────────────────────────────────
+
+describe('isTakenByUser', () => {
+  it('returns false for order with no executors', () => {
+    const order = makeOrder({ takenBy: [] });
+    expect(isTakenByUser(order, 123)).toBe(false);
+  });
+
+  it('returns true when user is among executors (number id)', () => {
+    const order = makeOrder({
+      takenBy: [{ executorId: '123', takenAt: new Date().toISOString() }],
+    });
+    expect(isTakenByUser(order, 123)).toBe(true);
+  });
+
+  it('returns true when user is among executors (string id)', () => {
+    const order = makeOrder({
+      takenBy: [{ executorId: '456', takenAt: new Date().toISOString() }],
+    });
+    expect(isTakenByUser(order, '456')).toBe(true);
+  });
+
+  it('returns false when user is not among executors', () => {
+    const order = makeOrder({
+      takenBy: [{ executorId: '100', takenAt: new Date().toISOString() }],
+    });
+    expect(isTakenByUser(order, 999)).toBe(false);
+  });
+
+  it('works with multiple executors', () => {
+    const now = new Date().toISOString();
+    const order = makeOrder({
+      takenBy: [
+        { executorId: '10', takenAt: now },
+        { executorId: '20', takenAt: now },
+        { executorId: '30', takenAt: now },
+      ],
+    });
+    expect(isTakenByUser(order, 20)).toBe(true);
+    expect(isTakenByUser(order, 99)).toBe(false);
   });
 });
 
