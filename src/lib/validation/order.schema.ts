@@ -33,18 +33,7 @@ export const createOrderSchema = z.object({
       message: 'Контакт обов\'язковий',
     })
     .min(3, 'Контакт занадто короткий')
-    .max(100, 'Контакт занадто довгий')
-    .refine(
-      (value) => {
-        // Telegram username (@username) або телефон
-        const telegramRegex = /^@[a-zA-Z0-9_]{5,32}$/;
-        const phoneRegex = /^(\+7|8)?[\s\-]?\(?[489]\d{2}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}$/;
-        return telegramRegex.test(value) || phoneRegex.test(value);
-      },
-      {
-        message: 'Введіть Telegram username (@username) або номер телефону',
-      }
-    ),
+    .max(100, 'Контакт занадто довгий'),
 });
 
 // Схема для редагування замовлення

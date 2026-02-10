@@ -83,10 +83,10 @@ export default function OrderForm({
         <FormInput
           label="Контакт"
           type="text"
-          placeholder="@username або +380XXXXXXXXX"
+          placeholder="Telegram, телефон, Viber тощо"
           register={register('contact')}
           error={errors.contact?.message}
-          info="Telegram username або номер телефону"
+          info="Будь-який зручний спосіб зв'язку"
           required
         />
       </List>
