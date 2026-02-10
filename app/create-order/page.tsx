@@ -1,6 +1,6 @@
 "use client"
 
-import React, { Suspense, useState, useCallback } from "react";
+import React, { Suspense, useState, useCallback, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Block, Checkbox, ListItem, Preloader } from "konsta/react";
 import { AppList, AppListInput, Select, InfoBlock, AppPage, AppNavbar, PageTransition } from "@/src/components";
@@ -40,6 +40,12 @@ function CreateOrderContent() {
   const [city, setCity] = useState("");
   const [contact, setContact] = useState("");
 
+  // Ref for stable handleSubmit — avoids re-creating callback on every keystroke
+  const formRef = useRef({ selectedCategory, description, city, contact });
+  useEffect(() => {
+    formRef.current = { selectedCategory, description, city, contact };
+  });
+
   // Sync form state when existing order loads (React "adjust state during render" pattern)
   const [syncedOrderId, setSyncedOrderId] = useState<string | null>(null);
   if (isEditMode && existingOrder && existingOrder.id !== syncedOrderId) {
@@ -60,6 +66,7 @@ function CreateOrderContent() {
   const isPending = createMut.isPending || updateMut.isPending;
 
   const handleSubmit = useCallback(() => {
+    const { selectedCategory, description, city, contact } = formRef.current;
     const data = {
       category: selectedCategory,
       description,
@@ -103,7 +110,7 @@ function CreateOrderContent() {
         },
       });
     }
-  }, [selectedCategory, description, city, contact, isEditMode, editId, createMut, updateMut, router, toast]);
+  }, [isEditMode, editId, createMut, updateMut, router, toast]);
 
   const mainButtonText = isEditMode ? 'Сохранить' : 'Создать';
   useTelegramMainButton(mainButtonText, handleSubmit, {
@@ -111,9 +118,19 @@ function CreateOrderContent() {
     isLoading: isPending,
   });
 
-  const toggleGroupValue = (value: string) => {
+  const toggleGroupValue = useCallback((value: string) => {
     setSelectedCategory(value);
-  };
+  }, []);
+
+  const handleDescriptionChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => setDescription(e.target.value),
+    []
+  );
+
+  const handleContactChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => setContact(e.target.value),
+    []
+  );
 
   if (isEditMode && isLoadingOrder) {
     return (
@@ -162,9 +179,7 @@ function CreateOrderContent() {
                 labelText={"Описание"}
                 placeholder={"Укажите район, ориентиры, что нужно сделать, степень срочности..."}
                 value={description}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
-                  setDescription(e.target.value)
-                }
+                onChange={handleDescriptionChange}
               />
             </AppList>
           </div>
@@ -176,9 +191,7 @@ function CreateOrderContent() {
                 labelText={"Контакт"}
                 placeholder={"Telegram (@username) или телефон"}
                 value={contact}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) =>
-                  setContact(e.target.value)
-                }
+                onChange={handleContactChange}
               />
             </AppList>
           </div>
