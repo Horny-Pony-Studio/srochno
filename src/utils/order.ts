@@ -24,6 +24,10 @@ export function secondsLeft(order: Order, nowMs: number = Date.now()): number {
   return Math.max(0, Math.ceil((expiresMs - nowMs) / 1000));
 }
 
+export function isTakenByUser(order: Order, userId: number | string): boolean {
+  return order.takenBy.some((t) => t.executorId === String(userId));
+}
+
 export function isAutoClosedNoResponse(order: Order, nowMs: number = Date.now()): boolean {
   if (order.status === "closed_no_response") return true;
   if (order.customerResponse) return false;

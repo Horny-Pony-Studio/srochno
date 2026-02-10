@@ -6,7 +6,7 @@ import { Block, Chip, Link, ListItem, Preloader } from "konsta/react";
 import { Clock, Phone, Lock, CheckCircle } from "lucide-react";
 import { AppPage, InfoBlock, AppNavbar, AppList, PageTransition } from "@/src/components";
 import { getTimeBackground, getTimeColor } from "@/src/utils/time";
-import { takenCount } from "@/src/utils/order";
+import { isTakenByUser, takenCount } from "@/src/utils/order";
 import { useOrderTimer } from "@/src/hooks/useOrderTimer";
 import { useTelegramBackButton, useTelegramMainButton } from "@/src/hooks/useTelegram";
 import { useOrder, useTakeOrder } from "@/hooks/useOrders";
@@ -31,9 +31,12 @@ export default function OrderDetailPage() {
 
   const timer = useOrderTimer(order);
 
+  const alreadyTaken = order && user ? isTakenByUser(order, user.id) : false;
+  const showContact = contactUnlocked || alreadyTaken;
+
   const pay = 2;
   const takes = order ? takenCount(order) : 0;
-  const canTake = !contactUnlocked && balance >= pay && takes < 3 && !timer.isExpired;
+  const canTake = !showContact && balance >= pay && takes < 3 && !timer.isExpired;
 
   const handleTakeOrder = useCallback(() => {
     if (!canTake || !orderId || takeOrderMut.isPending) return;
@@ -130,7 +133,7 @@ export default function OrderDetailPage() {
 
           <Block className="my-0 card-appear-delayed" style={{ animationDelay: '0.25s' }} strong inset>
             <div className="text-sm opacity-55 mb-2">Контакт</div>
-            {contactUnlocked ? (
+            {showContact ? (
               <div className="flex items-center gap-2 scale-in">
                 <Phone className="w-5 h-5 text-primary" />
                 <Link href={`https://t.me/${displayContact.replace("@", "")}`} className="text-primary">
@@ -172,7 +175,7 @@ export default function OrderDetailPage() {
             </Block>
           )}
 
-          {!contactUnlocked && !canTake && balance < pay && (
+          {!showContact && !canTake && balance < pay && (
             <InfoBlock
               className="mx-4 scale-in"
               variant="yellow"
