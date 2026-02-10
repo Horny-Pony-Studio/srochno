@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   useLaunchParams,
@@ -121,6 +121,11 @@ export function useTelegramMainButton(
   const isEnabled = options?.isEnabled ?? true;
   const isLoading = options?.isLoading ?? false;
 
+  const onClickRef = useRef(onClick);
+  useEffect(() => {
+    onClickRef.current = onClick;
+  });
+
   useEffect(() => {
     try {
       if (mainButton.setParams.isAvailable()) {
@@ -134,7 +139,7 @@ export function useTelegramMainButton(
 
       let unsub: VoidFunction | undefined;
       if (mainButton.onClick.isAvailable()) {
-        unsub = mainButton.onClick(onClick);
+        unsub = mainButton.onClick(() => onClickRef.current());
       }
 
       return () => {
@@ -151,7 +156,7 @@ export function useTelegramMainButton(
       // Not in Telegram environment
       return;
     }
-  }, [text, onClick, isEnabled, isLoading]);
+  }, [text, isEnabled, isLoading]);
 }
 
 /**
