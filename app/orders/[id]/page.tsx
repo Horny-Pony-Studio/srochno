@@ -63,8 +63,17 @@ export default function OrderDetailPage() {
     });
   }, [canTake, orderId, takeOrderMut, refetchUser, toast]);
 
+  const mainButtonLabel = (() => {
+    if (canTake) return `Взять заказ (${pay} ₽)`;
+    if (showContact) return 'В работе';
+    if (timer.isExpired) return 'Заказ истёк';
+    if (takes >= 3) return 'Откликов 3/3';
+    if (balance < pay) return 'Недостаточно средств';
+    return 'Недоступно';
+  })();
+
   useTelegramMainButton(
-    canTake ? `Взять заказ (${pay} ₽)` : 'Недоступно',
+    mainButtonLabel,
     handleTakeOrder,
     { isEnabled: canTake, isLoading: takeOrderMut.isPending },
   );
