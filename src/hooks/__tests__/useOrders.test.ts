@@ -38,6 +38,7 @@ import {
   useOrders,
   useOrder,
   useMyOrders,
+  useTakenOrders,
   useCreateOrder,
   useTakeOrder,
   useCloseOrder,
@@ -158,6 +159,48 @@ describe('useMyOrders', () => {
     // Only deleted orders are filtered out
     expect(result.current.data).toHaveLength(2);
     expect(result.current.data!.map(o => o.id)).toEqual(['1', '2']);
+  });
+});
+
+describe('useTakenOrders', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns only orders taken by the current user', async () => {
+    const rawOrders = [
+      { id: '1', takenBy: [{ executorId: 'user-1', takenAt: '2025-01-01T00:00:00Z' }] },
+      { id: '2', takenBy: [{ executorId: 'other-user', takenAt: '2025-01-01T00:00:00Z' }] },
+      { id: '3', takenBy: [
+        { executorId: 'other-user', takenAt: '2025-01-01T00:00:00Z' },
+        { executorId: 'user-1', takenAt: '2025-01-01T00:00:00Z' },
+      ] },
+    ];
+    mockGetOrders.mockResolvedValue({ orders: rawOrders });
+
+    const { result } = renderHook(() => useTakenOrders(), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(mockGetOrders).toHaveBeenCalledWith({ status: 'active' });
+    expect(result.current.data).toHaveLength(2);
+    expect(result.current.data!.map((o) => o.id)).toEqual(['1', '3']);
+  });
+
+  it('returns empty array when no orders are taken by user', async () => {
+    const rawOrders = [
+      { id: '1', takenBy: [{ executorId: 'other', takenAt: '2025-01-01T00:00:00Z' }] },
+    ];
+    mockGetOrders.mockResolvedValue({ orders: rawOrders });
+
+    const { result } = renderHook(() => useTakenOrders(), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toHaveLength(0);
   });
 });
 
