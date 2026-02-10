@@ -24,7 +24,7 @@ const VARIANT_STYLES: Record<Variant, { icon: string; colorClass: string }> = {
   },
 };
 
-export default function InfoBlock({
+function InfoBlock({
   className = "",
   variant = "red",
   children,
@@ -63,3 +63,5 @@ export default function InfoBlock({
     </Block>
   );
 }
+
+export default React.memo(InfoBlock);

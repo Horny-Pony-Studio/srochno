@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
   useCallback,
+  useMemo,
   type ReactNode,
 } from 'react';
 import { initData } from '@telegram-apps/sdk-react';
@@ -73,16 +74,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     fetchUser();
   }, [fetchUser]);
 
+  const contextValue = useMemo<AuthContextValue>(() => ({
+    user,
+    isLoading,
+    isAuthenticated: user !== null,
+    error,
+    refetchUser: fetchUser,
+  }), [user, isLoading, error, fetchUser]);
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isLoading,
-        isAuthenticated: user !== null,
-        error,
-        refetchUser: fetchUser,
-      }}
-    >
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
