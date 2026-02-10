@@ -25,18 +25,20 @@ vi.mock('konsta/react', () => ({
   ),
   ListInput: ({
     label,
+    name,
     value,
     onChange,
     placeholder,
   }: {
     label?: React.ReactNode;
+    name?: string;
     value?: string;
     onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
     placeholder?: string;
   }) => (
     <div>
       {label}
-      <textarea value={value} onChange={onChange} placeholder={placeholder} />
+      <textarea name={name} value={value} onChange={onChange} placeholder={placeholder} />
     </div>
   ),
 }));
@@ -113,6 +115,27 @@ describe('ReviewForm', () => {
         order_id: 'order-1',
         rating: 5,
         comment: null,
+      });
+    });
+  });
+
+  it('passes comment text through to mutateAsync on submit', async () => {
+    render(<ReviewForm orderId="order-1" />);
+
+    const stars = screen.getAllByRole('button');
+    fireEvent.click(stars[4]); // 5 stars
+
+    const textarea = screen.getByPlaceholderText('Расскажите о работе исполнителя...');
+    fireEvent.change(textarea, { target: { value: 'Отличная работа!' } });
+
+    const submitBtn = screen.getByText('Отправить отзыв');
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledWith({
+        order_id: 'order-1',
+        rating: 5,
+        comment: 'Отличная работа!',
       });
     });
   });
