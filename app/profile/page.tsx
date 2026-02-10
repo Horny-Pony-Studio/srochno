@@ -119,7 +119,7 @@ export default function Profile() {
         <div className="card-appear-delayed" style={{ animationDelay: '0.15s' }}>
           <AppList>
             <ListItem title="История заказов" link onClick={() => router.push("/history")} />
-            <ListItem title="Мои категории" link onClick={() => router.push("/executor")} />
+            <ListItem title="Заказы в работе" link onClick={() => router.push("/taken")} />
             <ListItem title="Отзывы" link onClick={() => router.push("/reviews")} />
             <ListItem title="Настройки уведомлений" link onClick={() => router.push("/executor")} />
           </AppList>
