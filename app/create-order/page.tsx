@@ -210,7 +210,6 @@ function CreateOrderContent() {
                     options={cities}
                     placeholder="Выберите город"
                     label="Выберите город"
-                    className="w-40"
                     disabled={isEditMode}
                     isLoading={isCitiesLoading}
                   />
