@@ -2,7 +2,8 @@
 
 import React, { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Block, BlockTitle, Checkbox, ListItem, Searchbar } from "konsta/react";
+import { Block, BlockTitle, Checkbox, ListItem } from "konsta/react";
+import { Search, X, MapPin } from "lucide-react";
 import { AppPage, AppNavbar, AppList, InfoBlock, Select, PageTransition } from "@/src/components";
 import { CATEGORIES } from "@/src/data/categories";
 import { useCities } from "@/hooks/useCities";
@@ -54,13 +55,7 @@ export default function ExecutorPreferencesPage() {
 
   const visibleCities = useMemo(() => filteredCities.slice(0, 50), [filteredCities]);
 
-  const handleCitySearchInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setCitySearch(e.target.value);
-  }, []);
-
-  const handleCitySearchClear = useCallback(() => {
-    setCitySearch("");
-  }, []);
+  const isCitySearching = citySearch.trim().length > 0;
 
   const isDirty = selectedCategories.size > 0 || selectedCities.size > 0;
   useClosingConfirmation(isDirty);
@@ -144,41 +139,65 @@ export default function ExecutorPreferencesPage() {
             Города {selectedCities.size > 0 && `(${selectedCities.size})`}
           </BlockTitle>
           <div className="card-appear-delayed">
-            <Searchbar
-              placeholder="Поиск города..."
-              value={citySearch}
-              onInput={handleCitySearchInput}
-              onClear={handleCitySearchClear}
-              clearButton
-            />
+            {/* Search input */}
+            <div className="px-4 pb-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 opacity-40" />
+                <input
+                  type="text"
+                  value={citySearch}
+                  onChange={(e) => setCitySearch(e.target.value)}
+                  placeholder="Поиск города..."
+                  className="w-full pl-9 pr-9 py-2.5 rounded-xl bg-black/5 dark:bg-white/10 text-sm placeholder:opacity-40"
+                />
+                {isCitySearching && (
+                  <button
+                    type="button"
+                    onClick={() => setCitySearch("")}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full bg-black/10 dark:bg-white/20 active:opacity-60"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {!isCitySearching && (
+              <div className="px-4 pb-1">
+                <span className="text-xs uppercase tracking-wide opacity-40">
+                  Популярные города
+                </span>
+              </div>
+            )}
+
             <AppList>
-              {visibleCities.map((city) => (
-                <ListItem
-                  key={city}
-                  label
-                  title={city}
-                  media={
-                    <Checkbox
-                      checked={selectedCities.has(city)}
-                      onChange={() => toggleCity(city)}
+              {visibleCities.length === 0 ? (
+                <li className="flex flex-col items-center justify-center py-8 gap-2">
+                  <MapPin className="w-8 h-8 opacity-20" />
+                  <p className="text-sm opacity-40">Город не найден</p>
+                </li>
+              ) : (
+                <>
+                  {visibleCities.map((city) => (
+                    <ListItem
+                      key={city}
+                      label
+                      title={city}
+                      media={
+                        <Checkbox
+                          checked={selectedCities.has(city)}
+                          onChange={() => toggleCity(city)}
+                        />
+                      }
                     />
-                  }
-                />
-              ))}
-              {filteredCities.length > 50 && (
-                <ListItem
-                  title={`Ещё ${filteredCities.length - 50}... Уточните поиск`}
-                  className="text-gray-400 italic"
-                />
-              )}
-              {filteredCities.length === 0 && (
-                <ListItem title="Ничего не найдено" className="text-gray-400" />
-              )}
-              {!citySearch.trim() && (
-                <ListItem
-                  title="Введите название для поиска других городов"
-                  className="text-gray-400 italic text-xs"
-                />
+                  ))}
+                  {filteredCities.length > 50 && (
+                    <ListItem
+                      title={`Ещё ${filteredCities.length - 50} — уточните поиск`}
+                      className="opacity-40 italic"
+                    />
+                  )}
+                </>
               )}
             </AppList>
           </div>
