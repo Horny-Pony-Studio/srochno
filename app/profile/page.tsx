@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { Block, Button, ListItem, Preloader } from "konsta/react";
 import { Star, Wallet, CreditCard } from "lucide-react";
 import {AppList, AppNavbar, AppPage, PageTransition, ThemeSelector} from "@/src/components";
@@ -10,14 +11,30 @@ import { useTelegramBackButton, useTelegramLinks } from "@/src/hooks/useTelegram
 import { useAuth } from "@/providers/AuthProvider";
 import { usePayment } from "@/src/hooks/usePayment";
 import { useToast } from "@/hooks/useToast";
+import { initData } from "@telegram-apps/sdk-react";
+
+function usePhotoUrl(): string | undefined {
+  try {
+    return initData.user()?.photo_url;
+  } catch {
+    return undefined;
+  }
+}
 
 export default function Profile() {
   const router = useRouter();
   useTelegramBackButton();
   const { openTelegramLink, openExternalLink } = useTelegramLinks();
-  const { user } = useAuth();
+  const { user, refetchUser } = useAuth();
   const toast = useToast();
   const { state: paymentState, startPayment, reset: resetPayment } = usePayment();
+  const photoUrl = usePhotoUrl();
+  const [imgError, setImgError] = useState(false);
+
+  // Refresh user stats on every visit to profile
+  useEffect(() => {
+    refetchUser();
+  }, [refetchUser]);
 
   const isPaymentBusy = paymentState === 'creating' || paymentState === 'awaiting_payment';
 
@@ -54,6 +71,7 @@ export default function Profile() {
     : '...';
   const displayUsername = user?.username ? `@${user.username}` : '';
   const avatarLetter = user?.first_name?.[0]?.toUpperCase() ?? '?';
+  const showPhoto = photoUrl && !imgError;
 
   return (
     <PageTransition>
@@ -63,8 +81,22 @@ export default function Profile() {
         <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
           <Block className="my-0 card-appear" strong inset>
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white text-2xl transition-transform duration-300 hover:scale-110">
-              {avatarLetter}
+            <div className="w-16 h-16 rounded-full overflow-hidden shrink-0 transition-transform duration-300 hover:scale-110">
+              {showPhoto ? (
+                <Image
+                  src={photoUrl}
+                  alt={displayName}
+                  width={64}
+                  height={64}
+                  className="w-full h-full object-cover"
+                  unoptimized
+                  onError={() => setImgError(true)}
+                />
+              ) : (
+                <div className="w-full h-full bg-primary flex items-center justify-center text-white text-2xl">
+                  {avatarLetter}
+                </div>
+              )}
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-lg mb-1 truncate">{displayName}</div>
@@ -142,7 +174,7 @@ export default function Profile() {
             <ListItem title="История заказов" link onClick={() => router.push("/history")} />
             <ListItem title="Заказы в работе" link onClick={() => router.push("/taken")} />
             <ListItem title="Отзывы" link onClick={() => router.push("/reviews")} />
-            <ListItem title="Настройки уведомлений" link onClick={() => router.push("/executor")} />
+            <ListItem title="Настройки уведомлений" link onClick={() => router.push("/notifications")} />
           </AppList>
         </div>
 

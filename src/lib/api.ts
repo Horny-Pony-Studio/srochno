@@ -143,6 +143,15 @@ export function getPaymentStatus(
   );
 }
 
+// ─── Cities ─────────────────────────────────────────────
+
+export function getCities(search?: string): Promise<string[]> {
+  const qs = new URLSearchParams();
+  if (search) qs.set('search', search);
+  const query = qs.toString();
+  return request<string[]>(`/api/cities${query ? `?${query}` : ''}`);
+}
+
 // ─── Orders ──────────────────────────────────────────────
 
 export interface OrderListParams {

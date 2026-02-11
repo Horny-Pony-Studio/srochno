@@ -4,6 +4,7 @@ import AppNavbar from "./AppNavbar";
 import AppPage from "./AppPage";
 import EmptyState from "./EmptyState";
 import InfoBlock from "./InfoBlock";
+import SearchableSelect from "./SearchableSelect";
 import Select from "./Select";
 import OrderCard from "./OrderCard";
 import HistoryCard from "./HistoryCard";
@@ -29,6 +30,7 @@ export {
   PageTransition,
   PullToRefresh,
   ReviewForm,
+  SearchableSelect,
   Select,
   StarRating,
   ThemeSelector,
