@@ -16,6 +16,7 @@ import {
   submitClientReview,
   submitExecutorComplaint,
   getReviews,
+  getCities,
 } from '../api';
 
 // ─── Mock fetch ─────────────────────────────────────────
@@ -342,5 +343,33 @@ describe('getReviews', () => {
     const url = spy.mock.calls[0][0] as string;
     expect(url).toContain('rating=5');
     expect(url).toContain('limit=10');
+  });
+});
+
+describe('getCities', () => {
+  it('calls GET /api/cities without params', async () => {
+    const spy = mockFetch(['Москва', 'Казань']);
+    vi.stubGlobal('fetch', spy);
+
+    const result = await getCities();
+    expect(spy.mock.calls[0][0]).toBe('/api/cities');
+    expect(result).toEqual(['Москва', 'Казань']);
+  });
+
+  it('appends search param when provided', async () => {
+    const spy = mockFetch(['Москва']);
+    vi.stubGlobal('fetch', spy);
+
+    await getCities('Мос');
+    const url = spy.mock.calls[0][0] as string;
+    expect(url).toContain('/api/cities?search=');
+  });
+
+  it('omits search param when empty', async () => {
+    const spy = mockFetch([]);
+    vi.stubGlobal('fetch', spy);
+
+    await getCities();
+    expect(spy.mock.calls[0][0]).toBe('/api/cities');
   });
 });
