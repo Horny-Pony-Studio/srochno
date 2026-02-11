@@ -13,7 +13,7 @@ export default function ThemeSelector() {
   const { preference, setPreference } = useTheme();
 
   return (
-    <List strongIos insetIos>
+    <List strongIos insetIos className={"m-0"}>
       {THEME_OPTIONS.map((option) => (
         <ListItem
           key={option.value}
