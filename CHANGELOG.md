@@ -1,5 +1,24 @@
 # Changelog
 
+## v0.1.0-beta.5 (2026-02-11)
+
+### Fixes
+- **orders**: Invalidate taken orders list after taking an order (`useTakeOrder.onSuccess`)
+
+### Performance
+- **history**: Wrap `HistoryCard` in `React.memo` to reduce unnecessary re-renders
+
+### Accessibility
+- Add `aria-label="Закрыть"` to Toast close button
+- Add `aria-label="Профиль"` to AppNavbar profile button
+- Add `role="button"` + `tabIndex={0}` to `OrderCard`, `HistoryCard`, and role-selection blocks
+
+### UX
+- Add loading skeletons (`loading.tsx`) for `/customer`, `/executor`, `/create-order`, `/taken`, `/reviews`
+
+### Chores
+- Remove unused Next.js template assets (`next.svg`, `vercel.svg`, `globe.svg`, `file.svg`, `window.svg`)
+
 ## v0.1.0-beta.4
 
 ### Fixes
