@@ -136,6 +136,7 @@ export function useTakeOrder() {
     onSuccess: (_res: ExecutorTakeResponse, id: string) => {
       qc.invalidateQueries({ queryKey: orderKeys.detail(id) });
       qc.invalidateQueries({ queryKey: orderKeys.lists() });
+      qc.invalidateQueries({ queryKey: [...orderKeys.all, 'taken'] });
     },
   });
 }
