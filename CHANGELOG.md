@@ -1,5 +1,24 @@
 # Changelog
 
+## v0.1.0-beta.6 (2026-02-11)
+
+### Features
+- **payments**: Crypto Bot payment integration (fiat RUB invoices, testnet)
+  - Payment API types and client functions (`createInvoice`, `getPaymentStatus`)
+  - `usePayment` hook with state machine (idle → creating → awaiting_payment → paid/error/expired)
+  - Profile recharge flow opens Crypto Bot mini app, polls for confirmation, shows toast on result
+- **customer**: Add "Respond" and "Complete" action buttons for order management
+- **api**: Add `respondToOrder` and `completeOrder` API functions
+
+### Chores
+- Remove unused mock orders data
+
+### Backend (applied separately)
+- `aiocryptopay` integration with fiat RUB invoices
+- `PaymentInvoice` model + Alembic migration
+- 3 new endpoints: `POST /create-invoice`, `GET /payment/{id}/status`, `POST /webhook/crypto-bot`
+- HMAC-SHA256 webhook verification, idempotent payment processing
+
 ## v0.1.0-beta.5 (2026-02-11)
 
 ### Fixes

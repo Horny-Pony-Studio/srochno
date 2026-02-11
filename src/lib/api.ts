@@ -3,6 +3,9 @@ import type {
   BalanceResponse,
   RechargeRequest,
   RechargeResponse,
+  CreateInvoiceRequest,
+  CreateInvoiceResponse,
+  PaymentStatusResponse,
   OrderResponse,
   OrderListResponse,
   OrderDetailResponse,
@@ -121,6 +124,25 @@ export function rechargeBalance(
   });
 }
 
+// ─── Crypto Bot Payments ─────────────────────────────────
+
+export function createInvoice(
+  data: CreateInvoiceRequest,
+): Promise<CreateInvoiceResponse> {
+  return request<CreateInvoiceResponse>('/api/balance/create-invoice', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export function getPaymentStatus(
+  paymentId: number,
+): Promise<PaymentStatusResponse> {
+  return request<PaymentStatusResponse>(
+    `/api/balance/payment/${paymentId}/status`,
+  );
+}
+
 // ─── Orders ──────────────────────────────────────────────
 
 export interface OrderListParams {
@@ -129,6 +151,7 @@ export interface OrderListParams {
   status?: OrderStatus;
   limit?: number;
   offset?: number;
+  mine?: boolean;
 }
 
 export function getOrders(
@@ -140,6 +163,7 @@ export function getOrders(
   if (params?.status) qs.set('status', params.status);
   if (params?.limit != null) qs.set('limit', String(params.limit));
   if (params?.offset != null) qs.set('offset', String(params.offset));
+  if (params?.mine) qs.set('mine', 'true');
   const query = qs.toString();
   return request<OrderListResponse>(
     `/api/orders${query ? `?${query}` : ''}`,
@@ -181,6 +205,18 @@ export function takeOrder(orderId: string): Promise<ExecutorTakeResponse> {
 
 export function closeOrder(orderId: string): Promise<void> {
   return request<void>(`/api/orders/${orderId}/close`, {
+    method: 'POST',
+  });
+}
+
+export function respondToOrder(orderId: string): Promise<OrderResponse> {
+  return request<OrderResponse>(`/api/orders/${orderId}/respond`, {
+    method: 'POST',
+  });
+}
+
+export function completeOrder(orderId: string): Promise<OrderResponse> {
+  return request<OrderResponse>(`/api/orders/${orderId}/complete`, {
     method: 'POST',
   });
 }
