@@ -50,7 +50,7 @@ export default function ComplaintForm({ orderId, onSuccess }: ComplaintFormProps
         onSuccess?.();
       }}
     >
-      <List className="my-0">
+      <List className="my-0 -mx-4">
         {COMPLAINT_REASONS.map((r) => (
           <ListItem
             key={r}

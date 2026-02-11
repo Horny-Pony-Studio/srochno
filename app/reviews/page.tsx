@@ -43,7 +43,7 @@ export default function ReviewsPage() {
       <AppPage className="min-h-dvh flex flex-col">
         <AppNavbar title="Отзывы" showRight />
 
-        <Block className="my-3 pl-0! pr-0!">
+        <Block className="my-4 pl-0! pr-0!">
           <div className="px-4 overflow-x-auto hide-scrollbar scroll-hint-right">
             <div className="flex gap-2 w-max pr-4">
               {FILTER_TABS.map((f) => (

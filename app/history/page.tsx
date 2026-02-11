@@ -76,7 +76,7 @@ export default function HistoryPage() {
       <AppPage className="min-h-dvh flex flex-col">
         <AppNavbar title="История заказов" showRight />
 
-        <Block className="my-3 pl-0! pr-0!">
+        <Block className="my-4 pl-0! pr-0!">
           <div className="px-4 overflow-x-auto hide-scrollbar scroll-hint-right">
             <div className="flex gap-2 w-max pr-4">
               {filterTabs.map((f) => (
@@ -100,7 +100,7 @@ export default function HistoryPage() {
         </Block>
 
         <PullToRefresh onRefresh={handleRefresh} className="flex-1">
-        <Block className="flex-1 pb-20 my-0 pl-0! pr-0! flex flex-col gap-3">
+        <Block className="flex-1 pb-20 my-0 pl-0! pr-0! flex flex-col gap-4">
           {isLoading ? (
             <div className="flex items-center justify-center py-20">
               <Preloader className="text-primary" />
