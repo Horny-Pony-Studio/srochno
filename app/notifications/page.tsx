@@ -19,7 +19,7 @@ const FREQUENCY_OPTIONS = [
   { value: "10", label: "Каждые 10 мин" },
 ];
 
-export default function ExecutorPreferencesPage() {
+export default function NotificationSettingsPage() {
   const router = useRouter();
   const toast = useToast();
   useTelegramBackButton("/profile");

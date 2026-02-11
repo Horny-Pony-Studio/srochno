@@ -20,7 +20,7 @@ function SkeletonCard() {
   );
 }
 
-export default function ExecutorLoading() {
+export default function NotificationSettingsLoading() {
   return (
     <AppPage>
       <AppNavbar title="Мои подписки" />
