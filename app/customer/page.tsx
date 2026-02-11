@@ -2,12 +2,12 @@
 
 import { useCallback } from "react";
 import { Block, List, Button, Chip, Preloader } from "konsta/react";
-import { Edit2, Trash2, X } from 'lucide-react';
+import { Edit2, Trash2, X, MessageCircle, CheckCircle } from 'lucide-react';
 import { takenCount } from "@/src/utils/order";
 import { useRouter } from "next/navigation";
 import { AppPage, EmptyState, InfoBlock, AppNavbar, OrderTimerChip, PageTransition } from "@/src/components";
 import { useTelegramBackButton, useTelegramMainButton, useTelegramConfirm } from "@/src/hooks/useTelegram";
-import { useMyOrders, useDeleteOrder, useCloseOrder } from "@/hooks/useOrders";
+import { useMyOrders, useDeleteOrder, useCloseOrder, useRespondToOrder, useCompleteOrder } from "@/hooks/useOrders";
 
 function CustomerPage() {
   const router = useRouter();
@@ -17,6 +17,8 @@ function CustomerPage() {
   const { data: orders, isLoading, isError, refetch } = useMyOrders();
   const deleteMut = useDeleteOrder();
   const closeMut = useCloseOrder();
+  const respondMut = useRespondToOrder();
+  const completeMut = useCompleteOrder();
 
   const handleCreateOrder = useCallback(() => {
     router.push('/create-order');
@@ -38,6 +40,18 @@ function CustomerPage() {
     if (!ok) return;
     closeMut.mutate(orderId);
   }, [confirm, closeMut]);
+
+  const onRespondToOrder = useCallback(async (orderId: string) => {
+    const ok = await confirm('Подтвердить, что вы ответили исполнителю?');
+    if (!ok) return;
+    respondMut.mutate(orderId);
+  }, [confirm, respondMut]);
+
+  const onCompleteOrder = useCallback(async (orderId: string) => {
+    const ok = await confirm('Завершить заявку?');
+    if (!ok) return;
+    completeMut.mutate(orderId);
+  }, [confirm, completeMut]);
 
   return (
     <PageTransition>
@@ -94,47 +108,83 @@ function CustomerPage() {
                       </div>
 
                       <div className="flex gap-2">
-                        <Button
-                          rounded
-                          outline
-                          disabled={!canModify || deleteMut.isPending}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onEditOrder(order.id);
-                          }}
-                          className={"flex-1 justify-center k-color-brand-yellow transition-all duration-200"}
-                        >
-                          <Edit2 className="w-4 h-4"/>
-                          <span className="text-sm">Изменить</span>
-                        </Button>
-                        <Button
-                          rounded
-                          outline
-                          color="red"
-                          disabled={!canModify || deleteMut.isPending}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onDeleteOrder(order.id);
-                          }}
-                          className={"flex-1 justify-center k-color-brand-red transition-all duration-200"}
-                        >
-                          <Trash2 className="w-4 h-4"/>
-                          <span className="text-sm">Удалить</span>
-                        </Button>
+                        {canModify && (
+                          <>
+                            <Button
+                              rounded
+                              outline
+                              disabled={deleteMut.isPending}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onEditOrder(order.id);
+                              }}
+                              className={"flex-1 justify-center k-color-brand-yellow transition-all duration-200"}
+                            >
+                              <Edit2 className="w-4 h-4"/>
+                              <span className="text-sm">Изменить</span>
+                            </Button>
+                            <Button
+                              rounded
+                              outline
+                              color="red"
+                              disabled={deleteMut.isPending}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onDeleteOrder(order.id);
+                              }}
+                              className={"flex-1 justify-center k-color-brand-red transition-all duration-200"}
+                            >
+                              <Trash2 className="w-4 h-4"/>
+                              <span className="text-sm">Удалить</span>
+                            </Button>
+                          </>
+                        )}
                         {order.status === 'active' && order.takenBy.length > 0 && (
-                          <Button
-                            rounded
-                            outline
-                            disabled={closeMut.isPending}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onCloseOrder(order.id);
-                            }}
-                            className={"flex-1 justify-center k-color-brand-red transition-all duration-200"}
-                          >
-                            <X className="w-4 h-4"/>
-                            <span className="text-sm">Закрыть</span>
-                          </Button>
+                          <>
+                            {!order.customerResponse ? (
+                              <Button
+                                rounded
+                                outline
+                                color="green"
+                                disabled={respondMut.isPending}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onRespondToOrder(order.id);
+                                }}
+                                className={"flex-1 justify-center k-color-brand-green transition-all duration-200"}
+                              >
+                                <MessageCircle className="w-4 h-4"/>
+                                <span className="text-sm">Я ответил</span>
+                              </Button>
+                            ) : (
+                              <Button
+                                rounded
+                                color="green"
+                                disabled={completeMut.isPending}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onCompleteOrder(order.id);
+                                }}
+                                className={"flex-1 justify-center transition-all duration-200"}
+                              >
+                                <CheckCircle className="w-4 h-4"/>
+                                <span className="text-sm">Завершить</span>
+                              </Button>
+                            )}
+                            <Button
+                              rounded
+                              outline
+                              disabled={closeMut.isPending}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onCloseOrder(order.id);
+                              }}
+                              className={"flex-1 justify-center k-color-brand-red transition-all duration-200"}
+                            >
+                              <X className="w-4 h-4"/>
+                              <span className="text-sm">Закрыть</span>
+                            </Button>
+                          </>
                         )}
                       </div>
 
