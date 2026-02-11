@@ -33,6 +33,7 @@ export default function AppNavbar({
           type="button"
           onClick={() => router.push("/profile")}
           className="flex items-center gap-2 shrink-0 ml-3 transition-opacity duration-200 active:opacity-50"
+          aria-label="Профиль"
         >
           <span className="text-[14px] font-medium whitespace-nowrap">
             {user?.balance ?? 0} ₽

@@ -85,6 +85,7 @@ function SingleToast({
             onClick={handleClose}
             className="rounded-full"
             style={{ opacity: 0.4 }}
+            aria-label="Закрыть"
           >
             <X className="w-4 h-4" />
           </button>
