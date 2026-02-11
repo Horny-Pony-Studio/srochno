@@ -23,7 +23,7 @@ function SkeletonCard() {
 export default function NotificationSettingsLoading() {
   return (
     <AppPage>
-      <AppNavbar title="Мои подписки" />
+      <AppNavbar title="Уведомления" />
       <Block className="my-4 pl-0! pr-0!">
         <SkeletonCard />
         <SkeletonCard />
