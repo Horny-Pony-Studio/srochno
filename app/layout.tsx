@@ -45,7 +45,7 @@ const geistMono = Geist_Mono({
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="uk">
+    <html lang="ru">
       <head />
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <TelegramProvider>

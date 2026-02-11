@@ -41,8 +41,8 @@ export default function OrderForm({
     try {
       setIsSubmitting(true);
       await onSubmit(data);
-    } catch (error) {
-      console.error('Form submission error:', error);
+    } catch {
+      // Error handling is delegated to the caller via onSubmit
     } finally {
       setIsSubmitting(false);
     }

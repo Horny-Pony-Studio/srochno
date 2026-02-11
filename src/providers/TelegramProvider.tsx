@@ -19,9 +19,8 @@ export function TelegramProvider({ children }: { children: ReactNode }) {
   try {
     init();
     initData.restore();
-    console.log('[TG] SDK init OK, initData.raw():', initData.raw()?.slice(0, 60));
-  } catch (e) {
-    console.warn('[TG] SDK init failed:', e);
+  } catch {
+    // SDK init fails during SSR (window is not defined) — expected
   }
 
   useEffect(() => {
@@ -87,8 +86,8 @@ export function TelegramProvider({ children }: { children: ReactNode }) {
       if (miniApp.ready.isAvailable()) {
         miniApp.ready();
       }
-    } catch (error) {
-      console.error('Failed to initialize Telegram SDK:', error);
+    } catch {
+      // Telegram SDK features may be unavailable outside TMA
     }
   }, []);
 
