@@ -3,6 +3,9 @@ import type {
   BalanceResponse,
   RechargeRequest,
   RechargeResponse,
+  CreateInvoiceRequest,
+  CreateInvoiceResponse,
+  PaymentStatusResponse,
   OrderResponse,
   OrderListResponse,
   OrderDetailResponse,
@@ -119,6 +122,25 @@ export function rechargeBalance(
     method: 'POST',
     body: JSON.stringify(data),
   });
+}
+
+// ─── Crypto Bot Payments ─────────────────────────────────
+
+export function createInvoice(
+  data: CreateInvoiceRequest,
+): Promise<CreateInvoiceResponse> {
+  return request<CreateInvoiceResponse>('/api/balance/create-invoice', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export function getPaymentStatus(
+  paymentId: number,
+): Promise<PaymentStatusResponse> {
+  return request<PaymentStatusResponse>(
+    `/api/balance/payment/${paymentId}/status`,
+  );
 }
 
 // ─── Orders ──────────────────────────────────────────────
