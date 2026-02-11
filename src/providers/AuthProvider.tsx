@@ -42,25 +42,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       let raw: string | undefined;
       try {
         raw = initData.raw();
-        console.log('[Auth] initData.raw() →', raw ? `${raw.slice(0, 50)}…` : 'empty');
-      } catch (e) {
-        console.warn('[Auth] initData.raw() threw:', e);
+      } catch {
+        // initData unavailable outside Telegram
       }
 
       if (!raw) {
-        console.warn('[Auth] No initData — skipping auth');
         setError('Telegram initData not available');
         setUser(null);
         return;
       }
 
       setAuthToken(raw);
-      console.log('[Auth] Fetching /api/users/me…');
       const profile = await getMe();
-      console.log('[Auth] Profile loaded:', profile);
       setUser(profile);
     } catch (err) {
-      console.error('[Auth] Failed:', err);
       const message =
         err instanceof Error ? err.message : 'Authentication failed';
       setError(message);
