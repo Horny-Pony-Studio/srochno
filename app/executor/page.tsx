@@ -2,10 +2,10 @@
 
 import React, { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Block, BlockTitle, Checkbox, ListItem } from "konsta/react";
+import { Block, BlockTitle, Checkbox, ListItem, Searchbar } from "konsta/react";
 import { AppPage, AppNavbar, AppList, InfoBlock, Select, PageTransition } from "@/src/components";
 import { CATEGORIES } from "@/src/data/categories";
-import { CITIES } from "@/src/data/cities";
+import { useCities } from "@/hooks/useCities";
 import { updatePreferences, updateNotificationSettings } from "@/lib/api";
 import {
   useTelegramBackButton,
@@ -26,8 +26,26 @@ export default function ExecutorPreferencesPage() {
 
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [selectedCities, setSelectedCities] = useState<Set<string>>(new Set());
+  const [citySearch, setCitySearch] = useState("");
   const [frequency, setFrequency] = useState("5");
   const [saving, setSaving] = useState(false);
+  const { data: cities = [] } = useCities();
+
+  const filteredCities = useMemo(() => {
+    if (!citySearch.trim()) return cities;
+    const q = citySearch.trim().toLowerCase();
+    return cities.filter((c) => c.toLowerCase().includes(q));
+  }, [cities, citySearch]);
+
+  const visibleCities = useMemo(() => filteredCities.slice(0, 50), [filteredCities]);
+
+  const handleCitySearchInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setCitySearch(e.target.value);
+  }, []);
+
+  const handleCitySearchClear = useCallback(() => {
+    setCitySearch("");
+  }, []);
 
   const isDirty = selectedCategories.size > 0 || selectedCities.size > 0;
   useClosingConfirmation(isDirty);
@@ -107,10 +125,19 @@ export default function ExecutorPreferencesPage() {
             </AppList>
           </div>
 
-          <BlockTitle className="card-appear-delayed">Города</BlockTitle>
+          <BlockTitle className="card-appear-delayed">
+            Города {selectedCities.size > 0 && `(${selectedCities.size})`}
+          </BlockTitle>
           <div className="card-appear-delayed">
+            <Searchbar
+              placeholder="Поиск города..."
+              value={citySearch}
+              onInput={handleCitySearchInput}
+              onClear={handleCitySearchClear}
+              clearButton
+            />
             <AppList>
-              {CITIES.map((city) => (
+              {visibleCities.map((city) => (
                 <ListItem
                   key={city}
                   label
@@ -123,6 +150,15 @@ export default function ExecutorPreferencesPage() {
                   }
                 />
               ))}
+              {filteredCities.length > 50 && (
+                <ListItem
+                  title={`Ещё ${filteredCities.length - 50}... Уточните поиск`}
+                  className="text-gray-400 italic"
+                />
+              )}
+              {filteredCities.length === 0 && (
+                <ListItem title="Ничего не найдено" className="text-gray-400" />
+              )}
             </AppList>
           </div>
 

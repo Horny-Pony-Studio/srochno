@@ -2,8 +2,9 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Block, ListItem, Preloader } from "konsta/react";
-import { AppList, AppNavbar, AppPage, InfoBlock, OrderCard, PageTransition, PullToRefresh, Select } from "@/src/components";
-import { CATEGORIES, CITIES } from "@/src/data";
+import { AppList, AppNavbar, AppPage, InfoBlock, OrderCard, PageTransition, PullToRefresh, SearchableSelect, Select } from "@/src/components";
+import { CATEGORIES } from "@/src/data";
+import { useCities } from "@/hooks/useCities";
 import { isTakenByUser, minutesLeft, takenCount } from "@/src/utils/order";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
 import { useOrders } from "@/hooks/useOrders";
@@ -20,15 +21,15 @@ export default function OrdersPage() {
   const { user } = useAuth();
   useTelegramBackButton('/');
   const [selectedCategory, setSelectedCategory] = useState<string>("Все");
-  const [selectedCity, setSelectedCity] = useState<string>("Все");
+  const [selectedCity, setSelectedCity] = useState<string>("");
+  const { data: cities = [], isLoading: isCitiesLoading } = useCities();
 
   const categoryOptions = useMemo(() => ["Все", ...CATEGORIES], []);
-  const cityOptions = useMemo(() => ["Все", ...CITIES], []);
 
   const filters = useMemo(() => {
     const f: { category?: string; city?: string; status?: 'active' } = { status: 'active' };
     if (selectedCategory !== "Все") f.category = selectedCategory;
-    if (selectedCity !== "Все") f.city = selectedCity;
+    if (selectedCity) f.city = selectedCity;
     return f;
   }, [selectedCategory, selectedCity]);
 
@@ -76,12 +77,15 @@ export default function OrdersPage() {
               label
               title={<span className={"text-sm"}>Город</span>}
               after={
-                <Select
+                <SearchableSelect
                   value={selectedCity}
-                  onChangeAction={setSelectedCity}
-                  options={cityOptions}
-                  placeholder="Выберите город"
+                  onSelect={setSelectedCity}
+                  options={cities}
+                  placeholder="Все города"
+                  label="Выберите город"
                   className="w-48 text-right"
+                  isLoading={isCitiesLoading}
+                  clearLabel="Все города"
                 />
               }
             />
