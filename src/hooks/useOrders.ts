@@ -11,12 +11,15 @@ import {
   deleteOrder,
   takeOrder,
   closeOrder,
+  respondToOrder,
+  completeOrder,
   type OrderListParams,
 } from '@/lib/api';
 import type {
   CreateOrderRequest,
   UpdateOrderRequest,
   ExecutorTakeResponse,
+  OrderResponse,
 } from '@/types/api';
 import { mapOrder, mapOrders } from '@/lib/mappers';
 import type { Order } from '@/src/models/Order';
@@ -64,10 +67,8 @@ export function useMyOrders() {
   return useQuery({
     queryKey: orderKeys.my(),
     queryFn: async (): Promise<Order[]> => {
-      const res = await getOrders();
-      const all = mapOrders(res.orders);
-      if (!user) return all;
-      return all.filter((o) => o.status !== 'deleted');
+      const res = await getOrders({ mine: true });
+      return mapOrders(res.orders);
     },
     enabled: !!user,
   });
@@ -147,6 +148,32 @@ export function useCloseOrder() {
   return useMutation({
     mutationFn: (id: string) => closeOrder(id),
     onSuccess: (_res: void, id: string) => {
+      qc.invalidateQueries({ queryKey: orderKeys.detail(id) });
+      qc.invalidateQueries({ queryKey: orderKeys.lists() });
+      qc.invalidateQueries({ queryKey: orderKeys.my() });
+    },
+  });
+}
+
+export function useRespondToOrder() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => respondToOrder(id),
+    onSuccess: (_res: OrderResponse, id: string) => {
+      qc.invalidateQueries({ queryKey: orderKeys.detail(id) });
+      qc.invalidateQueries({ queryKey: orderKeys.lists() });
+      qc.invalidateQueries({ queryKey: orderKeys.my() });
+    },
+  });
+}
+
+export function useCompleteOrder() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => completeOrder(id),
+    onSuccess: (_res: OrderResponse, id: string) => {
       qc.invalidateQueries({ queryKey: orderKeys.detail(id) });
       qc.invalidateQueries({ queryKey: orderKeys.lists() });
       qc.invalidateQueries({ queryKey: orderKeys.my() });
