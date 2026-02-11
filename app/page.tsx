@@ -37,6 +37,8 @@ export default function Home() {
               strong
               inset
               className="my-4 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] card-appear-delayed"
+              role="button"
+              tabIndex={0}
             >
               <div className="flex items-center justify-between">
                 <div>
@@ -53,6 +55,8 @@ export default function Home() {
               inset
               className="my-4 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] card-appear-delayed"
               style={{ animationDelay: '0.15s' }}
+              role="button"
+              tabIndex={0}
             >
               <div className="flex items-center justify-between">
                 <div>

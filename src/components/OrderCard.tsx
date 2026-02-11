@@ -22,6 +22,8 @@ function OrderCard({ order, onClick, className, footerRight }: Props) {
       strong
       inset
       onClick={onClick}
+      role="button"
+      tabIndex={0}
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
