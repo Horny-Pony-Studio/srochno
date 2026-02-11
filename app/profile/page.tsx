@@ -1,34 +1,49 @@
 "use client";
 
-import React from "react";
-import { Block, Button, ListItem } from "konsta/react";
+import React, { useEffect } from "react";
+import { Block, Button, ListItem, Preloader } from "konsta/react";
 import { Star, Wallet, CreditCard } from "lucide-react";
 import {AppList, AppNavbar, AppPage, PageTransition, ThemeSelector} from "@/src/components";
 import { PACKAGES } from "@/src/data";
 import {useRouter} from "next/navigation";
 import { useTelegramBackButton, useTelegramLinks } from "@/src/hooks/useTelegram";
 import { useAuth } from "@/providers/AuthProvider";
-import { useRechargeBalance } from "@/src/hooks/useBalance";
+import { usePayment } from "@/src/hooks/usePayment";
 import { useToast } from "@/hooks/useToast";
 
 export default function Profile() {
   const router = useRouter();
   useTelegramBackButton();
-  const { openTelegramLink } = useTelegramLinks();
+  const { openTelegramLink, openExternalLink } = useTelegramLinks();
   const { user } = useAuth();
   const toast = useToast();
-  const rechargeMut = useRechargeBalance();
+  const { state: paymentState, startPayment, reset: resetPayment } = usePayment();
 
-  const handleRecharge = (amount: number) => {
-    rechargeMut.mutate(
-      { amount },
-      {
-        onError: () => {
-          toast.error('Не удалось пополнить баланс. Попробуйте позже.');
-        },
-      },
-    );
+  const isPaymentBusy = paymentState === 'creating' || paymentState === 'awaiting_payment';
+
+  const handleRecharge = async (amount: number) => {
+    const invoice = await startPayment(amount);
+    if (!invoice) return;
+
+    if (invoice.mini_app_invoice_url) {
+      openTelegramLink(invoice.mini_app_invoice_url);
+    } else {
+      openExternalLink(invoice.pay_url);
+    }
   };
+
+  useEffect(() => {
+    if (paymentState === 'paid') {
+      toast.success('Баланс успешно пополнен!');
+      resetPayment();
+    } else if (paymentState === 'error') {
+      toast.error('Не удалось создать платёж. Попробуйте позже.');
+      resetPayment();
+    } else if (paymentState === 'expired') {
+      toast.warning('Время оплаты истекло. Попробуйте снова.');
+      resetPayment();
+    }
+  }, [paymentState, toast, resetPayment]);
 
   const rating = user?.rating ?? 0;
   const completedOrders = user?.completed_orders ?? 0;
@@ -95,7 +110,7 @@ export default function Profile() {
                 <Button
                   key={_package.amount}
                   onClick={() => handleRecharge(_package.amount)}
-                  disabled={rechargeMut.isPending}
+                  disabled={isPaymentBusy}
                   rounded
                   outline={!_package.popular}
                   className={`relative h-10 overflow-visible transition-all duration-200 hover:scale-105 active:scale-95 ${_package.popular ? "k-color-brand" : "k-color-brand"}`}
@@ -113,6 +128,12 @@ export default function Profile() {
               ))}
             </div>
 
+            {paymentState === 'awaiting_payment' && (
+              <div className="flex items-center justify-center gap-2 mt-3 text-sm opacity-70">
+                <Preloader className="text-primary" />
+                <span>Ожидание оплаты...</span>
+              </div>
+            )}
           </div>
         </Block>
 
