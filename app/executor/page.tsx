@@ -2,8 +2,8 @@
 
 import React, { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Block, BlockTitle, Checkbox, Chip, ListItem } from "konsta/react";
-import { AppPage, AppNavbar, AppList, InfoBlock, SearchableSelect, Select, PageTransition } from "@/src/components";
+import { Block, BlockTitle, Chip } from "konsta/react";
+import { AppPage, AppNavbar, InfoBlock, SearchableSelect, Select, PageTransition } from "@/src/components";
 import { CATEGORIES } from "@/src/data/categories";
 import { useCities } from "@/hooks/useCities";
 import { updatePreferences, updateNotificationSettings } from "@/lib/api";
@@ -100,21 +100,29 @@ export default function ExecutorPreferencesPage() {
         <Block className="flex-1 flex flex-col gap-4 pb-24 my-4 pl-0! pr-0!">
           <BlockTitle className="card-appear">Категории</BlockTitle>
           <div className="card-appear">
-            <AppList>
-              {CATEGORIES.map((cat) => (
-                <ListItem
-                  key={cat}
-                  label
-                  title={cat}
-                  media={
-                    <Checkbox
-                      checked={selectedCategories.has(cat)}
-                      onChange={() => toggleCategory(cat)}
-                    />
-                  }
-                />
-              ))}
-            </AppList>
+            <Block strong inset className="my-0">
+              <div className="flex flex-wrap gap-2">
+                {CATEGORIES.map((cat) => {
+                  const isSelected = selectedCategories.has(cat);
+                  return (
+                    <Chip
+                      key={cat}
+                      outline={!isSelected}
+                      onClick={() => toggleCategory(cat)}
+                      className={`transition-all duration-200 active:scale-95 ${
+                        isSelected ? 'bg-primary text-white' : ''
+                      }`}
+                      colors={isSelected ? {
+                        fillBgIos: 'bg-primary',
+                        fillTextIos: 'text-white',
+                      } : undefined}
+                    >
+                      {cat}
+                    </Chip>
+                  );
+                })}
+              </div>
+            </Block>
           </div>
 
           <BlockTitle className="card-appear-delayed">Города</BlockTitle>
