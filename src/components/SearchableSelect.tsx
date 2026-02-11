@@ -5,6 +5,19 @@ import { Popup, Searchbar, List, ListItem, Navbar, NavbarBackLink, Block, Preloa
 
 const MAX_VISIBLE = 50;
 
+const TOP_CITIES = new Set([
+  'Москва',
+  'Санкт-Петербург',
+  'Новосибирск',
+  'Екатеринбург',
+  'Казань',
+  'Нижний Новгород',
+  'Челябинск',
+  'Самара',
+  'Омск',
+  'Ростов-на-Дону',
+]);
+
 export interface SearchableSelectProps {
   value: string;
   onSelect: (value: string) => void;
@@ -32,11 +45,13 @@ function SearchableSelect({
   const [search, setSearch] = useState('');
   const inputRef = useRef<HTMLInputElement | null>(null);
 
+  const isSearchEmpty = !search.trim();
+
   const filtered = useMemo(() => {
-    if (!search.trim()) return options;
+    if (isSearchEmpty) return options.filter((opt) => TOP_CITIES.has(opt));
     const q = search.trim().toLowerCase();
     return options.filter((opt) => opt.toLowerCase().includes(q));
-  }, [options, search]);
+  }, [options, search, isSearchEmpty]);
 
   const visible = useMemo(() => filtered.slice(0, MAX_VISIBLE), [filtered]);
   const hasMore = filtered.length > MAX_VISIBLE;

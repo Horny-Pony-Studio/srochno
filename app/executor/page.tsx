@@ -14,6 +14,19 @@ import {
 } from "@/src/hooks/useTelegram";
 import { useToast } from "@/hooks/useToast";
 
+const TOP_CITIES = new Set([
+  'Москва',
+  'Санкт-Петербург',
+  'Новосибирск',
+  'Екатеринбург',
+  'Казань',
+  'Нижний Новгород',
+  'Челябинск',
+  'Самара',
+  'Омск',
+  'Ростов-на-Дону',
+]);
+
 const FREQUENCY_OPTIONS = [
   { value: "5", label: "Каждые 5 мин" },
   { value: "10", label: "Каждые 10 мин" },
@@ -32,10 +45,12 @@ export default function ExecutorPreferencesPage() {
   const { data: cities = [] } = useCities();
 
   const filteredCities = useMemo(() => {
-    if (!citySearch.trim()) return cities;
+    if (!citySearch.trim()) {
+      return cities.filter((c) => TOP_CITIES.has(c) || selectedCities.has(c));
+    }
     const q = citySearch.trim().toLowerCase();
     return cities.filter((c) => c.toLowerCase().includes(q));
-  }, [cities, citySearch]);
+  }, [cities, citySearch, selectedCities]);
 
   const visibleCities = useMemo(() => filteredCities.slice(0, 50), [filteredCities]);
 
@@ -158,6 +173,12 @@ export default function ExecutorPreferencesPage() {
               )}
               {filteredCities.length === 0 && (
                 <ListItem title="Ничего не найдено" className="text-gray-400" />
+              )}
+              {!citySearch.trim() && (
+                <ListItem
+                  title="Введите название для поиска других городов"
+                  className="text-gray-400 italic text-xs"
+                />
               )}
             </AppList>
           </div>
