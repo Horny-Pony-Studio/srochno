@@ -53,6 +53,25 @@ export interface RechargeResponse {
   transaction_id: number;
 }
 
+// ─── Crypto Bot Payments ─────────────────────────────────
+
+export interface CreateInvoiceRequest {
+  amount: number;
+}
+
+export interface CreateInvoiceResponse {
+  payment_id: number;
+  pay_url: string;
+  mini_app_invoice_url: string | null;
+}
+
+export interface PaymentStatusResponse {
+  payment_id: number;
+  status: 'pending' | 'paid' | 'expired';
+  amount: number;
+  new_balance: number | null;
+}
+
 // ─── Orders ──────────────────────────────────────────────
 
 export interface CreateOrderRequest {
