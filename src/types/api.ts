@@ -33,7 +33,8 @@ export interface UpdatePreferencesRequest {
 }
 
 export interface UpdateNotificationSettingsRequest {
-  frequency: number;
+  enabled?: boolean;
+  frequency?: number;
 }
 
 // ─── Balance ─────────────────────────────────────────────
