@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.0-beta.4
+
+### Fixes
+- **app**: Fix html `lang` attribute from "uk" to "ru" to match Russian UI content
+- **providers**: Remove all debug `console.log/warn/error` from TelegramProvider and AuthProvider
+- **forms**: Remove debug `console.error` from OrderForm — error handling delegated to caller
+
 ## v0.1.0-beta.3
 
 ### Fixes
