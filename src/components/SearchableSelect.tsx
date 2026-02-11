@@ -82,12 +82,8 @@ function SearchableSelect({
     setIsOpen(false);
   }, []);
 
-  useEffect(() => {
-    if (isOpen) {
-      const timer = setTimeout(() => inputRef.current?.focus(), 350);
-      return () => clearTimeout(timer);
-    }
-  }, [isOpen]);
+  // No auto-focus — let user tap search field manually to avoid
+  // unexpected keyboard pop-up on mobile
 
   useEffect(() => {
     if (listRef.current) {
