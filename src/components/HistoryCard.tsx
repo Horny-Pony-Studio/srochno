@@ -84,6 +84,8 @@ export default function HistoryCard({ item, onClick }: Props) {
       strong
       inset
       onClick={onClick}
+      role="button"
+      tabIndex={0}
     >
       <div className="flex items-start justify-between gap-3 mb-2">
         <div className="min-w-0">
