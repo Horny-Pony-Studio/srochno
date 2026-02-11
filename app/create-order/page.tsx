@@ -3,8 +3,9 @@
 import React, { Suspense, useState, useCallback, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Block, Checkbox, ListItem, Preloader } from "konsta/react";
-import { AppList, AppListInput, Select, InfoBlock, AppPage, AppNavbar, PageTransition } from "@/src/components";
-import { CATEGORIES, CITIES } from "@/src/data";
+import { AppList, AppListInput, SearchableSelect, InfoBlock, AppPage, AppNavbar, PageTransition } from "@/src/components";
+import { CATEGORIES } from "@/src/data";
+import { useCities } from "@/hooks/useCities";
 import { useTelegramBackButton, useTelegramMainButton, useClosingConfirmation } from "@/src/hooks/useTelegram";
 import { useOrder, useCreateOrder, useUpdateOrder } from "@/hooks/useOrders";
 import { createOrderSchema } from "@/src/lib/validation/order.schema";
@@ -34,6 +35,7 @@ function CreateOrderContent() {
   const isEditMode = !!editId;
 
   const { data: existingOrder, isLoading: isLoadingOrder } = useOrder(editId ?? undefined);
+  const { data: cities = [], isLoading: isCitiesLoading } = useCities();
 
   const [selectedCategory, setSelectedCategory] = useState<string>(CATEGORIES[0]);
   const [description, setDescription] = useState("");
@@ -202,13 +204,14 @@ function CreateOrderContent() {
                 label
                 title={<span className={"text-sm"}>Город</span>}
                 after={
-                  <Select
+                  <SearchableSelect
                     value={city}
-                    onChangeAction={setCity}
-                    options={CITIES}
+                    onSelect={setCity}
+                    options={cities}
                     placeholder="Выберите город"
-                    className="w-40"
+                    label="Выберите город"
                     disabled={isEditMode}
+                    isLoading={isCitiesLoading}
                   />
                 }
               />
