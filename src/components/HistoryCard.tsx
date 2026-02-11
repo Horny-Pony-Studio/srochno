@@ -77,7 +77,7 @@ function statusChip(status: HistoryStatus, rating?: number) {
   );
 }
 
-export default function HistoryCard({ item, onClick }: Props) {
+function HistoryCard({ item, onClick }: Props) {
   return (
     <Block
       className="my-0 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
@@ -100,4 +100,6 @@ export default function HistoryCard({ item, onClick }: Props) {
     </Block>
   );
 }
+
+export default React.memo(HistoryCard);
 
