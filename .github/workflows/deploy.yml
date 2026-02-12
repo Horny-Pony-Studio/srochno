@@ -139,12 +139,9 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_CI_BOT_TOKEN }}
           format: markdown
+          disable_web_page_preview: true
           message: |
-            *Deploy ${{ needs.deploy.result == 'success' && '✅' || '❌' }}*
+            ${{ needs.deploy.result == 'success' && '✅' || '❌' }} *Deploy* `${{ github.ref_name }}`
 
-            *Repo:* `${{ github.repository }}`
-            *Tag:* `${{ github.ref_name }}`
-            *Image:* `${{ needs.build-image.outputs.image-tag }}`
-            *Status:* ${{ needs.deploy.result }}
-
-            [View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            📦 `${{ needs.build-image.outputs.image-tag }}`
+            🔗 [Actions](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
