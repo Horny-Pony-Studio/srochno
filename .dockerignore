@@ -1,0 +1,44 @@
+# Version control
+.git
+.gitignore
+
+# Dependencies (rebuilt in container)
+node_modules
+
+# Build output (rebuilt in container)
+.next
+out
+
+# Tests
+e2e/
+coverage/
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+vitest.config.*
+playwright.config.*
+
+# CI/CD
+.github/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE & editor
+.vscode/
+.idea/
+
+# Claude / AI
+.claude/
+CLAUDE.md
+
+# Documentation
+*.md
+!README.md
+
+# OS files
+.DS_Store
+Thumbs.db
