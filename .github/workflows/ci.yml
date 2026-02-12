@@ -1,4 +1,4 @@
-name: "✅ Перевірка коду"
+name: CI
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   install:
-    name: "📦 Встановлення залежностей"
+    name: Install Dependencies
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,7 +25,7 @@ jobs:
           key: nm-${{ hashFiles('package-lock.json') }}
 
   lint:
-    name: "🔍 Лінтер"
+    name: Lint
     needs: install
     runs-on: ubuntu-latest
     steps:
@@ -40,7 +40,7 @@ jobs:
       - run: npm run lint
 
   typecheck:
-    name: "🔠 Перевірка типів"
+    name: Type Check
     needs: install
     runs-on: ubuntu-latest
     steps:
@@ -55,7 +55,7 @@ jobs:
       - run: npm run typecheck
 
   test:
-    name: "🧪 Тести"
+    name: Unit Tests
     needs: install
     runs-on: ubuntu-latest
     steps:
@@ -70,7 +70,7 @@ jobs:
       - run: npm run test
 
   e2e:
-    name: "🎭 E2E тести"
+    name: E2E Tests
     needs: install
     runs-on: ubuntu-latest
     steps:
@@ -95,7 +95,7 @@ jobs:
           retention-days: 7
 
   build:
-    name: "🏗️ Білд"
+    name: Build
     needs: [lint, typecheck, test, e2e]
     runs-on: ubuntu-latest
     steps:

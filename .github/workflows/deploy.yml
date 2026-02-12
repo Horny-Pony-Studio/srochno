@@ -1,4 +1,4 @@
-name: "🚀 Деплой"
+name: Deploy
 
 on:
   push:
@@ -11,7 +11,7 @@ env:
 
 jobs:
   build-image:
-    name: "🐳 Збірка Docker образу"
+    name: Build & Push Docker Image
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -27,14 +27,14 @@ jobs:
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Логін у GHCR
+      - name: Login to GHCR
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Метадані образу
+      - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -43,7 +43,7 @@ jobs:
             type=semver,pattern={{version}}
             type=raw,value=latest
 
-      - name: Збірка та push
+      - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -57,12 +57,12 @@ jobs:
             NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
 
   deploy:
-    name: "📡 Деплой на сервер"
+    name: Deploy to VPS
     runs-on: ubuntu-latest
     needs: build-image
 
     steps:
-      - name: Деплой по SSH
+      - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}
