@@ -29,7 +29,7 @@ export default function Home() {
             <p className="opacity-55">Закроем ваш заказ за час</p>
           </div>
 
-          <BlockTitle>Выбрать роль</BlockTitle>
+          <BlockTitle className="mb-4">Выбрать роль</BlockTitle>
 
           <List className="w-full max-w-md">
             <Block

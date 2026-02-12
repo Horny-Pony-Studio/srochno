@@ -95,7 +95,7 @@ export default function OrdersPage() {
             />
           </div>
 
-          <Block className="flex-1 flex flex-col gap-4 pb-16 my-0 pl-0! pr-0!">
+          <div className="flex flex-col gap-4">
             {isLoading ? (
               <div className="flex items-center justify-center py-20">
                 <Preloader className="text-primary" />
@@ -133,7 +133,7 @@ export default function OrdersPage() {
                 })}
               </div>
             )}
-          </Block>
+          </div>
         </Block>
         </PullToRefresh>
       </AppPage>

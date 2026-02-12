@@ -141,7 +141,7 @@ jobs:
           format: markdown
           disable_web_page_preview: true
           message: |
-            ${{ needs.deploy.result == 'success' && '✅' || '❌' }} *Deploy* `${{ github.ref_name }}`
+            ${{ needs.deploy.result == 'success' && '✅' || '❌' }} *Deploy* [${{ github.repository }}](${{ github.server_url }}/${{ github.repository }}) `${{ github.ref_name }}`
 
             📦 `${{ needs.build-image.outputs.image-tag }}`
             🔗 [Actions](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})

@@ -178,12 +178,12 @@ export default function Profile() {
           </AppList>
         </div>
 
-        <div className="card-appear-delayed" style={{ animationDelay: '0.2s' }}>
+        <div className="card-appear-delayed mt-2" style={{ animationDelay: '0.2s' }}>
           <div className="text-sm font-medium opacity-55 px-4 mb-1">Тема</div>
           <ThemeSelector />
         </div>
 
-        <div className="card-appear-delayed" style={{ animationDelay: '0.25s' }}>
+        <div className="card-appear-delayed mt-2" style={{ animationDelay: '0.25s' }}>
           <AppList>
             <ListItem
               title="Помощь"
