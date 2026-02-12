@@ -10,7 +10,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   rollback:
@@ -19,6 +18,10 @@ jobs:
     timeout-minutes: 5
 
     steps:
+      - name: Lowercase repo name
+        id: repo
+        run: echo "name=${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+
       - name: Deploy previous version via SSH
         uses: appleboy/ssh-action@v1
         with:
@@ -27,7 +30,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.tag }}
+            docker pull ${{ env.REGISTRY }}/${{ steps.repo.outputs.name }}:${{ inputs.tag }}
             cd /opt/srochno
             TAG=${{ inputs.tag }} docker compose -f docker-compose.prod.yml up -d --force-recreate
             docker image prune -f
