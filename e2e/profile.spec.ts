@@ -33,10 +33,9 @@ test.describe('Profile page', () => {
   test('recharge button triggers API call', async ({ mockPage: page }) => {
     await page.goto('/profile');
 
-    // Intercept the recharge request to verify it's called
-    const rechargePromise = page.waitForRequest('**/api/balance/recharge');
+    const invoicePromise = page.waitForRequest('**/api/balance/create-invoice');
     await page.getByText('100 ₽').click();
-    const request = await rechargePromise;
+    const request = await invoicePromise;
     const body = request.postDataJSON();
     expect(body.amount).toBe(100);
   });

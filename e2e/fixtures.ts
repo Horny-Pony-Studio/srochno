@@ -106,12 +106,12 @@ async function setupMocks(page: Page) {
     });
   });
 
-  // Mock balance recharge
-  await page.route('**/api/balance/recharge', (route) =>
+  // Mock balance create-invoice
+  await page.route('**/api/balance/create-invoice', (route) =>
     route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ success: true, new_balance: 600, transaction_id: 1 }),
+      body: JSON.stringify({ invoice_id: 1, pay_url: 'https://example.com/pay', mini_app_invoice_url: null }),
     }),
   );
 
