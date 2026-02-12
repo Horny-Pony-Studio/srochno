@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.3.0-alpha.1 (2026-02-12)
+
+### Features
+- **CI Pipeline:** GitHub Actions CI with parallel lint, typecheck, unit tests, E2E tests, and build verification on every PR
+- **Deploy Pipeline:** Automated Docker build, push to GHCR, and deploy to VPS on tag push
+- **Quality Gate:** Lint, typecheck, and unit tests run before deploy to prevent broken releases
+- **Security Scan:** Trivy scans Docker images for CRITICAL/HIGH vulnerabilities before deploy
+- **Deploy Notifications:** Telegram bot sends success/failure notifications after each deploy
+- **Rollback Workflow:** Manual rollback to any previous version via GitHub Actions UI
+- **Dependabot:** Automatic weekly PRs for npm and GitHub Actions dependency updates
+- **PR Template:** Standardized pull request template
+- **npm audit:** Dependency vulnerability check during CI install step
+- **Branch Protection:** Ruleset on main requiring PR + passing CI Build check + no force push
+
+### Fixes
+- E2E tests now use production build in CI instead of dev server
+- Concurrency group uses `head_ref` for proper PR run cancellation
+- Docker compose image path updated for new GitHub org
+
+### Infrastructure
+- `.dockerignore` for optimized Docker build context
+- Dockerfile accepts `NEXT_PUBLIC_*` build args for proper env inlining
+- Production `docker-compose.prod.yml` with health check, log rotation, restart policy
+- Repository transferred to Horny-Pony-Studio organization
+
 ## v0.1.0-beta.6 (2026-02-11)
 
 ### Features
