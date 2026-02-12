@@ -7,7 +7,6 @@ services:
       - "20002:10002"
     environment:
       - NODE_ENV=production
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
       - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
     healthcheck:
