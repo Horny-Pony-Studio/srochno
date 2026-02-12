@@ -142,7 +142,7 @@ describe('useMyOrders', () => {
     vi.clearAllMocks();
   });
 
-  it('fetches and filters out deleted orders', async () => {
+  it('fetches user orders via mine param', async () => {
     const rawOrders = [
       { id: '1', contact: '+380', status: 'active' },
       { id: '2', contact: '', status: 'active' },
@@ -156,9 +156,9 @@ describe('useMyOrders', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    // Only deleted orders are filtered out
-    expect(result.current.data).toHaveLength(2);
-    expect(result.current.data!.map(o => o.id)).toEqual(['1', '2']);
+    // All orders returned by API are mapped (filtering is server-side)
+    expect(result.current.data).toHaveLength(3);
+    expect(mockGetOrders).toHaveBeenCalledWith({ mine: true });
   });
 });
 
