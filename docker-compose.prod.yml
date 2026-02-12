@@ -1,6 +1,6 @@
 services:
   srochno:
-    image: ghcr.io/mrreptiloid/srochno:${TAG:-latest}
+    image: ghcr.io/horny-pony-studio/srochno:${TAG:-latest}
     container_name: srochno
     restart: unless-stopped
     ports:
