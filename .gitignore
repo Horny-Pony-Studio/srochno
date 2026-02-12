@@ -3,6 +3,9 @@
 # claude
 .claude/
 
+# local todo
+TODO.md
+
 # project spec (private)
 SPEC.md
 
