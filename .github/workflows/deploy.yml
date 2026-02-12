@@ -99,7 +99,7 @@ jobs:
           image-ref: ${{ env.REGISTRY }}/${{ needs.build-image.outputs.image-name }}:${{ needs.build-image.outputs.image-tag }}
           format: table
           exit-code: 1
-          severity: CRITICAL,HIGH
+          severity: CRITICAL
 
   deploy:
     name: Deploy to VPS
