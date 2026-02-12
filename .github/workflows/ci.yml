@@ -94,7 +94,7 @@ jobs:
           CI: true
           NEXT_PUBLIC_API_URL: https://placeholder.example.com
           NEXT_PUBLIC_APP_URL: http://localhost:10002
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: playwright-report
