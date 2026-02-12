@@ -6,8 +6,8 @@
 - **CI Pipeline:** GitHub Actions CI with parallel lint, typecheck, unit tests, E2E tests, and build verification on every PR
 - **Deploy Pipeline:** Automated Docker build, push to GHCR, and deploy to VPS on tag push
 - **Quality Gate:** Lint, typecheck, and unit tests run before deploy to prevent broken releases
-- **Security Scan:** Trivy scans Docker images for CRITICAL/HIGH vulnerabilities before deploy
-- **Deploy Notifications:** Telegram bot sends success/failure notifications after each deploy
+- **Security Scan:** Trivy scans Docker images for CRITICAL vulnerabilities before deploy
+- **Deploy Notifications:** Telegram bot sends success/failure notifications after each deploy and CI run
 - **Rollback Workflow:** Manual rollback to any previous version via GitHub Actions UI
 - **Dependabot:** Automatic weekly PRs for npm and GitHub Actions dependency updates
 - **PR Template:** Standardized pull request template
@@ -18,6 +18,16 @@
 - E2E tests now use production build in CI instead of dev server
 - Concurrency group uses `head_ref` for proper PR run cancellation
 - Docker compose image path updated for new GitHub org
+- Lowercase Docker image reference for GHCR compatibility
+- Trivy severity scoped to CRITICAL only (base image HIGH CVEs excluded)
+- Deploy job references `production` environment for secrets access
+- Dockerfile `mkdir -p /app/public` for projects without public dir
+
+### Dependencies
+- `actions/setup-node` v4 → v6
+- `actions/cache` v4 → v5
+- `actions/upload-artifact` v4 → v6
+- `@tanstack/react-query`, `@types/react` minor updates
 
 ### Infrastructure
 - `.dockerignore` for optimized Docker build context
