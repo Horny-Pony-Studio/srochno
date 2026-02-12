@@ -1,4 +1,4 @@
-name: CI
+name: "✅ Перевірка коду"
 
 on:
   pull_request:
@@ -9,34 +9,80 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  quality-gate:
-    name: Quality Gate
+  install:
+    name: "📦 Встановлення залежностей"
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+      - run: npm ci
+      - uses: actions/cache/save@v4
+        with:
+          path: node_modules
+          key: nm-${{ hashFiles('package-lock.json') }}
 
-      - name: Install dependencies
-        run: npm ci
+  lint:
+    name: "🔍 Лінтер"
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: nm-${{ hashFiles('package-lock.json') }}
+      - run: npm run lint
 
-      - name: Lint
-        run: npm run lint
+  typecheck:
+    name: "🔠 Перевірка типів"
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: nm-${{ hashFiles('package-lock.json') }}
+      - run: npm run typecheck
 
-      - name: Type check
-        run: npm run typecheck
+  test:
+    name: "🧪 Тести"
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: nm-${{ hashFiles('package-lock.json') }}
+      - run: npm run test
 
-      - name: Test
-        run: npm run test
-
-      - name: Build
-        run: npm run build
+  build:
+    name: "🏗️ Білд"
+    needs: [lint, typecheck, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: nm-${{ hashFiles('package-lock.json') }}
+      - run: npm run build
         env:
           NEXT_PUBLIC_API_URL: https://placeholder.example.com
           NEXT_PUBLIC_APP_URL: https://placeholder.example.com
