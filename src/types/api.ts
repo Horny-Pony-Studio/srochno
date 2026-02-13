@@ -115,6 +115,7 @@ export interface OrderResponse {
   taken_by: ExecutorTakeSchema[];
   customer_responded_at: string | null;
   city_locked: boolean;
+  rating?: number | null;
 }
 
 export interface OrderDetailResponse {
@@ -129,6 +130,7 @@ export interface OrderDetailResponse {
   taken_by: ExecutorTakeSchema[];
   customer_responded_at: string | null;
   city_locked: boolean;
+  rating?: number | null;
 }
 
 export interface OrderListResponse {
