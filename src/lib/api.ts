@@ -17,7 +17,9 @@ import type {
   ExecutorComplaintRequest,
   ReviewResponse,
   UpdatePreferencesRequest,
+  PreferencesResponse,
   UpdateNotificationSettingsRequest,
+  NotificationSettingsResponse,
   OrderStatus,
 } from '@/types/api';
 
@@ -91,6 +93,10 @@ export function getMe(): Promise<UserProfile> {
   return request<UserProfile>('/api/users/me');
 }
 
+export function getPreferences(): Promise<PreferencesResponse> {
+  return request<PreferencesResponse>('/api/users/me/preferences');
+}
+
 export function updatePreferences(
   data: UpdatePreferencesRequest,
 ): Promise<Record<string, boolean>> {
@@ -98,6 +104,10 @@ export function updatePreferences(
     method: 'PUT',
     body: JSON.stringify(data),
   });
+}
+
+export function getNotificationSettings(): Promise<NotificationSettingsResponse> {
+  return request<NotificationSettingsResponse>('/api/users/me/notification-settings');
 }
 
 export function updateNotificationSettings(

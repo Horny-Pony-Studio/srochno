@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Block, Chip, ListItem, Preloader } from "konsta/react";
 import { Star } from "lucide-react";
-import { AppList, AppNavbar, AppPage, InfoBlock, PageTransition } from "@/src/components";
+import { AppList, AppNavbar, AppPage, InfoBlock, PageTransition, PullToRefresh } from "@/src/components";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
 import { useReviews } from "@/src/hooks/useReviews";
 
@@ -34,15 +34,20 @@ export default function ReviewsPage() {
   const [tab, setTab] = useState<FilterTab>("all");
 
   const ratingFilter = tab === "all" ? undefined : tab;
-  const { data: reviews, isLoading, isError } = useReviews(
+  const { data: reviews, isLoading, isError, refetch } = useReviews(
     ratingFilter != null ? { rating: ratingFilter } : undefined,
   );
+
+  const handleRefresh = useCallback(async () => {
+    await refetch();
+  }, [refetch]);
 
   return (
     <PageTransition>
       <AppPage className="min-h-dvh flex flex-col">
         <AppNavbar title="Отзывы" showRight />
 
+        <PullToRefresh onRefresh={handleRefresh} className="flex-1">
         <Block className="my-4 pl-0! pr-0!">
           <div className="px-4 overflow-x-auto hide-scrollbar scroll-hint-right">
             <div className="flex gap-2 w-max pr-4">
@@ -124,6 +129,7 @@ export default function ReviewsPage() {
             </>
           )}
         </Block>
+        </PullToRefresh>
       </AppPage>
     </PageTransition>
   );

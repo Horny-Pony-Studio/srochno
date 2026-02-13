@@ -32,9 +32,19 @@ export interface UpdatePreferencesRequest {
   cities?: string[];
 }
 
+export interface PreferencesResponse {
+  categories: string[];
+  cities: string[];
+}
+
 export interface UpdateNotificationSettingsRequest {
   enabled?: boolean;
   frequency?: number;
+}
+
+export interface NotificationSettingsResponse {
+  enabled: boolean;
+  frequency: number;
 }
 
 // ─── Balance ─────────────────────────────────────────────

@@ -4,6 +4,7 @@ import React, { useState, useMemo, useCallback, useRef, useEffect, useSyncExtern
 import { createPortal } from 'react-dom';
 import { Sheet, List, ListItem, Block, Preloader } from 'konsta/react';
 import { Search, ChevronDown, X, Check, MapPin } from 'lucide-react';
+import { useSwipeToClose } from '@/src/hooks/useSwipeToClose';
 
 const emptySubscribe = () => () => {};
 const getClientSnapshot = () => true;
@@ -82,6 +83,11 @@ function SearchableSelect({
     setIsOpen(false);
   }, []);
 
+  const { sheetRef } = useSwipeToClose({
+    onClose: handleClose,
+    enabled: isOpen,
+  });
+
   // No auto-focus — let user tap search field manually to avoid
   // unexpected keyboard pop-up on mobile
 
@@ -122,7 +128,7 @@ function SearchableSelect({
           onBackdropClick={handleClose}
           className="pb-safe"
         >
-          <div className="flex flex-col" style={{ maxHeight: '70dvh' }}>
+          <div ref={sheetRef} className="flex flex-col" style={{ maxHeight: '70dvh' }}>
             {/* Handle bar */}
             <div className="flex justify-center pt-2 pb-1">
               <div className="w-9 h-1 rounded-full bg-black/15 dark:bg-white/20" />
@@ -174,7 +180,7 @@ function SearchableSelect({
             )}
 
             {/* Scrollable list */}
-            <div ref={listRef} className="overflow-y-auto hide-scrollbar flex-1 min-h-0">
+            <div ref={listRef} data-scroll-container className="overflow-y-auto hide-scrollbar flex-1 min-h-0">
               {isLoading ? (
                 <Block className="flex items-center justify-center py-10">
                   <Preloader />
