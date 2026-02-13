@@ -128,7 +128,21 @@ jobs:
     if: always()
 
     steps:
-      - name: Send Telegram notification
+      - name: Send Dependabot notification
+        if: github.actor == 'dependabot[bot]'
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ vars.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_CI_BOT_TOKEN }}
+          format: markdown
+          disable_web_page_preview: true
+          message: |
+            🤖 *Dependabot* [${{ github.repository }}](${{ github.server_url }}/${{ github.repository }}) `${{ github.head_ref }}`
+
+            📋 [#${{ github.event.pull_request.number }} — ${{ github.event.pull_request.title }}](${{ github.event.pull_request.html_url }})
+            🔗 [Actions](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+      - name: Send CI notification
         uses: appleboy/telegram-action@master
         with:
           to: ${{ vars.TELEGRAM_CHAT_ID }}
