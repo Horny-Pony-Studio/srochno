@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { useParams } from "next/navigation";
+import React, { useCallback } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { Block, Chip, ListItem, Preloader } from "konsta/react";
 import { AppList, AppNavbar, AppPage, ComplaintForm, InfoBlock, PageTransition, ReviewForm } from "@/src/components";
 import { minutesLeft, takenCount } from "@/src/utils/order";
@@ -20,10 +20,15 @@ function formatDateTime(iso: string) {
 }
 
 export default function HistoryDetailPage() {
+  const router = useRouter();
   useTelegramBackButton('/history');
   const { user } = useAuth();
   const params = useParams<{ id?: string }>();
   const id = typeof params?.id === "string" ? params.id : "";
+
+  const handleFeedbackSuccess = useCallback(() => {
+    setTimeout(() => router.push('/history'), 1500);
+  }, [router]);
 
   const { data: order, isLoading, isError } = useOrder(id || undefined);
 
@@ -98,9 +103,9 @@ export default function HistoryDetailPage() {
           {expired && takes > 0 ? (
             <div className="scale-in">
               {order.takenBy.some(t => t.executorId === String(user?.id)) ? (
-                <ComplaintForm orderId={id} />
+                <ComplaintForm orderId={id} onSuccess={handleFeedbackSuccess} />
               ) : (
-                <ReviewForm orderId={id} />
+                <ReviewForm orderId={id} onSuccess={handleFeedbackSuccess} />
               )}
             </div>
           ) : null}
