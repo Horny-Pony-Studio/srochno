@@ -29,6 +29,7 @@ export function mapOrder(raw: OrderResponse | OrderDetailResponse): Order {
     takenBy: raw.taken_by.map(mapExecutorTake),
     customerResponse: mapCustomerResponse(raw.customer_responded_at),
     cityLocked: raw.city_locked,
+    ...(raw.rating != null ? { rating: raw.rating } : {}),
   };
 }
 

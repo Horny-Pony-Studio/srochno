@@ -21,4 +21,5 @@ export interface Order {
   takenBy: ExecutorTake[];
   customerResponse?: CustomerResponse;
   cityLocked: boolean;
+  rating?: number;
 }

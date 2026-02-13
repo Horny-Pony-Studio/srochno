@@ -263,6 +263,7 @@ export function submitExecutorComplaint(
 export interface ReviewListParams {
   rating?: number;
   limit?: number;
+  mine?: boolean;
 }
 
 export function getReviews(
@@ -271,6 +272,7 @@ export function getReviews(
   const qs = new URLSearchParams();
   if (params?.rating != null) qs.set('rating', String(params.rating));
   if (params?.limit != null) qs.set('limit', String(params.limit));
+  if (params?.mine) qs.set('mine', 'true');
   const query = qs.toString();
   return request<ReviewResponse[]>(
     `/api/reviews${query ? `?${query}` : ''}`,

@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useCallback, useMemo, useState } from "react";
-import { Block, Chip, Preloader } from "konsta/react";
+import { Block, Button, Chip, Preloader } from "konsta/react";
+import { Star } from "lucide-react";
 import { AppNavbar, AppPage, InfoBlock, HistoryCard, PageTransition, PullToRefresh } from "@/src/components";
 import type { HistoryCardData, HistoryStatus } from "@/src/components/HistoryCard";
 import { minutesLeft, takenCount } from "@/src/utils/order";
 import { useRouter } from "next/navigation";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
-import { useOrders } from "@/hooks/useOrders";
+import { useMyOrders } from "@/hooks/useOrders";
 import type { Order } from "@/src/models/Order";
 
 function firstLine(text: string) {
@@ -35,7 +36,7 @@ export default function HistoryPage() {
   useTelegramBackButton('/profile');
   const [tab, setTab] = useState<"all" | "completed" | "cancelled" | "in_progress">("all");
 
-  const { data: orders, isLoading, isError, refetch } = useOrders();
+  const { data: orders, isLoading, isError, refetch } = useMyOrders();
 
   const handleRefresh = useCallback(async () => {
     await refetch();
@@ -60,7 +61,7 @@ export default function HistoryPage() {
           city: o.city,
           createdAt: o.createdAt,
           status,
-          rating: undefined,
+          rating: o.rating,
         };
       })
       .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
@@ -130,6 +131,18 @@ export default function HistoryPage() {
               </div>
             ))
           )}
+
+          <Block className="my-0 mx-4">
+            <Button
+              rounded
+              outline
+              onClick={() => router.push('/reviews')}
+              className="w-full justify-center"
+            >
+              <Star className="w-4 h-4" />
+              <span className="text-sm">Все отзывы</span>
+            </Button>
+          </Block>
         </Block>
         </PullToRefresh>
       </AppPage>
