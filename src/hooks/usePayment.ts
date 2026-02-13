@@ -52,8 +52,9 @@ export function usePayment() {
 
           if (result.status === 'paid') {
             stopPolling();
-            await refetchUser();
             setState('paid');
+            // Best-effort balance refresh — payment is already confirmed
+            refetchUser().catch(() => {});
           } else if (result.status === 'expired') {
             stopPolling();
             setState('expired');

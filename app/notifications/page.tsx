@@ -149,6 +149,8 @@ export default function NotificationSettingsPage() {
   const isDirty = useMemo(() => {
     const saved = savedRef.current;
     if (enabled !== saved.enabled) return true;
+    // When disabled, only the toggle matters
+    if (!enabled) return false;
     if (frequency !== saved.frequency) return true;
     if (selectedCategories.size !== saved.categories.size) return true;
     if (selectedCities.size !== saved.cities.size) return true;

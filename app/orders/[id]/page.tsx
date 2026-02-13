@@ -45,7 +45,9 @@ export default function OrderDetailPage() {
       onSuccess: (res) => {
         setContactUnlocked(true);
         setRevealedContact(res.contact);
-        refetchUser();
+        refetchUser().catch(() => {
+          toast.warning('Баланс обновится при следующем входе.');
+        });
       },
       onError: (err) => {
         if (err instanceof ApiRequestError) {
@@ -145,8 +147,8 @@ export default function OrderDetailPage() {
             {showContact ? (
               <div className="flex items-center gap-2 scale-in">
                 <Phone className="w-5 h-5 text-primary" />
-                <Link href={`https://t.me/${displayContact.replace("@", "")}`} className="text-primary">
-                  {displayContact}
+                <Link href={`https://t.me/${displayContact?.replace("@", "") ?? ""}`} className="text-primary">
+                  {displayContact ?? "—"}
                 </Link>
               </div>
             ) : (
