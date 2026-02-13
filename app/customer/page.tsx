@@ -54,8 +54,10 @@ function CustomerPage() {
   const onCompleteOrder = useCallback(async (orderId: string) => {
     const ok = await confirm('Завершить заявку?');
     if (!ok) return;
-    completeMut.mutate(orderId);
-  }, [confirm, completeMut]);
+    completeMut.mutate(orderId, {
+      onSuccess: () => router.push(`/history/${orderId}`),
+    });
+  }, [confirm, completeMut, router]);
 
   return (
     <PageTransition>
