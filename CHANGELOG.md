@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.3.1-beta.1 (2026-02-13)
+
+### Bug Fixes
+- **history**: Show only user's own orders instead of all orders (#126)
+- **history**: Wire up rating field from API to history cards (#127)
+- **customer**: Redirect to review page after completing order (#128)
+- **history**: Clarify feedback form condition and guard user ID (#129)
+- **history**: Add reviews link to history page for better discoverability (#130)
+- **reviews**: Add `mine` filter to show user's own reviews (#131)
+- **taken**: Show past completed orders for executor (#132)
+- **orders**: Remove active-only filter from `useTakenOrders` (#133)
+
+### Tests
+- Add rating field mapping tests for `mapOrder`
+- Add `mine` param test for `getReviews`
+- Update `useTakenOrders` assertion to match removed status filter
+
 ## v0.3.0-alpha.1 (2026-02-12)
 
 ### Features
