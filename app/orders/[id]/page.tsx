@@ -45,7 +45,9 @@ export default function OrderDetailPage() {
       onSuccess: (res) => {
         setContactUnlocked(true);
         setRevealedContact(res.contact);
-        refetchUser();
+        refetchUser().catch(() => {
+          toast.warning('Баланс обновится при следующем входе.');
+        });
       },
       onError: (err) => {
         if (err instanceof ApiRequestError) {
