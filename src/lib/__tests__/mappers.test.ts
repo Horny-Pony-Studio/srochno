@@ -18,6 +18,7 @@ const rawOrder: OrderResponse = {
   ],
   customer_responded_at: '2025-01-01T12:10:00Z',
   city_locked: true,
+  rating: 4,
 };
 
 const rawOrderDetail: OrderDetailResponse = {
@@ -121,6 +122,16 @@ describe('mapOrder', () => {
     const order = mapOrder(multi);
     expect(order.takenBy).toHaveLength(3);
     expect(order.takenBy.map((t) => t.executorId)).toEqual(['1', '2', '3']);
+  });
+
+  it('maps rating when present', () => {
+    const order = mapOrder(rawOrder);
+    expect(order.rating).toBe(4);
+  });
+
+  it('omits rating when field is absent', () => {
+    const order = mapOrder(rawOrderDetail);
+    expect(order.rating).toBeUndefined();
   });
 });
 
