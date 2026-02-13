@@ -346,6 +346,15 @@ describe('getReviews', () => {
     expect(url).toContain('rating=5');
     expect(url).toContain('limit=10');
   });
+
+  it('appends mine=true when mine param is set', async () => {
+    const spy = mockFetch([]);
+    vi.stubGlobal('fetch', spy);
+
+    await getReviews({ mine: true });
+    const url = spy.mock.calls[0][0] as string;
+    expect(url).toContain('mine=true');
+  });
 });
 
 describe('getCities', () => {
