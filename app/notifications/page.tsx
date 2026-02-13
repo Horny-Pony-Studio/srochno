@@ -18,17 +18,25 @@ import {
   useClosingConfirmation,
 } from "@/src/hooks/useTelegram";
 import { useToast } from "@/hooks/useToast";
-import type { NotificationSettingsResponse, PreferencesResponse } from "@/types/api";
 
 const FREQUENCY_OPTIONS = [
   { value: "5", label: "Каждые 5 мин" },
   { value: "10", label: "Каждые 10 мин" },
 ];
 
+const CACHE_KEY = 'notification_settings_cache';
+
 interface SavedState {
   enabled: boolean;
   categories: Set<string>;
   cities: Set<string>;
+  frequency: string;
+}
+
+interface CachedSettings {
+  enabled: boolean;
+  categories: string[];
+  cities: string[];
   frequency: string;
 }
 
@@ -38,6 +46,36 @@ const DEFAULT_SAVED: SavedState = {
   cities: new Set(),
   frequency: "5",
 };
+
+function readCache(): SavedState | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const parsed: CachedSettings = JSON.parse(raw);
+    return {
+      enabled: parsed.enabled,
+      categories: new Set(parsed.categories),
+      cities: new Set(parsed.cities),
+      frequency: parsed.frequency,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function writeCache(state: SavedState): void {
+  try {
+    const data: CachedSettings = {
+      enabled: state.enabled,
+      categories: Array.from(state.categories),
+      cities: Array.from(state.cities),
+      frequency: state.frequency,
+    };
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+  } catch {
+    // localStorage may be unavailable
+  }
+}
 
 export default function NotificationSettingsPage() {
   const router = useRouter();
@@ -53,46 +91,49 @@ export default function NotificationSettingsPage() {
   const savedRef = useRef<SavedState>(DEFAULT_SAVED);
   const { data: cities = [], isLoading: isCitiesLoading } = useCities();
 
-  // Load saved settings on mount
+  // Load saved settings on mount: try API → fallback to localStorage cache → defaults
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
+      let saved: SavedState | null = null;
+
       try {
         const [settings, prefs] = await Promise.all([
-          getNotificationSettings().catch((): NotificationSettingsResponse => ({
-            enabled: false,
-            frequency: 5,
-          })),
-          getPreferences().catch((): PreferencesResponse => ({
-            categories: [],
-            cities: [],
-          })),
+          getNotificationSettings(),
+          getPreferences(),
         ]);
 
         if (cancelled) return;
 
-        const saved: SavedState = {
+        saved = {
           enabled: settings.enabled,
           categories: new Set(prefs.categories),
           cities: new Set(prefs.cities),
           frequency: String(settings.frequency),
         };
-        savedRef.current = saved;
-
-        setEnabled(saved.enabled);
-        setSelectedCategories(saved.categories);
-        setSelectedCities(saved.cities);
-        setFrequency(saved.frequency);
+        writeCache(saved);
       } catch {
-        if (!cancelled) {
+        if (cancelled) return;
+
+        // API failed — try localStorage cache
+        const cached = readCache();
+        if (cached) {
+          saved = cached;
+        } else {
+          saved = DEFAULT_SAVED;
           toast.error("Не удалось загрузить настройки. Используются значения по умолчанию.");
         }
-      } finally {
-        if (!cancelled) {
-          setIsLoadingSettings(false);
-        }
       }
+
+      if (cancelled) return;
+
+      savedRef.current = saved;
+      setEnabled(saved.enabled);
+      setSelectedCategories(saved.categories);
+      setSelectedCities(saved.cities);
+      setFrequency(saved.frequency);
+      setIsLoadingSettings(false);
     }
 
     load();
@@ -175,12 +216,14 @@ export default function NotificationSettingsPage() {
 
       await Promise.all(promises);
 
-      savedRef.current = {
+      const newSaved: SavedState = {
         enabled,
         categories: new Set(selectedCategories),
         cities: new Set(selectedCities),
         frequency,
       };
+      savedRef.current = newSaved;
+      writeCache(newSaved);
 
       toast.success("Настройки сохранены");
       router.push("/profile");
