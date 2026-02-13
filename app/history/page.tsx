@@ -19,6 +19,9 @@ function deriveHistoryStatus(order: Order): HistoryStatus {
   if (order.status === 'completed') return 'completed';
   if (order.status === 'closed_no_response') return 'closed_no_response';
   if (order.status === 'deleted') return 'cancelled';
+  if (order.status === 'expired') {
+    return takenCount(order) > 0 ? 'completed' : 'cancelled';
+  }
 
   const left = minutesLeft(order);
   if (left <= 0) {
