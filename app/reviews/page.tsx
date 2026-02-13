@@ -34,9 +34,10 @@ export default function ReviewsPage() {
   const [tab, setTab] = useState<FilterTab>("all");
 
   const ratingFilter = tab === "all" ? undefined : tab;
-  const { data: reviews, isLoading, isError, refetch } = useReviews(
-    ratingFilter != null ? { rating: ratingFilter } : undefined,
-  );
+  const { data: reviews, isLoading, isError, refetch } = useReviews({
+    ...(ratingFilter != null ? { rating: ratingFilter } : {}),
+    mine: true,
+  });
 
   const handleRefresh = useCallback(async () => {
     await refetch();
