@@ -164,7 +164,7 @@ function CreateOrderContent() {
                     <Checkbox
                       component="div"
                       name="categories-Checkbox"
-                      checked={selectedCategory.includes(category)}
+                      checked={selectedCategory === category}
                       onChange={() => toggleGroupValue(category)}
                     />
                   }

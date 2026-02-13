@@ -102,7 +102,7 @@ export default function HistoryDetailPage() {
 
           {expired && takes > 0 ? (
             <div className="scale-in">
-              {order.takenBy.some(t => t.executorId === String(user?.id)) ? (
+              {user?.id != null && order.takenBy.some(t => t.executorId === String(user.id)) ? (
                 <ComplaintForm orderId={id} onSuccess={handleFeedbackSuccess} />
               ) : (
                 <ReviewForm orderId={id} onSuccess={handleFeedbackSuccess} />

@@ -7,7 +7,7 @@ import type { HistoryCardData, HistoryStatus } from "@/src/components/HistoryCar
 import { minutesLeft, takenCount } from "@/src/utils/order";
 import { useRouter } from "next/navigation";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
-import { useOrders } from "@/hooks/useOrders";
+import { useMyOrders } from "@/hooks/useOrders";
 import type { Order } from "@/src/models/Order";
 
 function firstLine(text: string) {
@@ -35,7 +35,7 @@ export default function HistoryPage() {
   useTelegramBackButton('/profile');
   const [tab, setTab] = useState<"all" | "completed" | "cancelled" | "in_progress">("all");
 
-  const { data: orders, isLoading, isError, refetch } = useOrders();
+  const { data: orders, isLoading, isError, refetch } = useMyOrders();
 
   const handleRefresh = useCallback(async () => {
     await refetch();
