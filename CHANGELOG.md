@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.1-beta.2 (2026-02-13)
+
+### Bug Fixes
+- **customer**: Add toast error handling to all order mutations (#124)
+
 ## v0.3.1-beta.1 (2026-02-13)
 
 ### Bug Fixes
