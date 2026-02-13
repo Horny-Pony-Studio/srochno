@@ -60,7 +60,7 @@ export default function HistoryPage() {
           city: o.city,
           createdAt: o.createdAt,
           status,
-          rating: undefined,
+          rating: o.rating,
         };
       })
       .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
