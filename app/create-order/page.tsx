@@ -210,7 +210,7 @@ function CreateOrderContent() {
                     options={cities}
                     placeholder="Выберите город"
                     label="Выберите город"
-                    disabled={isEditMode}
+                    disabled={isEditMode && (existingOrder?.cityLocked ?? true)}
                     isLoading={isCitiesLoading}
                   />
                 }
