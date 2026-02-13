@@ -17,6 +17,8 @@ import {
   submitExecutorComplaint,
   getReviews,
   getCities,
+  getNotificationSettings,
+  getPreferences,
 } from '../api';
 
 // ─── Mock fetch ─────────────────────────────────────────
@@ -371,5 +373,27 @@ describe('getCities', () => {
 
     await getCities();
     expect(spy.mock.calls[0][0]).toBe('/api/cities');
+  });
+});
+
+describe('getNotificationSettings', () => {
+  it('calls GET /api/users/me/notification-settings', async () => {
+    const spy = mockFetch({ enabled: true, frequency: 10 });
+    vi.stubGlobal('fetch', spy);
+
+    const result = await getNotificationSettings();
+    expect(spy.mock.calls[0][0]).toBe('/api/users/me/notification-settings');
+    expect(result).toEqual({ enabled: true, frequency: 10 });
+  });
+});
+
+describe('getPreferences', () => {
+  it('calls GET /api/users/me/preferences', async () => {
+    const spy = mockFetch({ categories: ['Электрика'], cities: ['Москва'] });
+    vi.stubGlobal('fetch', spy);
+
+    const result = await getPreferences();
+    expect(spy.mock.calls[0][0]).toBe('/api/users/me/preferences');
+    expect(result).toEqual({ categories: ['Электрика'], cities: ['Москва'] });
   });
 });
