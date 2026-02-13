@@ -184,7 +184,7 @@ describe('useTakenOrders', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(mockGetOrders).toHaveBeenCalledWith({ status: 'active' });
+    expect(mockGetOrders).toHaveBeenCalledWith();
     expect(result.current.data).toHaveLength(2);
     expect(result.current.data!.map((o) => o.id)).toEqual(['1', '3']);
   });
