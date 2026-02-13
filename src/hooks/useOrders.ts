@@ -80,7 +80,7 @@ export function useTakenOrders() {
   return useQuery({
     queryKey: [...orderKeys.all, 'taken'] as const,
     queryFn: async (): Promise<Order[]> => {
-      const res = await getOrders({ status: 'active' });
+      const res = await getOrders();
       const all = mapOrders(res.orders);
       if (!user) return [];
       return all.filter((o) => isTakenByUser(o, user.id));
