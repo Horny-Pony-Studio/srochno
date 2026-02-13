@@ -8,11 +8,13 @@ import { useRouter } from "next/navigation";
 import { AppPage, EmptyState, InfoBlock, AppNavbar, OrderTimerChip, PageTransition, PullToRefresh } from "@/src/components";
 import { useTelegramBackButton, useTelegramMainButton, useTelegramConfirm } from "@/src/hooks/useTelegram";
 import { useMyOrders, useDeleteOrder, useCloseOrder, useRespondToOrder, useCompleteOrder } from "@/hooks/useOrders";
+import { useToast } from "@/hooks/useToast";
 
 function CustomerPage() {
   const router = useRouter();
   useTelegramBackButton('/');
   const confirm = useTelegramConfirm();
+  const toast = useToast();
 
   const { data: orders, isLoading, isError, refetch } = useMyOrders();
   const deleteMut = useDeleteOrder();
@@ -36,26 +38,35 @@ function CustomerPage() {
   const onDeleteOrder = useCallback(async (orderId: string) => {
     const ok = await confirm('Удалить заявку?');
     if (!ok) return;
-    deleteMut.mutate(orderId);
-  }, [confirm, deleteMut]);
+    deleteMut.mutate(orderId, {
+      onError: () => toast.error('Не удалось удалить заявку. Попробуйте позже.'),
+    });
+  }, [confirm, deleteMut, toast]);
 
   const onCloseOrder = useCallback(async (orderId: string) => {
     const ok = await confirm('Закрыть заявку?');
     if (!ok) return;
-    closeMut.mutate(orderId);
-  }, [confirm, closeMut]);
+    closeMut.mutate(orderId, {
+      onError: () => toast.error('Не удалось закрыть заявку. Попробуйте позже.'),
+    });
+  }, [confirm, closeMut, toast]);
 
   const onRespondToOrder = useCallback(async (orderId: string) => {
     const ok = await confirm('Подтвердить, что вы ответили исполнителю?');
     if (!ok) return;
-    respondMut.mutate(orderId);
-  }, [confirm, respondMut]);
+    respondMut.mutate(orderId, {
+      onError: () => toast.error('Не удалось подтвердить ответ. Попробуйте позже.'),
+    });
+  }, [confirm, respondMut, toast]);
 
   const onCompleteOrder = useCallback(async (orderId: string) => {
     const ok = await confirm('Завершить заявку?');
     if (!ok) return;
-    completeMut.mutate(orderId);
-  }, [confirm, completeMut]);
+    completeMut.mutate(orderId, {
+      onSuccess: () => router.push(`/history/${orderId}`),
+      onError: () => toast.error('Не удалось завершить заявку. Попробуйте позже.'),
+    });
+  }, [confirm, completeMut, router, toast]);
 
   return (
     <PageTransition>
