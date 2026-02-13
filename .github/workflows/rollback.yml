@@ -34,3 +34,24 @@ jobs:
             cd /opt/srochno
             TAG=${{ inputs.tag }} docker compose -f docker-compose.prod.yml up -d --force-recreate
             docker image prune -f
+
+  notify:
+    name: Notify
+    needs: [rollback]
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    environment: production
+    if: always()
+
+    steps:
+      - name: Send Telegram notification
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_CI_BOT_TOKEN }}
+          format: markdown
+          disable_web_page_preview: true
+          message: |
+            ${{ needs.rollback.result == 'success' && '✅' || '❌' }} *Rollback* [${{ github.repository }}](${{ github.server_url }}/${{ github.repository }}) to `${{ inputs.tag }}`
+
+            🔗 [Actions](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
