@@ -54,16 +54,21 @@ export default function HistoryDetailPage() {
 
   const left = minutesLeft(order);
   const takes = takenCount(order);
-  const expired = left <= 0 || order.status === 'expired' || order.status === 'completed';
+  const isFinished = order.status === 'completed'
+    || order.status === 'expired'
+    || order.status === 'closed_no_response'
+    || order.status === 'deleted'
+    || left <= 0;
   const status = order.status === 'completed'
     ? "Выполнен"
     : order.status === 'closed_no_response'
     ? "Закрыт (нет ответа)"
     : order.status === 'deleted'
     ? "Отменён"
-    : expired
+    : isFinished
     ? (takes > 0 ? "Выполнен" : "Отменён")
     : "В работе";
+  const canLeaveFeedback = isFinished && takes > 0;
 
   return (
     <PageTransition>
@@ -96,13 +101,13 @@ export default function HistoryDetailPage() {
           <div className="card-appear-delayed">
             <AppList>
               <ListItem label title="Откликов" after={`${takes}/3`} />
-              <ListItem label title="Таймер" after={expired ? "Истек" : `${left} мин`} />
+              <ListItem label title="Таймер" after={isFinished ? "Истек" : `${left} мин`} />
             </AppList>
           </div>
 
-          {expired && takes > 0 ? (
+          {canLeaveFeedback ? (
             <div className="scale-in">
-              {order.takenBy.some(t => t.executorId === String(user?.id)) ? (
+              {user?.id != null && order.takenBy.some(t => t.executorId === String(user.id)) ? (
                 <ComplaintForm orderId={id} onSuccess={handleFeedbackSuccess} />
               ) : (
                 <ReviewForm orderId={id} onSuccess={handleFeedbackSuccess} />
