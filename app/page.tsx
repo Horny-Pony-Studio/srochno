@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Page,
@@ -9,11 +9,35 @@ import {
   List,
 } from "konsta/react";
 import {AppNavbar, PageTransition} from "@/src/components";
-import { useHideBackButton } from "@/src/hooks/useTelegram";
+import { useHideBackButton, useTelegram } from "@/src/hooks/useTelegram";
+
+/**
+ * Parse Telegram startParam for deep linking.
+ * Supported formats: "order_<id>" → /orders/<id>
+ */
+function resolveDeepLink(startParam: string | undefined): string | null {
+  if (!startParam) return null;
+
+  const orderMatch = startParam.match(/^order_(.+)$/);
+  if (orderMatch) return `/orders/${orderMatch[1]}`;
+
+  return null;
+}
 
 export default function Home() {
   const router = useRouter();
   useHideBackButton();
+  const { startParam } = useTelegram();
+  const handledRef = useRef(false);
+
+  useEffect(() => {
+    if (handledRef.current) return;
+    const target = resolveDeepLink(startParam);
+    if (target) {
+      handledRef.current = true;
+      router.replace(target);
+    }
+  }, [startParam, router]);
 
   return (
     <PageTransition>
