@@ -2,41 +2,124 @@
 
 import React, { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Block, BlockTitle, Chip, ListItem, Toggle } from "konsta/react";
+import { Block, BlockTitle, Chip, ListItem, Preloader, Toggle } from "konsta/react";
 import { AppPage, AppNavbar, AppList, InfoBlock, SearchableSelect, Select, PageTransition } from "@/src/components";
 import { CATEGORIES } from "@/src/data/categories";
 import { useCities } from "@/hooks/useCities";
-import { updatePreferences, updateNotificationSettings } from "@/lib/api";
+import {
+  getNotificationSettings,
+  getPreferences,
+  updatePreferences,
+  updateNotificationSettings,
+} from "@/lib/api";
 import {
   useTelegramBackButton,
   useTelegramMainButton,
   useClosingConfirmation,
 } from "@/src/hooks/useTelegram";
 import { useToast } from "@/hooks/useToast";
+import type { NotificationSettingsResponse, PreferencesResponse } from "@/types/api";
 
 const FREQUENCY_OPTIONS = [
   { value: "5", label: "Каждые 5 мин" },
   { value: "10", label: "Каждые 10 мин" },
 ];
 
+interface SavedState {
+  enabled: boolean;
+  categories: Set<string>;
+  cities: Set<string>;
+  frequency: string;
+}
+
+const DEFAULT_SAVED: SavedState = {
+  enabled: false,
+  categories: new Set(),
+  cities: new Set(),
+  frequency: "5",
+};
+
 export default function NotificationSettingsPage() {
   const router = useRouter();
   const toast = useToast();
   useTelegramBackButton("/profile");
 
+  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
   const [enabled, setEnabled] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [selectedCities, setSelectedCities] = useState<Set<string>>(new Set());
   const [frequency, setFrequency] = useState("5");
   const [saving, setSaving] = useState(false);
+  const savedRef = useRef<SavedState>(DEFAULT_SAVED);
   const { data: cities = [], isLoading: isCitiesLoading } = useCities();
+
+  // Load saved settings on mount
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const [settings, prefs] = await Promise.all([
+          getNotificationSettings().catch((): NotificationSettingsResponse => ({
+            enabled: false,
+            frequency: 5,
+          })),
+          getPreferences().catch((): PreferencesResponse => ({
+            categories: [],
+            cities: [],
+          })),
+        ]);
+
+        if (cancelled) return;
+
+        const saved: SavedState = {
+          enabled: settings.enabled,
+          categories: new Set(prefs.categories),
+          cities: new Set(prefs.cities),
+          frequency: String(settings.frequency),
+        };
+        savedRef.current = saved;
+
+        setEnabled(saved.enabled);
+        setSelectedCategories(saved.categories);
+        setSelectedCities(saved.cities);
+        setFrequency(saved.frequency);
+      } catch {
+        if (!cancelled) {
+          toast.error("Не удалось загрузить настройки. Используются значения по умолчанию.");
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoadingSettings(false);
+        }
+      }
+    }
+
+    load();
+    return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const availableCities = useMemo(
     () => cities.filter((c) => !selectedCities.has(c)),
     [cities, selectedCities],
   );
 
-  const isDirty = enabled || selectedCategories.size > 0 || selectedCities.size > 0;
+  const isDirty = useMemo(() => {
+    const saved = savedRef.current;
+    if (enabled !== saved.enabled) return true;
+    if (frequency !== saved.frequency) return true;
+    if (selectedCategories.size !== saved.categories.size) return true;
+    if (selectedCities.size !== saved.cities.size) return true;
+    for (const cat of selectedCategories) {
+      if (!saved.categories.has(cat)) return true;
+    }
+    for (const city of selectedCities) {
+      if (!saved.cities.has(city)) return true;
+    }
+    return false;
+  }, [enabled, frequency, selectedCategories, selectedCities]);
+
   useClosingConfirmation(isDirty);
 
   const toggleCategory = useCallback((cat: string) => {
@@ -91,6 +174,14 @@ export default function NotificationSettingsPage() {
       }
 
       await Promise.all(promises);
+
+      savedRef.current = {
+        enabled,
+        categories: new Set(selectedCategories),
+        cities: new Set(selectedCities),
+        frequency,
+      };
+
       toast.success("Настройки сохранены");
       router.push("/profile");
     } catch {
@@ -106,9 +197,22 @@ export default function NotificationSettingsPage() {
   }, [enabled, selectedCategories.size, selectedCities.size]);
 
   useTelegramMainButton("Сохранить", handleSave, {
-    isEnabled: canSave && !saving,
+    isEnabled: canSave && !saving && !isLoadingSettings,
     isLoading: saving,
   });
+
+  if (isLoadingSettings) {
+    return (
+      <PageTransition>
+        <AppPage className="min-h-dvh flex flex-col">
+          <AppNavbar title="Уведомления" />
+          <div className="flex items-center justify-center py-20">
+            <Preloader className="text-primary" />
+          </div>
+        </AppPage>
+      </PageTransition>
+    );
+  }
 
   return (
     <PageTransition>
