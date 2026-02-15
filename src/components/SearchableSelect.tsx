@@ -107,6 +107,9 @@ function SearchableSelect({
         type="button"
         onClick={handleOpen}
         disabled={disabled}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-label={label}
         className={`inline-flex items-center gap-1 bg-transparent text-sm transition-all duration-200 active:opacity-60 ${
           isPlaceholder ? 'opacity-55' : ''
         } ${disabled ? 'opacity-30' : ''} ${className}`}
@@ -140,6 +143,7 @@ function SearchableSelect({
               <button
                 type="button"
                 onClick={handleClose}
+                aria-label="Закрыть"
                 className="w-8 h-8 flex items-center justify-center rounded-full bg-black/5 dark:bg-white/10 active:opacity-60"
               >
                 <X className="w-4 h-4 opacity-55" />
@@ -156,12 +160,14 @@ function SearchableSelect({
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Поиск города..."
+                  aria-label="Поиск города"
                   className="w-full pl-9 pr-9 py-2.5 rounded-xl bg-black/5 dark:bg-white/10 text-sm placeholder:opacity-40"
                 />
                 {isSearching && (
                   <button
                     type="button"
                     onClick={() => setSearch('')}
+                    aria-label="Очистить поиск"
                     className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full bg-black/10 dark:bg-white/20 active:opacity-60"
                   >
                     <X className="w-3 h-3" />

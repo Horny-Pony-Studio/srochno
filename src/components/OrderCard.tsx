@@ -16,12 +16,20 @@ type Props = {
 function OrderCard({ order, onClick, className, footerRight }: Props) {
   const takes = takenCount(order);
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick?.();
+    }
+  };
+
   return (
     <Block
       className={`my-0 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] cursor-pointer ${className ?? ""}`}
       strong
       inset
       onClick={onClick}
+      onKeyDown={handleKeyDown}
       role="button"
       tabIndex={0}
     >

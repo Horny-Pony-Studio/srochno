@@ -1,5 +1,31 @@
 # Changelog
 
+## v0.4.0 (2026-02-15)
+
+### Features
+- **security**: Add Next.js middleware with CSP, HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy headers
+
+### Bug Fixes
+- **security**: Resolve Valibot ReDoS vulnerability (GHSA-vqpr-j7v3-hqw9) via npm overrides
+- **security**: Remove `unsafe-eval` from CSP, add `frame-src 'none'` directive
+- **a11y**: Add `aria-live="polite"`, `role="status"` to Toast component
+- **a11y**: Add `aria-haspopup`, `aria-expanded`, `aria-label` to SearchableSelect
+- **a11y**: Add keyboard handlers (Enter/Space) to OrderCard and HistoryCard
+- **i18n**: Replace Ukrainian text with Russian in FormSelect and ActionSheet
+- **perf**: Add loading fallback to dynamic imports in history detail page
+
+### Performance
+- Dynamic imports for ReviewForm and ComplaintForm
+- Add Telegram CDN `remotePatterns` to next.config for optimized images
+
+### Chores
+- **eslint**: Add strict rules — `no-explicit-any` (error), `no-console` (warn), `react-hooks/exhaustive-deps` (warn)
+- **ci**: `npm audit` now blocks pipeline on HIGH+ vulnerabilities
+- **ci**: Pin GitHub Actions to commit SHAs (ssh-action, telegram-action, trivy-action)
+- **ci**: Add explicit `permissions` block for least privilege
+- **ci**: Quote environment variables in deploy script to prevent injection
+- Remove dead code `useConfirm` hook
+
 ## v0.3.1-beta.2 (2026-02-13)
 
 ### Bug Fixes
