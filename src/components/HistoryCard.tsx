@@ -78,12 +78,20 @@ function statusChip(status: HistoryStatus, rating?: number) {
 }
 
 function HistoryCard({ item, onClick }: Props) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick?.();
+    }
+  };
+
   return (
     <Block
       className="my-0 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
       strong
       inset
       onClick={onClick}
+      onKeyDown={handleKeyDown}
       role="button"
       tabIndex={0}
     >
