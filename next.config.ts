@@ -2,6 +2,18 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "t.me",
+      },
+      {
+        protocol: "https",
+        hostname: "*.telegram.org",
+      },
+    ],
+  },
   async rewrites() {
     return [
       {
