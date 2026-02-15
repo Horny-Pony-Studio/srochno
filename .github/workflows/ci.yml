@@ -20,7 +20,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npm audit --audit-level=critical || true
+      - run: npm audit --audit-level=high
       - uses: actions/cache/save@v5
         with:
           path: node_modules
