@@ -69,9 +69,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return preference;
   }, [preference, systemDark]);
 
-  // DOM side effect — toggle dark class on <html>
+  // DOM side effect — toggle dark class on <html> with scoped transition
   useEffect(() => {
+    document.documentElement.classList.add('theme-transitioning');
     document.documentElement.classList.toggle('dark', theme === 'dark');
+    const id = setTimeout(() => {
+      document.documentElement.classList.remove('theme-transitioning');
+    }, 350);
+    return () => clearTimeout(id);
   }, [theme]);
 
   const setPreference = useCallback((newPreference: ThemePreference) => {

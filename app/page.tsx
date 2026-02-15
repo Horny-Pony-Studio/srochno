@@ -42,7 +42,7 @@ export default function Home() {
   return (
     <PageTransition>
       <Page>
-        <AppNavbar title="Срочные услуги" />
+        <AppNavbar title="Срочные услуги" showRight />
 
         <Block className="flex-1 flex flex-col items-center justify-center px-4 pb-20">
           <div className="text-center mb-8 card-appear">

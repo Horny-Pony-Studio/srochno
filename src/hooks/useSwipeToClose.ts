@@ -84,15 +84,17 @@ export function useSwipeToClose({ onClose, enabled = true }: UseSwipeToCloseOpti
       if (!draggingRef.current) return;
       draggingRef.current = false;
 
-      el!.style.transition = 'transform 0.3s ease-out';
-
       if (currentYRef.current >= CLOSE_THRESHOLD) {
-        onClose();
+        // Animate off-screen first, then call onClose
+        el!.style.transition = 'transform 0.25s ease-in';
+        el!.style.transform = 'translateY(100%)';
         setTimeout(() => {
+          onClose();
           el!.style.transform = '';
           el!.style.transition = '';
-        }, 300);
+        }, 250);
       } else {
+        el!.style.transition = 'transform 0.3s ease-out';
         el!.style.transform = '';
         currentYRef.current = 0;
       }
