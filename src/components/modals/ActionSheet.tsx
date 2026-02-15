@@ -54,7 +54,7 @@ export default function ActionSheet({
       </ActionsGroup>
       <ActionsGroup>
         <ActionsButton onClick={onClose} bold>
-          Скасувати
+          Отменить
         </ActionsButton>
       </ActionsGroup>
     </Actions>

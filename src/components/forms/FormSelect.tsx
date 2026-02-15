@@ -22,13 +22,13 @@ export interface FormSelectProps {
 export default function FormSelect({
   label,
   options,
-  placeholder = 'Виберіть...',
+  placeholder = 'Выберите...',
   error,
   register,
   disabled = false,
   info,
 }: FormSelectProps) {
-  // Нормалізуємо опції до єдиного формату
+  // Нормализуем опции к единому формату
   const normalizedOptions: FormSelectOption[] = options.map((opt) =>
     typeof opt === 'string' ? { value: opt, label: opt } : opt
   );
