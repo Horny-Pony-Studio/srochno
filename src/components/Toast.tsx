@@ -120,6 +120,8 @@ export default function ToastStack({ toasts, onDismiss }: ToastStackProps) {
 
   return createPortal(
     <div
+      role="status"
+      aria-live="polite"
       className="fixed inset-x-0 top-0 z-[9999] pointer-events-none"
       style={{
         paddingTop: 'calc(var(--content-safe-top, 0px) + var(--safe-area-top, 0px) + 8px)',
