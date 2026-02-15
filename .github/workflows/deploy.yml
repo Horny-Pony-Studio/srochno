@@ -95,7 +95,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Scan image with Trivy
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@c1824fd6edce30d7ab345a9989de00bbd46ef284 # 0.34.0
         with:
           image-ref: ${{ env.REGISTRY }}/${{ needs.build-image.outputs.image-name }}:${{ needs.build-image.outputs.image-tag }}
           format: table
@@ -111,7 +111,7 @@ jobs:
 
     steps:
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
         with:
           host: ${{ vars.SSH_HOST }}
           username: ${{ vars.SSH_USER }}
@@ -120,7 +120,7 @@ jobs:
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             docker pull ${{ env.REGISTRY }}/${{ needs.build-image.outputs.image-name }}:latest
             cd /opt/srochno
-            printf 'NEXT_PUBLIC_API_URL=%s\nNEXT_PUBLIC_APP_URL=%s\n' '${{ vars.NEXT_PUBLIC_API_URL }}' '${{ vars.NEXT_PUBLIC_APP_URL }}' > .env
+            printf 'NEXT_PUBLIC_API_URL=%s\nNEXT_PUBLIC_APP_URL=%s\n' "${{ vars.NEXT_PUBLIC_API_URL }}" "${{ vars.NEXT_PUBLIC_APP_URL }}" > .env
             TAG=${{ needs.build-image.outputs.image-tag }} docker compose -f docker-compose.prod.yml up -d --force-recreate
             docker image prune -f
 
@@ -134,7 +134,7 @@ jobs:
 
     steps:
       - name: Send Telegram notification
-        uses: appleboy/telegram-action@master
+        uses: appleboy/telegram-action@221e6b684967abe813051ee4a37dd61770a83ad3 # v1.0.1
         with:
           to: ${{ vars.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_CI_BOT_TOKEN }}
