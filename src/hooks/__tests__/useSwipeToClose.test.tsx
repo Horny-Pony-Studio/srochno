@@ -94,12 +94,15 @@ describe('useSwipeToClose', () => {
       fireTouchEnd(el);
     });
 
-    expect(onClose).toHaveBeenCalledOnce();
+    // onClose is deferred until slide-off animation completes (250ms)
+    expect(onClose).not.toHaveBeenCalled();
+    expect(el.style.transform).toBe('translateY(100%)');
 
     act(() => {
-      vi.advanceTimersByTime(300);
+      vi.advanceTimersByTime(250);
     });
 
+    expect(onClose).toHaveBeenCalledOnce();
     expect(el.style.transform).toBe('');
   });
 
