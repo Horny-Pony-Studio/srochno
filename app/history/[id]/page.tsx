@@ -6,8 +6,12 @@ import { useParams, useRouter } from "next/navigation";
 import { Block, Chip, ListItem, Preloader } from "konsta/react";
 import { AppList, AppNavbar, AppPage, InfoBlock, PageTransition } from "@/src/components";
 
-const ReviewForm = dynamic(() => import("@/src/components/ReviewForm"));
-const ComplaintForm = dynamic(() => import("@/src/components/ComplaintForm"));
+const ReviewForm = dynamic(() => import("@/src/components/ReviewForm"), {
+  loading: () => <Preloader className="text-primary" />,
+});
+const ComplaintForm = dynamic(() => import("@/src/components/ComplaintForm"), {
+  loading: () => <Preloader className="text-primary" />,
+});
 import { minutesLeft, takenCount } from "@/src/utils/order";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
 import { useOrder } from "@/hooks/useOrders";
