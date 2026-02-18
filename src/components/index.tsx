@@ -3,6 +3,7 @@ import AppListInput from "./AppListInput";
 import AppNavbar from "./AppNavbar";
 import AppPage from "./AppPage";
 import EmptyState from "./EmptyState";
+import FeedbackDisplay from "./FeedbackDisplay";
 import InfoBlock from "./InfoBlock";
 import SearchableSelect from "./SearchableSelect";
 import Select from "./Select";
@@ -23,6 +24,7 @@ export {
   AppPage,
   ComplaintForm,
   EmptyState,
+  FeedbackDisplay,
   HistoryCard,
   InfoBlock,
   OrderCard,
