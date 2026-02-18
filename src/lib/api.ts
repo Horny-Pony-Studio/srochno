@@ -14,7 +14,6 @@ import type {
   ExecutorTakeResponse,
   ClientReviewRequest,
   ClientReviewResponse,
-  ExecutorComplaintRequest,
   ReviewResponse,
   UpdatePreferencesRequest,
   PreferencesResponse,
@@ -246,15 +245,6 @@ export function submitClientReview(
   data: ClientReviewRequest,
 ): Promise<ClientReviewResponse> {
   return request<ClientReviewResponse>('/api/reviews/client', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
-}
-
-export function submitExecutorComplaint(
-  data: ExecutorComplaintRequest,
-): Promise<Record<string, boolean | number>> {
-  return request<Record<string, boolean | number>>('/api/reviews/executor', {
     method: 'POST',
     body: JSON.stringify(data),
   });

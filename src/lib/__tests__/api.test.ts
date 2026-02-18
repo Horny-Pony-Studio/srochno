@@ -14,7 +14,6 @@ import {
   takeOrder,
   closeOrder,
   submitClientReview,
-  submitExecutorComplaint,
   getReviews,
   getCities,
   getNotificationSettings,
@@ -315,16 +314,6 @@ describe('submitClientReview', () => {
     const [url, init] = spy.mock.calls[0];
     expect(url).toBe('/api/reviews/client');
     expect(init.method).toBe('POST');
-  });
-});
-
-describe('submitExecutorComplaint', () => {
-  it('calls POST /api/reviews/executor', async () => {
-    const spy = mockFetch({ success: true });
-    vi.stubGlobal('fetch', spy);
-
-    await submitExecutorComplaint({ order_id: 'o1', complaint: 'Не отвечал' as const });
-    expect(vi.mocked(fetch).mock.calls[0][0]).toBe('/api/reviews/executor');
   });
 });
 

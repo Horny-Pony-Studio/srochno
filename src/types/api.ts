@@ -7,13 +7,6 @@ export type OrderStatus =
   | 'closed_no_response'
   | 'completed';
 
-export type ComplaintReason =
-  | 'Не отвечал'
-  | 'Отменил заказ'
-  | 'Неадекватное поведение'
-  | 'Ложная информация'
-  | 'Другое';
-
 // ─── Users ───────────────────────────────────────────────
 
 export interface UserProfile {
@@ -170,12 +163,6 @@ export interface ClientReviewRequest {
 export interface ClientReviewResponse {
   success: boolean;
   review_id: number;
-}
-
-export interface ExecutorComplaintRequest {
-  order_id: string;
-  complaint: ComplaintReason;
-  comment?: string | null;
 }
 
 export interface ReviewResponse {
