@@ -91,17 +91,16 @@ function CustomerPage() {
             <EmptyState
               title="У вас пока нет заявок"
               description="Создайте первую заявку"
-              className="scale-in"
             />
           ) : (
             <List className={"my-0"}>
-              {orders.map((order, index) => {
+              {orders.map((order) => {
                 const canModify = order.status === 'active' && order.takenBy.length === 0;
 
                 return (
-                  <div key={order.id} className="stagger-item" style={{ animationDelay: `${index * 0.05}s` }}>
+                  <div key={order.id}>
                     <Block
-                      className={"my-0 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"}
+                      className={"my-0"}
                       strong inset
                     >
                       <div className="flex items-start justify-between mb-3">
@@ -134,7 +133,7 @@ function CustomerPage() {
                                 e.stopPropagation();
                                 onEditOrder(order.id);
                               }}
-                              className={"flex-1 justify-center k-color-brand-yellow transition-all duration-200"}
+                              className={"flex-1 justify-center k-color-brand-yellow"}
                             >
                               <Edit2 className="w-4 h-4"/>
                               <span className="text-sm">Изменить</span>
@@ -148,7 +147,7 @@ function CustomerPage() {
                                 e.stopPropagation();
                                 onDeleteOrder(order.id);
                               }}
-                              className={"flex-1 justify-center k-color-brand-red transition-all duration-200"}
+                              className={"flex-1 justify-center k-color-brand-red"}
                             >
                               <Trash2 className="w-4 h-4"/>
                               <span className="text-sm">Удалить</span>
@@ -167,7 +166,7 @@ function CustomerPage() {
                                   e.stopPropagation();
                                   onRespondToOrder(order.id);
                                 }}
-                                className={"flex-1 justify-center k-color-brand-green transition-all duration-200"}
+                                className={"flex-1 justify-center k-color-brand-green"}
                               >
                                 <MessageCircle className="w-4 h-4"/>
                                 <span className="text-sm">Я ответил</span>
@@ -181,7 +180,7 @@ function CustomerPage() {
                                   e.stopPropagation();
                                   onCompleteOrder(order.id);
                                 }}
-                                className={"flex-1 justify-center transition-all duration-200"}
+                                className={"flex-1 justify-center"}
                               >
                                 <CheckCircle className="w-4 h-4"/>
                                 <span className="text-sm">Завершить</span>
@@ -195,7 +194,7 @@ function CustomerPage() {
                                 e.stopPropagation();
                                 onCloseOrder(order.id);
                               }}
-                              className={"flex-1 justify-center k-color-brand-red transition-all duration-200"}
+                              className={"flex-1 justify-center k-color-brand-red"}
                             >
                               <X className="w-4 h-4"/>
                               <span className="text-sm">Закрыть</span>
@@ -223,7 +222,7 @@ function CustomerPage() {
           )}
 
           <InfoBlock
-            className={"mx-4 scale-in"}
+            className={"mx-4"}
             variant={"blue"}
             message={"Заявка активна 60 минут. После этого её можно обновить или удалить."}
             icon={"⏱️"}

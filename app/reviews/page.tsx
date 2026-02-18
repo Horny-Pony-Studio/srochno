@@ -58,7 +58,7 @@ export default function ReviewsPage() {
                   component="button"
                   onClick={() => setTab(f.key)}
                   className={
-                    `text-base p-3 transition-all duration-200
+                    `text-base p-3
                     ${tab === f.key
                       ? "bg-primary text-white"
                       : "bg-transparent text-primary border border-primary"}`
@@ -85,47 +85,43 @@ export default function ReviewsPage() {
             />
           ) : !reviews || reviews.length === 0 ? (
             <InfoBlock
-              className="mx-4 scale-in"
+              className="mx-4"
               variant="blue"
               icon="⭐"
               message="Пока нет отзывов с таким рейтингом."
             />
           ) : (
             <>
-              <div className="card-appear">
-                <AppList>
-                  <ListItem title="Всего" after={reviews.length} />
-                </AppList>
-              </div>
+              <AppList>
+                <ListItem title="Всего" after={reviews.length} />
+              </AppList>
 
-              {reviews.map((r, index) => (
-                <div key={r.id} className="stagger-item" style={{ animationDelay: `${index * 0.05}s` }}>
-                  <Block className="my-0 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]" strong inset>
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white text-sm shrink-0 transition-transform duration-300 hover:scale-110">
-                        {getInitials(r.authorName)}
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2 mb-1">
-                          <div className="font-medium truncate">{r.authorName}</div>
-                          <div className="flex items-center gap-1 shrink-0">
-                            <Star className="w-4 h-4 text-[#FF9500] fill-[#FF9500]" />
-                            <span className="text-sm">{r.rating}</span>
-                          </div>
-                        </div>
-
-                        <div className="text-sm opacity-55 mb-2">
-                          {r.category} • {formatDate(r.createdAt)}
-                        </div>
-
-                        {r.comment && (
-                          <p className="text-sm leading-relaxed">{r.comment}</p>
-                        )}
-                      </div>
+              {reviews.map((r) => (
+                <Block key={r.id} className="my-0" strong inset>
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white text-sm shrink-0">
+                      {getInitials(r.authorName)}
                     </div>
-                  </Block>
-                </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <div className="font-medium truncate">{r.authorName}</div>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <Star className="w-4 h-4 text-[#FF9500] fill-[#FF9500]" />
+                          <span className="text-sm">{r.rating}</span>
+                        </div>
+                      </div>
+
+                      <div className="text-sm opacity-55 mb-2">
+                        {r.category} • {formatDate(r.createdAt)}
+                      </div>
+
+                      {r.comment && (
+                        <p className="text-sm leading-relaxed">{r.comment}</p>
+                      )}
+                    </div>
+                  </div>
+                </Block>
               ))}
             </>
           )}

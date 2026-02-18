@@ -20,7 +20,7 @@ function OrderTimerChip({ order, className }: Props) {
         fillBgIos: getTimeBackground(timer.minutes),
         fillTextIos: getTimeColor(timer.minutes),
       }}
-      className={`text-sm transition-all duration-200 ${className ?? ''}`}
+      className={`text-sm ${className ?? ''}`}
     >
       ⏱️ {timer.display}
     </Chip>

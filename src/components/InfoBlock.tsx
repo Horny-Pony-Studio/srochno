@@ -31,6 +31,7 @@ function InfoBlock({
   message,
   icon,
   onRetry,
+  retryLabel,
 }: {
   className?: string;
   variant?: Variant;
@@ -38,6 +39,7 @@ function InfoBlock({
   message?: React.ReactNode;
   icon?: React.ReactNode;
   onRetry?: () => void;
+  retryLabel?: string;
 }) {
   const styles = VARIANT_STYLES[variant] || VARIANT_STYLES.red;
   const resolvedIcon = icon ?? styles.icon;
@@ -57,7 +59,7 @@ function InfoBlock({
           onClick={onRetry}
           className="mt-2 text-sm underline opacity-75 hover:opacity-100 transition-opacity"
         >
-          Попробовать снова
+          {retryLabel ?? 'Попробовать снова'}
         </button>
       )}
     </Block>

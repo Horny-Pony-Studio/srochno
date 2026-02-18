@@ -73,11 +73,10 @@ function SingleToast({
         top: offsetY,
         scale: String(scale),
         opacity: contentOpacity,
-        willChange: 'transform, opacity',
       }}
     >
-      <div className="flex items-center gap-2 px-3 py-3 rounded-2xl shadow-lg backdrop-blur-md
-        bg-white/90 dark:bg-neutral-800/90 border border-black/5 dark:border-white/10">
+      <div className="flex items-center gap-2 px-3 py-3 rounded-2xl shadow-lg
+        bg-white dark:bg-neutral-800 border border-black/5 dark:border-white/10">
         {icons[item.type]}
         <span className="flex-1 text-sm font-medium">{item.message}</span>
         {depth === 0 && (

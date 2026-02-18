@@ -79,9 +79,9 @@ export default function Profile() {
         <AppNavbar title="Профиль" />
 
         <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
-          <Block className="my-0 card-appear" strong inset>
+          <Block className="my-0" strong inset>
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 rounded-full overflow-hidden shrink-0 transition-transform duration-300 hover:scale-110">
+            <div className="w-16 h-16 rounded-full overflow-hidden shrink-0">
               {showPhoto ? (
                 <Image
                   src={photoUrl}
@@ -89,7 +89,6 @@ export default function Profile() {
                   width={64}
                   height={64}
                   className="w-full h-full object-cover"
-                  unoptimized
                   onError={() => setImgError(true)}
                 />
               ) : (
@@ -125,7 +124,7 @@ export default function Profile() {
           </div>
         </Block>
 
-        <Block className="my-0 card-appear-delayed" strong inset>
+        <Block className="my-0" strong inset>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <Wallet className="w-5 h-5 text-primary" />
@@ -145,7 +144,7 @@ export default function Profile() {
                   disabled={isPaymentBusy}
                   rounded
                   outline={!_package.popular}
-                  className={`relative h-10 overflow-visible transition-all duration-200 hover:scale-105 active:scale-95 ${_package.popular ? "k-color-brand" : "k-color-brand"}`}
+                  className={`relative h-10 overflow-visible ${_package.popular ? "k-color-brand" : "k-color-brand"}`}
                 >
                   {_package.popular && (
                     <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full">
@@ -169,7 +168,7 @@ export default function Profile() {
           </div>
         </Block>
 
-        <div className="card-appear-delayed" style={{ animationDelay: '0.15s' }}>
+        <div>
           <AppList>
             <ListItem title="История заказов" link onClick={() => router.push("/history")} />
             <ListItem title="Заказы в работе" link onClick={() => router.push("/taken")} />
@@ -178,12 +177,12 @@ export default function Profile() {
           </AppList>
         </div>
 
-        <div className="card-appear-delayed mt-2" style={{ animationDelay: '0.2s' }}>
+        <div className="mt-2">
           <div className="text-sm font-medium opacity-55 px-4 mb-1">Тема</div>
           <ThemeSelector />
         </div>
 
-        <div className="card-appear-delayed mt-2" style={{ animationDelay: '0.25s' }}>
+        <div className="mt-2">
           <AppList>
             <ListItem
               title="Помощь"

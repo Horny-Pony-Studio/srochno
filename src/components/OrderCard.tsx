@@ -25,7 +25,7 @@ function OrderCard({ order, onClick, className, footerRight }: Props) {
 
   return (
     <Block
-      className={`my-0 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] cursor-pointer ${className ?? ""}`}
+      className={`my-0 cursor-pointer ${className ?? ""}`}
       strong
       inset
       onClick={onClick}
