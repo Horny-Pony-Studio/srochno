@@ -8,6 +8,7 @@ import InfoBlock from "./InfoBlock";
 import SearchableSelect from "./SearchableSelect";
 import Select from "./Select";
 import OrderCard from "./OrderCard";
+import OrderFeedbackSection from "./OrderFeedbackSection";
 import HistoryCard from "./HistoryCard";
 import StarRating from "./StarRating";
 import ReviewForm from "./ReviewForm";
@@ -28,6 +29,7 @@ export {
   HistoryCard,
   InfoBlock,
   OrderCard,
+  OrderFeedbackSection,
   OrderTimerChip,
   PageTransition,
   PullToRefresh,
