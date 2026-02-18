@@ -131,6 +131,7 @@ export interface OrderDetailResponse {
   customer_responded_at: string | null;
   city_locked: boolean;
   rating?: number | null;
+  feedback?: OrderFeedback | null;
 }
 
 export interface OrderListResponse {
@@ -143,6 +144,27 @@ export interface ExecutorTakeResponse {
   contact: string;
   executor_count: number;
   new_balance: number;
+}
+
+// ─── Order Feedback (embedded in OrderDetailResponse) ─
+
+export interface OrderClientReview {
+  id: number;
+  rating: number;
+  comment: string | null;
+  created_at: string;
+}
+
+export interface OrderExecutorComplaint {
+  id: number;
+  complaint: ComplaintReason;
+  comment: string | null;
+  created_at: string;
+}
+
+export interface OrderFeedback {
+  client_review: OrderClientReview | null;
+  executor_complaint: OrderExecutorComplaint | null;
 }
 
 // ─── Reviews ─────────────────────────────────────────────
