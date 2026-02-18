@@ -1,5 +1,5 @@
-import type { OrderResponse, OrderDetailResponse, ExecutorTakeSchema, ReviewResponse } from '@/types/api';
-import type { Order, ExecutorTake, CustomerResponse } from '@/src/models/Order';
+import type { OrderResponse, OrderDetailResponse, ExecutorTakeSchema, ReviewResponse, OrderFeedback } from '@/types/api';
+import type { Order, ExecutorTake, CustomerResponse, OrderFeedbackData } from '@/src/models/Order';
 import type { Review } from '@/src/models/Review';
 
 function mapExecutorTake(raw: ExecutorTakeSchema): ExecutorTake {
@@ -16,7 +16,31 @@ function mapCustomerResponse(
   return { respondedAt };
 }
 
+function mapOrderFeedback(raw: OrderFeedback | null | undefined): OrderFeedbackData | undefined {
+  if (raw == null) return undefined;
+  return {
+    clientReview: raw.client_review
+      ? {
+          id: raw.client_review.id,
+          rating: raw.client_review.rating,
+          comment: raw.client_review.comment,
+          createdAt: raw.client_review.created_at,
+        }
+      : null,
+    executorComplaint: raw.executor_complaint
+      ? {
+          id: raw.executor_complaint.id,
+          reason: raw.executor_complaint.complaint,
+          comment: raw.executor_complaint.comment,
+          createdAt: raw.executor_complaint.created_at,
+        }
+      : null,
+  };
+}
+
 export function mapOrder(raw: OrderResponse | OrderDetailResponse): Order {
+  const feedback = 'feedback' in raw ? mapOrderFeedback(raw.feedback) : undefined;
+
   return {
     id: raw.id,
     category: raw.category,
@@ -30,6 +54,7 @@ export function mapOrder(raw: OrderResponse | OrderDetailResponse): Order {
     customerResponse: mapCustomerResponse(raw.customer_responded_at),
     cityLocked: raw.city_locked,
     ...(raw.rating != null ? { rating: raw.rating } : {}),
+    ...(feedback !== undefined ? { feedback } : {}),
   };
 }
 
