@@ -94,7 +94,7 @@ function CustomerPage() {
             />
           ) : (
             <List className={"my-0"}>
-              {orders.map((order, index) => {
+              {orders.map((order) => {
                 const canModify = order.status === 'active' && order.takenBy.length === 0;
 
                 return (
