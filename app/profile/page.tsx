@@ -89,7 +89,6 @@ export default function Profile() {
                   width={64}
                   height={64}
                   className="w-full h-full object-cover"
-                  unoptimized
                   onError={() => setImgError(true)}
                 />
               ) : (
