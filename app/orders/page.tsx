@@ -11,7 +11,7 @@ import { useOrders } from "@/hooks/useOrders";
 import { useAuth } from "@/providers/AuthProvider";
 
 const takeButtonElement = (
-  <div className="bg-primary text-white px-4 py-2 rounded-lg text-sm transition-all duration-200 hover:opacity-80">
+  <div className="bg-primary text-white px-4 py-2 rounded-lg text-sm">
     Взять (2 ₽)
   </div>
 );
@@ -66,7 +66,7 @@ export default function OrdersPage() {
                     key={cat}
                     outline={!isActive}
                     onClick={() => setSelectedCategory(cat)}
-                    className={`shrink-0 transition-all duration-200 active:scale-95 ${
+                    className={`shrink-0 ${
                       isActive ? 'bg-primary text-white' : ''
                     }`}
                     colors={isActive ? {
@@ -116,19 +116,18 @@ export default function OrdersPage() {
               />
             ) : (
               <div className="flex flex-col gap-4">
-                {activeOrders.map((order, index) => {
+                {activeOrders.map((order) => {
                   const takes = takenCount(order);
                   const left = minutesLeft(order);
                   const canShowTake = takes < 3 && left > 0;
 
                   return (
-                    <div key={order.id} className="stagger-item" style={{ animationDelay: `${index * 0.05}s` }}>
-                      <OrderCard
-                        order={order}
-                        onClick={() => router.push(`/orders/${order.id}`)}
-                        footerRight={canShowTake ? takeButtonElement : undefined}
-                      />
-                    </div>
+                    <OrderCard
+                      key={order.id}
+                      order={order}
+                      onClick={() => router.push(`/orders/${order.id}`)}
+                      footerRight={canShowTake ? takeButtonElement : undefined}
+                    />
                   );
                 })}
               </div>

@@ -74,13 +74,12 @@ export default function TakenOrdersPage() {
                   <>
                     <BlockTitle className="my-0 mx-4">В работе</BlockTitle>
                     <div className="flex flex-col gap-4">
-                      {active.map((order, index) => (
-                        <div key={order.id} className="stagger-item" style={{ animationDelay: `${index * 0.05}s` }}>
-                          <OrderCard
-                            order={order}
-                            onClick={() => router.push(`/orders/${order.id}`)}
-                          />
-                        </div>
+                      {active.map((order) => (
+                        <OrderCard
+                          key={order.id}
+                          order={order}
+                          onClick={() => router.push(`/orders/${order.id}`)}
+                        />
                       ))}
                     </div>
                   </>
@@ -90,13 +89,12 @@ export default function TakenOrdersPage() {
                   <>
                     <BlockTitle className="my-0 mx-4">Завершённые</BlockTitle>
                     <div className="flex flex-col gap-4">
-                      {past.map((item, index) => (
-                        <div key={item.id} className="stagger-item" style={{ animationDelay: `${index * 0.05}s` }}>
-                          <HistoryCard
-                            item={item}
-                            onClick={() => router.push(`/history/${item.id}`)}
-                          />
-                        </div>
+                      {past.map((item) => (
+                        <HistoryCard
+                          key={item.id}
+                          item={item}
+                          onClick={() => router.push(`/history/${item.id}`)}
+                        />
                       ))}
                     </div>
                   </>

@@ -89,7 +89,7 @@ export default function HistoryPage() {
                   component="button"
                   onClick={() => setTab(f.key)}
                   className={
-                    `text-base p-3 transition-all duration-200
+                    `text-base p-3
                     ${tab === f.key
                       ? "bg-primary text-white"
                       : "bg-transparent text-primary border border-primary"}
@@ -119,16 +119,14 @@ export default function HistoryPage() {
             />
           ) : items.length === 0 ? (
             <InfoBlock
-              className="mx-4 scale-in"
+              className="mx-4"
               variant="blue"
               icon="📚"
               message="Пока пусто. Здесь появятся ваши выполненные и отменённые заявки."
             />
           ) : (
-            items.map((i, index) => (
-              <div key={i.id} className="stagger-item" style={{ animationDelay: `${index * 0.05}s` }}>
-                <HistoryCard item={i} onClick={() => router.push(`/history/${i.id}`)} />
-              </div>
+            items.map((i) => (
+              <HistoryCard key={i.id} item={i} onClick={() => router.push(`/history/${i.id}`)} />
             ))
           )}
 
