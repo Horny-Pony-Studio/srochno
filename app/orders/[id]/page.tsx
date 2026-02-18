@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Block, Chip, Link, ListItem, Preloader } from "konsta/react";
 import { Clock, Phone, Lock, CheckCircle } from "lucide-react";
 import { AppPage, InfoBlock, AppNavbar, AppList, PageTransition } from "@/src/components";
@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/useToast";
 
 export default function OrderDetailPage() {
   useTelegramBackButton('/orders');
+  const router = useRouter();
   const params = useParams<{ id?: string }>();
   const { user, refetchUser } = useAuth();
   const toast = useToast();
@@ -37,8 +38,14 @@ export default function OrderDetailPage() {
   const pay = 2;
   const takes = order ? takenCount(order) : 0;
   const canTake = !showContact && balance >= pay && takes < 3 && !timer.isExpired;
+  const insufficientBalance = !showContact && balance < pay && takes < 3 && !timer.isExpired;
 
   const handleTakeOrder = useCallback(() => {
+    if (insufficientBalance) {
+      router.push('/profile');
+      return;
+    }
+
     if (!canTake || !orderId || takeOrderMut.isPending) return;
 
     takeOrderMut.mutate(orderId, {
@@ -63,21 +70,21 @@ export default function OrderDetailPage() {
         }
       },
     });
-  }, [canTake, orderId, takeOrderMut, refetchUser, toast]);
+  }, [insufficientBalance, canTake, orderId, takeOrderMut, refetchUser, toast, router]);
 
   const mainButtonLabel = (() => {
     if (canTake) return `Взять заказ (${pay} ₽)`;
     if (showContact) return 'В работе';
     if (timer.isExpired) return 'Заказ истёк';
     if (takes >= 3) return 'Откликов 3/3';
-    if (balance < pay) return 'Недостаточно средств';
+    if (insufficientBalance) return 'Пополнить баланс';
     return 'Недоступно';
   })();
 
   useTelegramMainButton(
     mainButtonLabel,
     handleTakeOrder,
-    { isEnabled: canTake, isLoading: takeOrderMut.isPending },
+    { isEnabled: canTake || insufficientBalance, isLoading: takeOrderMut.isPending },
   );
 
   if (isLoading || !orderId) {
@@ -186,12 +193,14 @@ export default function OrderDetailPage() {
             </Block>
           )}
 
-          {!showContact && !canTake && balance < pay && (
+          {insufficientBalance && (
             <InfoBlock
-              className="mx-4 scale-in"
+              className="mx-4"
               variant="yellow"
               icon="💰"
               message="Недостаточно средств. Пополните баланс для взятия заказа."
+              onRetry={() => router.push('/profile')}
+              retryLabel="Пополнить баланс"
             />
           )}
 
