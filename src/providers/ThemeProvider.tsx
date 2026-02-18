@@ -75,7 +75,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     const id = setTimeout(() => {
       document.documentElement.classList.remove('theme-transitioning');
-    }, 350);
+    }, 200);
     return () => clearTimeout(id);
   }, [theme]);
 
