@@ -155,16 +155,8 @@ export interface OrderClientReview {
   created_at: string;
 }
 
-export interface OrderExecutorComplaint {
-  id: number;
-  complaint: ComplaintReason;
-  comment: string | null;
-  created_at: string;
-}
-
 export interface OrderFeedback {
   client_review: OrderClientReview | null;
-  executor_complaint: OrderExecutorComplaint | null;
 }
 
 // ─── Reviews ─────────────────────────────────────────────

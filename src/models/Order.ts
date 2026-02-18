@@ -16,16 +16,8 @@ export interface ClientReviewData {
   createdAt: string;
 }
 
-export interface ExecutorComplaintData {
-  id: number;
-  reason: string;
-  comment: string | null;
-  createdAt: string;
-}
-
 export interface OrderFeedbackData {
   clientReview: ClientReviewData | null;
-  executorComplaint: ExecutorComplaintData | null;
 }
 
 export interface Order {

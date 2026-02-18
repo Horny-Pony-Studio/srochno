@@ -27,14 +27,6 @@ function mapOrderFeedback(raw: OrderFeedback | null | undefined): OrderFeedbackD
           createdAt: raw.client_review.created_at,
         }
       : null,
-    executorComplaint: raw.executor_complaint
-      ? {
-          id: raw.executor_complaint.id,
-          reason: raw.executor_complaint.complaint,
-          comment: raw.executor_complaint.comment,
-          createdAt: raw.executor_complaint.created_at,
-        }
-      : null,
   };
 }
 
