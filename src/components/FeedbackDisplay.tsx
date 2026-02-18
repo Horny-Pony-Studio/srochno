@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Block, Chip } from 'konsta/react';
+import { Block } from 'konsta/react';
 import StarRating from './StarRating';
 
 function formatDate(iso: string): string {
@@ -12,29 +12,20 @@ function formatDate(iso: string): string {
   return `${dd}.${mm}.${yyyy}`;
 }
 
-type FeedbackDisplayProps =
-  | { type: 'review'; rating: number; comment: string | null; createdAt: string }
-  | { type: 'complaint'; reason: string; comment: string | null; createdAt: string };
+interface FeedbackDisplayProps {
+  rating: number;
+  comment: string | null;
+  createdAt: string;
+}
 
-export default function FeedbackDisplay(props: FeedbackDisplayProps) {
+export default function FeedbackDisplay({ rating, comment, createdAt }: FeedbackDisplayProps) {
   return (
     <Block className="my-0" strong inset>
-      {props.type === 'review' ? (
-        <>
-          <StarRating value={props.rating} readonly size="sm" />
-          {props.comment && (
-            <p className="mt-2 text-sm whitespace-pre-wrap">{props.comment}</p>
-          )}
-        </>
-      ) : (
-        <>
-          <Chip className="bg-orange-100 text-orange-600">{props.reason}</Chip>
-          {props.comment && (
-            <p className="mt-2 text-sm whitespace-pre-wrap">{props.comment}</p>
-          )}
-        </>
+      <StarRating value={rating} readonly size="sm" />
+      {comment && (
+        <p className="mt-2 text-sm whitespace-pre-wrap">{comment}</p>
       )}
-      <div className="mt-2 text-xs opacity-55">{formatDate(props.createdAt)}</div>
+      <div className="mt-2 text-xs opacity-55">{formatDate(createdAt)}</div>
     </Block>
   );
 }

@@ -12,7 +12,6 @@ import OrderFeedbackSection from "./OrderFeedbackSection";
 import HistoryCard from "./HistoryCard";
 import StarRating from "./StarRating";
 import ReviewForm from "./ReviewForm";
-import ComplaintForm from "./ComplaintForm";
 import OrderTimerChip from "./OrderTimerChip";
 import { PageTransition } from "./PageTransition";
 import PullToRefresh from "./PullToRefresh";
@@ -23,7 +22,6 @@ export {
   AppListInput,
   AppNavbar,
   AppPage,
-  ComplaintForm,
   EmptyState,
   FeedbackDisplay,
   HistoryCard,

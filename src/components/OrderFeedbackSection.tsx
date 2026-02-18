@@ -10,9 +10,6 @@ import type { OrderFeedbackData } from '@/src/models/Order';
 const ReviewForm = dynamic(() => import('./ReviewForm'), {
   loading: () => <Preloader className="text-primary" />,
 });
-const ComplaintForm = dynamic(() => import('./ComplaintForm'), {
-  loading: () => <Preloader className="text-primary" />,
-});
 
 interface OrderFeedbackSectionProps {
   orderId: string;
@@ -31,39 +28,25 @@ export default function OrderFeedbackSection({
   feedback,
   onFeedbackSubmitted,
 }: OrderFeedbackSectionProps) {
-  // Fallback: backend hasn't been updated yet — show only own form (current behavior)
+  const review = feedback?.clientReview ?? null;
+
+  // Fallback: backend hasn't been updated yet — show only client form (current behavior)
   if (feedback === undefined) {
-    return isExecutor ? (
-      <ComplaintForm orderId={orderId} onSuccess={onFeedbackSubmitted} />
-    ) : (
+    return isExecutor ? null : (
       <ReviewForm orderId={orderId} onSuccess={onFeedbackSubmitted} />
     );
   }
 
   if (isExecutor) {
+    // Executor can only view the client's review (read-only)
     return (
       <>
-        {/* Own feedback first */}
-        <SectionLabel>Ваша жалоба</SectionLabel>
-        {feedback.executorComplaint ? (
-          <FeedbackDisplay
-            type="complaint"
-            reason={feedback.executorComplaint.reason}
-            comment={feedback.executorComplaint.comment}
-            createdAt={feedback.executorComplaint.createdAt}
-          />
-        ) : (
-          <ComplaintForm orderId={orderId} onSuccess={onFeedbackSubmitted} />
-        )}
-
-        {/* Other party's feedback */}
         <SectionLabel>Отзыв клиента</SectionLabel>
-        {feedback.clientReview ? (
+        {review ? (
           <FeedbackDisplay
-            type="review"
-            rating={feedback.clientReview.rating}
-            comment={feedback.clientReview.comment}
-            createdAt={feedback.clientReview.createdAt}
+            rating={review.rating}
+            comment={review.comment}
+            createdAt={review.createdAt}
           />
         ) : (
           <InfoBlock className="mx-4" variant="blue" icon="ℹ️" message="Клиент пока не оставил отзыв" />
@@ -72,33 +55,18 @@ export default function OrderFeedbackSection({
     );
   }
 
-  // Client POV
+  // Client: show form or submitted review
   return (
     <>
-      {/* Own feedback first */}
       <SectionLabel>Ваш отзыв</SectionLabel>
-      {feedback.clientReview ? (
+      {review ? (
         <FeedbackDisplay
-          type="review"
-          rating={feedback.clientReview.rating}
-          comment={feedback.clientReview.comment}
-          createdAt={feedback.clientReview.createdAt}
+          rating={review.rating}
+          comment={review.comment}
+          createdAt={review.createdAt}
         />
       ) : (
         <ReviewForm orderId={orderId} onSuccess={onFeedbackSubmitted} />
-      )}
-
-      {/* Other party's feedback */}
-      <SectionLabel>Отзыв исполнителя</SectionLabel>
-      {feedback.executorComplaint ? (
-        <FeedbackDisplay
-          type="complaint"
-          reason={feedback.executorComplaint.reason}
-          comment={feedback.executorComplaint.comment}
-          createdAt={feedback.executorComplaint.createdAt}
-        />
-      ) : (
-        <InfoBlock className="mx-4" variant="blue" icon="ℹ️" message="Исполнитель пока не оставил отзыв" />
       )}
     </>
   );
