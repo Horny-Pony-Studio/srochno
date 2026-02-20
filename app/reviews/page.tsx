@@ -20,9 +20,15 @@ function getInitials(name: string) {
   return parts.map((p) => p[0] ?? "").join("").toUpperCase().slice(0, 2);
 }
 
-type FilterTab = "all" | 5 | 4 | 3;
+type RoleTab = "mine" | "about_me";
+type RatingFilter = "all" | 5 | 4 | 3;
 
-const FILTER_TABS: { key: FilterTab; label: string }[] = [
+const ROLE_TABS: { key: RoleTab; label: string }[] = [
+  { key: "mine", label: "Мои отзывы" },
+  { key: "about_me", label: "Обо мне" },
+];
+
+const RATING_FILTERS: { key: RatingFilter; label: string }[] = [
   { key: "all", label: "Все" },
   { key: 5, label: "5★" },
   { key: 4, label: "4★" },
@@ -31,12 +37,19 @@ const FILTER_TABS: { key: FilterTab; label: string }[] = [
 
 export default function ReviewsPage() {
   useTelegramBackButton('/profile');
-  const [tab, setTab] = useState<FilterTab>("all");
+  const [roleTab, setRoleTab] = useState<RoleTab>("mine");
+  const [ratingTab, setRatingTab] = useState<RatingFilter>("all");
 
-  const ratingFilter = tab === "all" ? undefined : tab;
-  const { data: reviews, isLoading, isError, refetch } = useReviews({
+  const ratingFilter = ratingTab === "all" ? undefined : ratingTab;
+
+  const {
+    data: reviews,
+    isLoading,
+    isError,
+    refetch,
+  } = useReviews({
     ...(ratingFilter != null ? { rating: ratingFilter } : {}),
-    mine: true,
+    ...(roleTab === "mine" ? { mine: true } : { about_me: true }),
   });
 
   const handleRefresh = useCallback(async () => {
@@ -48,84 +61,109 @@ export default function ReviewsPage() {
       <AppPage className="min-h-dvh flex flex-col">
         <AppNavbar title="Отзывы" showRight />
 
-        <PullToRefresh onRefresh={handleRefresh} className="flex-1">
-        <Block className="my-4 pl-0! pr-0!">
-          <div className="px-4 overflow-x-auto hide-scrollbar scroll-hint-right">
-            <div className="flex gap-2 w-max pr-4">
-              {FILTER_TABS.map((f) => (
-                <Chip
-                  key={String(f.key)}
-                  component="button"
-                  onClick={() => setTab(f.key)}
-                  className={
-                    `text-base p-3
-                    ${tab === f.key
-                      ? "bg-primary text-white"
-                      : "bg-transparent text-primary border border-primary"}`
-                  }
-                >
-                  {f.label}
-                </Chip>
-              ))}
-            </div>
+        {/* Role tabs — large, full-width for 40+ audience */}
+        <Block className="my-0 pt-4 pb-0 px-4!">
+          <div className="flex gap-2">
+            {ROLE_TABS.map((t) => (
+              <button
+                key={t.key}
+                onClick={() => { setRoleTab(t.key); setRatingTab("all"); }}
+                className={
+                  `flex-1 py-3 rounded-lg text-base font-medium transition-colors
+                  ${roleTab === t.key
+                    ? "bg-primary text-white"
+                    : "bg-transparent text-primary border-2 border-primary"}`
+                }
+              >
+                {t.label}
+              </button>
+            ))}
           </div>
         </Block>
 
-        <Block className="flex-1 pb-20 my-0 pl-0! pr-0! flex flex-col gap-4">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-20">
-              <Preloader className="text-primary" />
+        <PullToRefresh onRefresh={handleRefresh} className="flex-1">
+          {/* Rating filter chips */}
+          <Block className="my-4 pl-0! pr-0!">
+            <div className="px-4 overflow-x-auto hide-scrollbar scroll-hint-right">
+              <div className="flex gap-2 w-max pr-4">
+                {RATING_FILTERS.map((f) => (
+                  <Chip
+                    key={String(f.key)}
+                    component="button"
+                    onClick={() => setRatingTab(f.key)}
+                    className={
+                      `text-base p-3
+                      ${ratingTab === f.key
+                        ? "bg-primary text-white"
+                        : "bg-transparent text-primary border border-primary"}`
+                    }
+                  >
+                    {f.label}
+                  </Chip>
+                ))}
+              </div>
             </div>
-          ) : isError ? (
-            <InfoBlock
-              className="mx-4"
-              variant="red"
-              icon="⚠️"
-              message="Не удалось загрузить отзывы. Попробуйте позже."
-            />
-          ) : !reviews || reviews.length === 0 ? (
-            <InfoBlock
-              className="mx-4"
-              variant="blue"
-              icon="⭐"
-              message="Пока нет отзывов с таким рейтингом."
-            />
-          ) : (
-            <>
-              <AppList>
-                <ListItem title="Всего" after={reviews.length} />
-              </AppList>
+          </Block>
 
-              {reviews.map((r) => (
-                <Block key={r.id} className="my-0" strong inset>
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white text-sm shrink-0">
-                      {getInitials(r.authorName)}
-                    </div>
+          <Block className="flex-1 pb-20 my-0 pl-0! pr-0! flex flex-col gap-4">
+            {isLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <Preloader className="text-primary" />
+              </div>
+            ) : isError ? (
+              <InfoBlock
+                className="mx-4"
+                variant="red"
+                icon="⚠️"
+                message="Не удалось загрузить отзывы. Попробуйте позже."
+              />
+            ) : !reviews || reviews.length === 0 ? (
+              <InfoBlock
+                className="mx-4"
+                variant="blue"
+                icon="⭐"
+                message={
+                  roleTab === "mine"
+                    ? "Пока нет отзывов с таким рейтингом."
+                    : "Пока никто не оставил отзыв о вас."
+                }
+              />
+            ) : (
+              <>
+                <AppList>
+                  <ListItem title="Всего" after={reviews.length} />
+                </AppList>
 
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                        <div className="font-medium truncate">{r.authorName}</div>
-                        <div className="flex items-center gap-1 shrink-0">
-                          <Star className="w-4 h-4 text-[#FF9500] fill-[#FF9500]" />
-                          <span className="text-sm">{r.rating}</span>
+                {reviews.map((r) => (
+                  <Block key={r.id} className="my-0" strong inset>
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white text-sm shrink-0">
+                        {getInitials(r.authorName)}
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <div className="font-medium truncate">{r.authorName}</div>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <Star className="w-4 h-4 text-[#FF9500] fill-[#FF9500]" />
+                            <span className="text-sm">{r.rating}</span>
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="text-sm opacity-55 mb-2">
-                        {r.category} • {formatDate(r.createdAt)}
-                      </div>
+                        <div className="text-sm opacity-55 mb-2">
+                          {r.category} • {formatDate(r.createdAt)}
+                        </div>
 
-                      {r.comment && (
-                        <p className="text-sm leading-relaxed">{r.comment}</p>
-                      )}
+                        {r.comment && (
+                          <p className="text-sm leading-relaxed">{r.comment}</p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </Block>
-              ))}
-            </>
-          )}
-        </Block>
+                  </Block>
+                ))}
+              </>
+            )}
+          </Block>
         </PullToRefresh>
       </AppPage>
     </PageTransition>
