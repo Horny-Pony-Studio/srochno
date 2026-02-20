@@ -1,14 +1,17 @@
 "use client";
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { App } from 'konsta/react';
 import { useTheme } from '@/src/providers/ThemeProvider';
 import ToastContainer from '@/components/ToastContainer';
 
 export default function KonstaProvider({ children }: { children: React.ReactNode }) {
   const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   return (
-    <App theme="ios" dark={theme === 'dark'}>
+    <App theme="ios" dark={mounted && theme === 'dark'}>
       {children}
       <ToastContainer />
     </App>
