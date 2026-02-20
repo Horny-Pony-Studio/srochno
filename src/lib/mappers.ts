@@ -62,6 +62,10 @@ export function mapReview(raw: ReviewResponse): Review {
     category: raw.category,
     authorName: raw.author_name,
     createdAt: raw.created_at,
+    ...(raw.order_id != null ? { orderId: raw.order_id } : {}),
+    ...(raw.description != null ? { description: raw.description } : {}),
+    ...(raw.contact != null ? { contact: raw.contact } : {}),
+    ...(raw.city != null ? { city: raw.city } : {}),
   };
 }
 

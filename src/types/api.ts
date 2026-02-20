@@ -172,4 +172,8 @@ export interface ReviewResponse {
   comment: string | null;
   category: string;
   created_at: string;
+  order_id?: string | null;
+  description?: string | null;
+  contact?: string | null;
+  city?: string | null;
 }

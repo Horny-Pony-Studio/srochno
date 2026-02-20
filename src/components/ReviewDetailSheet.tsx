@@ -89,6 +89,28 @@ export default function ReviewDetailSheet({ review, opened, onClose }: ReviewDet
             <StarRow rating={review.rating} />
           </Block>
 
+          {/* Order details (when backend provides them) */}
+          {(review.description || review.contact || review.city) && (
+            <Block className="my-0 mb-4" strong inset>
+              <div className="text-sm opacity-55 mb-2">Заказ</div>
+              {review.description && (
+                <p className="text-base leading-relaxed whitespace-pre-wrap mb-3">{review.description}</p>
+              )}
+              {review.city && (
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-sm opacity-55">Город</span>
+                  <span className="text-sm">{review.city}</span>
+                </div>
+              )}
+              {review.contact && (
+                <div className="flex justify-between items-center">
+                  <span className="text-sm opacity-55">Контакт</span>
+                  <span className="text-sm">{review.contact}</span>
+                </div>
+              )}
+            </Block>
+          )}
+
           {/* Comment */}
           {review.comment && (
             <Block className="my-0 mb-4" strong inset>
