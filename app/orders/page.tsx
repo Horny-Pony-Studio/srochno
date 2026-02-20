@@ -21,7 +21,7 @@ const takeButtonElement = (
 type RoleTab = "available" | "taken";
 
 const ROLE_TABS: { key: RoleTab; label: string }[] = [
-  { key: "available", label: "Доступные" },
+  { key: "available", label: "Мои заказы" },
   { key: "taken", label: "Взятые мной" },
 ];
 
