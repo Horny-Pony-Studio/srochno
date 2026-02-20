@@ -81,6 +81,30 @@ describe('useReviews', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(mockGetReviews).toHaveBeenCalledWith({ rating: 5 });
   });
+
+  it('passes about_me filter to API', async () => {
+    mockGetReviews.mockResolvedValue([]);
+
+    const { result } = renderHook(
+      () => useReviews({ about_me: true }),
+      { wrapper: createWrapper() },
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(mockGetReviews).toHaveBeenCalledWith({ about_me: true });
+  });
+
+  it('passes mine filter to API', async () => {
+    mockGetReviews.mockResolvedValue([]);
+
+    const { result } = renderHook(
+      () => useReviews({ mine: true, rating: 4 }),
+      { wrapper: createWrapper() },
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(mockGetReviews).toHaveBeenCalledWith({ mine: true, rating: 4 });
+  });
 });
 
 describe('useSubmitReview', () => {

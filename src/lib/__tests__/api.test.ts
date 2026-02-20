@@ -215,6 +215,24 @@ describe('getOrders', () => {
     expect(url).not.toContain('city=');
     expect(url).not.toContain('limit=');
   });
+
+  it('appends taken_by_me=true when param is set', async () => {
+    const spy = mockFetch({ orders: [], total: 0 });
+    vi.stubGlobal('fetch', spy);
+
+    await getOrders({ taken_by_me: true });
+    const url = spy.mock.calls[0][0] as string;
+    expect(url).toContain('taken_by_me=true');
+  });
+
+  it('omits taken_by_me when not set', async () => {
+    const spy = mockFetch({ orders: [], total: 0 });
+    vi.stubGlobal('fetch', spy);
+
+    await getOrders({ mine: true });
+    const url = spy.mock.calls[0][0] as string;
+    expect(url).not.toContain('taken_by_me');
+  });
 });
 
 describe('getOrder', () => {
@@ -343,6 +361,24 @@ describe('getReviews', () => {
     await getReviews({ mine: true });
     const url = spy.mock.calls[0][0] as string;
     expect(url).toContain('mine=true');
+  });
+
+  it('appends about_me=true when param is set', async () => {
+    const spy = mockFetch([]);
+    vi.stubGlobal('fetch', spy);
+
+    await getReviews({ about_me: true });
+    const url = spy.mock.calls[0][0] as string;
+    expect(url).toContain('about_me=true');
+  });
+
+  it('omits about_me when not set', async () => {
+    const spy = mockFetch([]);
+    vi.stubGlobal('fetch', spy);
+
+    await getReviews({ mine: true });
+    const url = spy.mock.calls[0][0] as string;
+    expect(url).not.toContain('about_me');
   });
 });
 
