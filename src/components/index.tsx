@@ -11,6 +11,7 @@ import OrderCard from "./OrderCard";
 import OrderFeedbackSection from "./OrderFeedbackSection";
 import HistoryCard from "./HistoryCard";
 import StarRating from "./StarRating";
+import ReviewDetailSheet from "./ReviewDetailSheet";
 import ReviewForm from "./ReviewForm";
 import OrderTimerChip from "./OrderTimerChip";
 import { PageTransition } from "./PageTransition";
@@ -31,6 +32,7 @@ export {
   OrderTimerChip,
   PageTransition,
   PullToRefresh,
+  ReviewDetailSheet,
   ReviewForm,
   SearchableSelect,
   Select,

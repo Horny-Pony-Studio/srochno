@@ -4,8 +4,10 @@ import React, { useState, useCallback } from "react";
 import { Block, Chip, ListItem, Preloader } from "konsta/react";
 import { Star } from "lucide-react";
 import { AppList, AppNavbar, AppPage, InfoBlock, PageTransition, PullToRefresh } from "@/src/components";
+import ReviewDetailSheet from "@/src/components/ReviewDetailSheet";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
 import { useReviews } from "@/src/hooks/useReviews";
+import type { Review } from "@/src/models/Review";
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -39,6 +41,7 @@ export default function ReviewsPage() {
   useTelegramBackButton('/profile');
   const [roleTab, setRoleTab] = useState<RoleTab>("mine");
   const [ratingTab, setRatingTab] = useState<RatingFilter>("all");
+  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
 
   const ratingFilter = ratingTab === "all" ? undefined : ratingTab;
 
@@ -135,7 +138,15 @@ export default function ReviewsPage() {
                 </AppList>
 
                 {reviews.map((r) => (
-                  <Block key={r.id} className="my-0" strong inset>
+                  <Block
+                    key={r.id}
+                    className="my-0 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
+                    strong
+                    inset
+                    onClick={() => setSelectedReview(r)}
+                    role="button"
+                    tabIndex={0}
+                  >
                     <div className="flex items-start gap-3">
                       <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white text-sm shrink-0">
                         {getInitials(r.authorName)}
@@ -165,6 +176,11 @@ export default function ReviewsPage() {
             )}
           </Block>
         </PullToRefresh>
+        <ReviewDetailSheet
+          review={selectedReview}
+          opened={selectedReview !== null}
+          onClose={() => setSelectedReview(null)}
+        />
       </AppPage>
     </PageTransition>
   );
