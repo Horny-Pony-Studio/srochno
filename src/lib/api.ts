@@ -170,6 +170,7 @@ export interface OrderListParams {
   limit?: number;
   offset?: number;
   mine?: boolean;
+  taken_by_me?: boolean;
 }
 
 export function getOrders(
@@ -182,6 +183,7 @@ export function getOrders(
   if (params?.limit != null) qs.set('limit', String(params.limit));
   if (params?.offset != null) qs.set('offset', String(params.offset));
   if (params?.mine) qs.set('mine', 'true');
+  if (params?.taken_by_me) qs.set('taken_by_me', 'true');
   const query = qs.toString();
   return request<OrderListResponse>(
     `/api/orders${query ? `?${query}` : ''}`,
@@ -254,6 +256,7 @@ export interface ReviewListParams {
   rating?: number;
   limit?: number;
   mine?: boolean;
+  about_me?: boolean;
 }
 
 export function getReviews(
@@ -263,6 +266,7 @@ export function getReviews(
   if (params?.rating != null) qs.set('rating', String(params.rating));
   if (params?.limit != null) qs.set('limit', String(params.limit));
   if (params?.mine) qs.set('mine', 'true');
+  if (params?.about_me) qs.set('about_me', 'true');
   const query = qs.toString();
   return request<ReviewResponse[]>(
     `/api/reviews${query ? `?${query}` : ''}`,
