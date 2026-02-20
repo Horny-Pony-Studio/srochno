@@ -23,7 +23,7 @@ function getInitials(name: string) {
 }
 
 type RoleTab = "mine" | "about_me";
-type RatingFilter = "all" | 5 | 4 | 3;
+type RatingFilter = "all" | 5 | 4 | 3 | 2 | 1;
 
 const ROLE_TABS: { key: RoleTab; label: string }[] = [
   { key: "mine", label: "Мои отзывы" },
@@ -35,6 +35,8 @@ const RATING_FILTERS: { key: RatingFilter; label: string }[] = [
   { key: 5, label: "5★" },
   { key: 4, label: "4★" },
   { key: 3, label: "3★" },
+  { key: 2, label: "2★" },
+  { key: 1, label: "1★" },
 ];
 
 export default function ReviewsPage() {
