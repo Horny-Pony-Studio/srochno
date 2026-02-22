@@ -4,31 +4,14 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Block, Button, Chip, Preloader } from "konsta/react";
 import { Star } from "lucide-react";
 import { AppNavbar, AppPage, InfoBlock, HistoryCard, PageTransition, PullToRefresh } from "@/src/components";
-import type { HistoryCardData, HistoryStatus } from "@/src/components/HistoryCard";
-import { minutesLeft, takenCount } from "@/src/utils/order";
+import type { HistoryCardData } from "@/src/components/HistoryCard";
+import { deriveHistoryStatus } from "@/src/utils/order";
 import { useRouter } from "next/navigation";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
 import { useMyOrders } from "@/hooks/useOrders";
-import type { Order } from "@/src/models/Order";
-
 function firstLine(text: string) {
   const line = text.split("\n")[0] ?? "";
   return line.length > 70 ? `${line.slice(0, 70)}…` : line;
-}
-
-function deriveHistoryStatus(order: Order): HistoryStatus {
-  if (order.status === 'completed') return 'completed';
-  if (order.status === 'closed_no_response') return 'closed_no_response';
-  if (order.status === 'deleted') return 'cancelled';
-  if (order.status === 'expired') {
-    return takenCount(order) > 0 ? 'completed' : 'cancelled';
-  }
-
-  const left = minutesLeft(order);
-  if (left <= 0) {
-    return takenCount(order) > 0 ? "completed" : "cancelled";
-  }
-  return "in_progress";
 }
 
 export default function HistoryPage() {
@@ -122,7 +105,7 @@ export default function HistoryPage() {
               className="mx-4"
               variant="blue"
               icon="📚"
-              message="Пока пусто. Здесь появятся ваши выполненные и отменённые заявки."
+              message="Пока нет заказов в истории."
             />
           ) : (
             items.map((i) => (
