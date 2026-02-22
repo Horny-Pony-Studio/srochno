@@ -4,8 +4,8 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Block, BlockTitle, Button, Chip, Preloader } from "konsta/react";
 import { Star } from "lucide-react";
 import { AppNavbar, AppPage, InfoBlock, HistoryCard, OrderCard, PageTransition, PullToRefresh } from "@/src/components";
-import type { HistoryCardData, HistoryStatus } from "@/src/components/HistoryCard";
-import { minutesLeft, takenCount } from "@/src/utils/order";
+import type { HistoryCardData } from "@/src/components/HistoryCard";
+import { minutesLeft, deriveHistoryStatus } from "@/src/utils/order";
 import { useRouter } from "next/navigation";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
 import { useMyOrders, useTakenOrders } from "@/hooks/useOrders";
@@ -14,21 +14,6 @@ import type { Order } from "@/src/models/Order";
 function firstLine(text: string) {
   const line = text.split("\n")[0] ?? "";
   return line.length > 70 ? `${line.slice(0, 70)}…` : line;
-}
-
-function deriveHistoryStatus(order: Order): HistoryStatus {
-  if (order.status === 'completed') return 'completed';
-  if (order.status === 'closed_no_response') return 'closed_no_response';
-  if (order.status === 'deleted') return 'cancelled';
-  if (order.status === 'expired') {
-    return takenCount(order) > 0 ? 'completed' : 'cancelled';
-  }
-
-  const left = minutesLeft(order);
-  if (left <= 0) {
-    return takenCount(order) > 0 ? "completed" : "cancelled";
-  }
-  return "in_progress";
 }
 
 type RoleTab = "my" | "taken";
@@ -94,7 +79,7 @@ export default function HistoryPage() {
           category: o.category,
           city: o.city,
           createdAt: o.createdAt,
-          status: o.status === 'completed' || takenCount(o) > 0 ? 'completed' : 'cancelled',
+          status: deriveHistoryStatus(o),
         });
       }
     }
@@ -202,8 +187,8 @@ export default function HistoryPage() {
                 icon="📚"
                 message={
                   roleTab === "my"
-                    ? "Пока пусто. Здесь появятся ваши заказы."
-                    : "У вас пока нет взятых заказов."
+                    ? "Пока нет заказов в истории."
+                    : "Пока нет взятых заказов."
                 }
               />
             ) : roleTab === "my" ? (

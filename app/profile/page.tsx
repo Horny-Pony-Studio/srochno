@@ -171,8 +171,9 @@ export default function Profile() {
 
         <div>
           <AppList>
-            <ListItem title="История заказов" link onClick={() => router.push("/history")} />
+            <ListItem title="Мои заявки" link onClick={() => router.push("/customer")} />
             <ListItem title="Заказы в работе" link onClick={() => router.push("/taken")} />
+            <ListItem title="История заказов" link onClick={() => router.push("/history")} />
             <ListItem title="Отзывы" link onClick={() => router.push("/reviews")} />
             <ListItem title="Настройки уведомлений" link onClick={() => router.push("/notifications")} />
           </AppList>

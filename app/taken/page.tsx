@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Block, BlockTitle, Preloader } from "konsta/react";
 import { AppNavbar, AppPage, HistoryCard, InfoBlock, OrderCard, PageTransition, PullToRefresh } from "@/src/components";
 import type { HistoryCardData } from "@/src/components/HistoryCard";
-import { minutesLeft, takenCount } from "@/src/utils/order";
+import { minutesLeft, deriveHistoryStatus } from "@/src/utils/order";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
 import { useMyOrders, useTakenOrders } from "@/hooks/useOrders";
 import type { Order } from "@/src/models/Order";
@@ -54,7 +54,7 @@ export default function TakenOrdersPage() {
           category: o.category,
           city: o.city,
           createdAt: o.createdAt,
-          status: o.status === 'completed' || takenCount(o) > 0 ? 'completed' : 'cancelled',
+          status: deriveHistoryStatus(o),
         });
       }
     }
@@ -113,7 +113,7 @@ export default function TakenOrdersPage() {
                 <InfoBlock
                   className="mx-4"
                   variant="blue"
-                  message="У вас нет активных заказов"
+                  message="Пока нет активных заказов."
                 />
               ) : (
                 <div className="flex flex-col gap-4">
@@ -132,7 +132,7 @@ export default function TakenOrdersPage() {
                 <InfoBlock
                   className="mx-4"
                   variant="blue"
-                  message="У вас пока нет взятых заказов"
+                  message="Пока нет взятых заказов."
                 />
               ) : (
                 <>
