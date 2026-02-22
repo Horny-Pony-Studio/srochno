@@ -82,13 +82,14 @@ export default function ReviewsPage() {
               variant="red"
               icon="⚠️"
               message="Не удалось загрузить отзывы. Попробуйте позже."
+              onRetry={() => refetch()}
             />
           ) : !reviews || reviews.length === 0 ? (
             <InfoBlock
               className="mx-4"
               variant="blue"
               icon="⭐"
-              message="Пока нет отзывов с таким рейтингом."
+              message="Пока нет отзывов."
             />
           ) : (
             <>
