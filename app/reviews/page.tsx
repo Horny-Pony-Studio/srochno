@@ -6,6 +6,7 @@ import { Star } from "lucide-react";
 import { AppList, AppNavbar, AppPage, InfoBlock, PageTransition, PullToRefresh } from "@/src/components";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
 import { useReviews } from "@/src/hooks/useReviews";
+import { formatRating } from "@/src/utils/format";
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -108,7 +109,7 @@ export default function ReviewsPage() {
                         <div className="font-medium truncate">{r.authorName}</div>
                         <div className="flex items-center gap-1 shrink-0">
                           <Star className="w-4 h-4 text-[#FF9500] fill-[#FF9500]" />
-                          <span className="text-sm">{r.rating}</span>
+                          <span className="text-sm">{formatRating(r.rating)}</span>
                         </div>
                       </div>
 
