@@ -1,33 +1,54 @@
 "use client";
 
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Block, BlockTitle, Preloader } from "konsta/react";
 import { AppNavbar, AppPage, HistoryCard, InfoBlock, OrderCard, PageTransition, PullToRefresh } from "@/src/components";
 import type { HistoryCardData } from "@/src/components/HistoryCard";
 import { minutesLeft, takenCount } from "@/src/utils/order";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
-import { useTakenOrders } from "@/hooks/useOrders";
+import { useMyOrders, useTakenOrders } from "@/hooks/useOrders";
+import type { Order } from "@/src/models/Order";
+
+type RoleTab = "my" | "taken";
+
+const ROLE_TABS: { key: RoleTab; label: string }[] = [
+  { key: "my", label: "Мои заказы" },
+  { key: "taken", label: "Взятые мной" },
+];
 
 export default function TakenOrdersPage() {
   const router = useRouter();
   useTelegramBackButton("/profile");
+  const [roleTab, setRoleTab] = useState<RoleTab>("my");
 
-  const { data: orders, isLoading, isError, refetch } = useTakenOrders();
+  const { data: myOrders, isLoading: myLoading, isError: myError, refetch: myRefetch } = useMyOrders();
+  const { data: takenOrders, isLoading: takenLoading, isError: takenError, refetch: takenRefetch } = useTakenOrders();
 
   const handleRefresh = useCallback(async () => {
-    await refetch();
-  }, [refetch]);
+    if (roleTab === "my") {
+      await myRefetch();
+    } else {
+      await takenRefetch();
+    }
+  }, [roleTab, myRefetch, takenRefetch]);
 
-  const { active, past } = useMemo(() => {
-    if (!orders) return { active: [], past: [] };
-    const a: typeof orders = [];
-    const p: HistoryCardData[] = [];
-    for (const o of orders) {
+  // — My orders: show active ones as OrderCards —
+  const myActiveOrders = useMemo(() => {
+    if (!myOrders) return [];
+    return myOrders.filter((o) => o.status === 'active' && minutesLeft(o) > 0);
+  }, [myOrders]);
+
+  // — Taken orders: split into active (live) and past (history cards) —
+  const { takenActive, takenPast } = useMemo(() => {
+    if (!takenOrders) return { takenActive: [] as Order[], takenPast: [] as HistoryCardData[] };
+    const active: Order[] = [];
+    const past: HistoryCardData[] = [];
+    for (const o of takenOrders) {
       if (minutesLeft(o) > 0 && o.status === 'active') {
-        a.push(o);
+        active.push(o);
       } else {
-        p.push({
+        past.push({
           id: o.id,
           title: o.description.split("\n")[0]?.slice(0, 70) ?? "",
           category: o.category,
@@ -37,16 +58,40 @@ export default function TakenOrdersPage() {
         });
       }
     }
-    p.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
-    return { active: a, past: p };
-  }, [orders]);
+    past.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+    return { takenActive: active, takenPast: past };
+  }, [takenOrders]);
 
-  const isEmpty = active.length === 0 && past.length === 0;
+  const isLoading = roleTab === "my" ? myLoading : takenLoading;
+  const isError = roleTab === "my" ? myError : takenError;
+  const refetch = roleTab === "my" ? myRefetch : takenRefetch;
+
+  const takenEmpty = takenActive.length === 0 && takenPast.length === 0;
 
   return (
     <PageTransition>
       <AppPage className="min-h-screen flex flex-col">
-        <AppNavbar title="Мои заказы" />
+        <AppNavbar title="Заказы в работе" />
+
+        {/* Role tabs */}
+        <Block className="my-0 pt-4 pb-0 px-4!">
+          <div className="flex gap-2">
+            {ROLE_TABS.map((t) => (
+              <button
+                key={t.key}
+                onClick={() => setRoleTab(t.key)}
+                className={
+                  `flex-1 py-3 rounded-lg text-base font-medium transition-colors
+                  ${roleTab === t.key
+                    ? "bg-primary text-white"
+                    : "bg-transparent text-primary border-2 border-primary"}`
+                }
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </Block>
 
         <PullToRefresh onRefresh={handleRefresh} className="flex-1">
           <Block className="flex-1 flex flex-col gap-4 pb-16 my-4 pl-0! pr-0!">
@@ -62,44 +107,68 @@ export default function TakenOrdersPage() {
                 icon="⚠️"
                 onRetry={() => refetch()}
               />
-            ) : isEmpty ? (
-              <InfoBlock
-                className="mx-4"
-                variant="blue"
-                message="У вас пока нет взятых заказов"
-              />
+            ) : roleTab === "my" ? (
+              /* ─── My orders (created by user) ─── */
+              myActiveOrders.length === 0 ? (
+                <InfoBlock
+                  className="mx-4"
+                  variant="blue"
+                  message="У вас нет активных заказов"
+                />
+              ) : (
+                <div className="flex flex-col gap-4">
+                  {myActiveOrders.map((order) => (
+                    <OrderCard
+                      key={order.id}
+                      order={order}
+                      onClick={() => router.push(`/orders/${order.id}`)}
+                    />
+                  ))}
+                </div>
+              )
             ) : (
-              <>
-                {active.length > 0 && (
-                  <>
-                    <BlockTitle className="my-0 mx-4">В работе</BlockTitle>
-                    <div className="flex flex-col gap-4">
-                      {active.map((order) => (
-                        <OrderCard
-                          key={order.id}
-                          order={order}
-                          onClick={() => router.push(`/orders/${order.id}`)}
-                        />
-                      ))}
-                    </div>
-                  </>
-                )}
+              /* ─── Taken orders (user is executor) ─── */
+              takenEmpty ? (
+                <InfoBlock
+                  className="mx-4"
+                  variant="blue"
+                  message="У вас пока нет взятых заказов"
+                />
+              ) : (
+                <>
+                  {takenActive.length > 0 && (
+                    <>
+                      <BlockTitle className="my-0 mx-4">В работе</BlockTitle>
+                      <div className="flex flex-col gap-4">
+                        {takenActive.map((order) => (
+                          <OrderCard
+                            key={order.id}
+                            order={order}
+                            onClick={() => router.push(`/orders/${order.id}`)}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
 
-                {past.length > 0 && (
-                  <>
-                    <BlockTitle className="my-0 mx-4">Завершённые</BlockTitle>
-                    <div className="flex flex-col gap-4">
-                      {past.map((item) => (
-                        <HistoryCard
-                          key={item.id}
-                          item={item}
-                          onClick={() => router.push(`/history/${item.id}`)}
-                        />
-                      ))}
-                    </div>
-                  </>
-                )}
-              </>
+                  {takenPast.length > 0 && (
+                    <>
+                      {takenActive.length > 0 && (
+                        <BlockTitle className="my-0 mx-4">Завершённые</BlockTitle>
+                      )}
+                      <div className="flex flex-col gap-4">
+                        {takenPast.map((item) => (
+                          <HistoryCard
+                            key={item.id}
+                            item={item}
+                            onClick={() => router.push(`/history/${item.id}`)}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </>
+              )
             )}
           </Block>
         </PullToRefresh>

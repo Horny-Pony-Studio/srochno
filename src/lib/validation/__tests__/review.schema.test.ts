@@ -1,9 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  clientReviewSchema,
-  executorComplaintSchema,
-  COMPLAINT_REASONS,
-} from '../review.schema';
+import { clientReviewSchema } from '../review.schema';
 
 // ─── clientReviewSchema ─────────────────────────────────
 
@@ -100,79 +96,3 @@ describe('clientReviewSchema', () => {
   });
 });
 
-// ─── COMPLAINT_REASONS ──────────────────────────────────
-
-describe('COMPLAINT_REASONS', () => {
-  it('has 5 complaint reasons', () => {
-    expect(COMPLAINT_REASONS).toHaveLength(5);
-  });
-
-  it('includes key reasons', () => {
-    expect(COMPLAINT_REASONS).toContain('Не отвечал');
-    expect(COMPLAINT_REASONS).toContain('Отменил заказ');
-    expect(COMPLAINT_REASONS).toContain('Другое');
-  });
-});
-
-// ─── executorComplaintSchema ────────────────────────────
-
-describe('executorComplaintSchema', () => {
-  const validComplaint = {
-    orderId: 'order-456',
-    complaint: 'Не отвечал' as const,
-  };
-
-  it('passes with valid complaint reason', () => {
-    const result = executorComplaintSchema.safeParse(validComplaint);
-    expect(result.success).toBe(true);
-  });
-
-  it('passes with complaint and comment', () => {
-    const result = executorComplaintSchema.safeParse({
-      ...validComplaint,
-      comment: 'Клиент не отвечал в течение 30 минут',
-    });
-    expect(result.success).toBe(true);
-  });
-
-  it('accepts all valid complaint reasons', () => {
-    for (const reason of COMPLAINT_REASONS) {
-      const result = executorComplaintSchema.safeParse({
-        ...validComplaint,
-        complaint: reason,
-      });
-      expect(result.success).toBe(true);
-    }
-  });
-
-  it('rejects invalid complaint reason', () => {
-    const result = executorComplaintSchema.safeParse({
-      ...validComplaint,
-      complaint: 'Невірна причина',
-    });
-    expect(result.success).toBe(false);
-  });
-
-  it('rejects empty complaint reason', () => {
-    const result = executorComplaintSchema.safeParse({
-      ...validComplaint,
-      complaint: '',
-    });
-    expect(result.success).toBe(false);
-  });
-
-  it('rejects comment > 500 chars', () => {
-    const result = executorComplaintSchema.safeParse({
-      ...validComplaint,
-      comment: 'a'.repeat(501),
-    });
-    expect(result.success).toBe(false);
-  });
-
-  it('requires orderId', () => {
-    const result = executorComplaintSchema.safeParse({
-      complaint: 'Не отвечал',
-    });
-    expect(result.success).toBe(false);
-  });
-});

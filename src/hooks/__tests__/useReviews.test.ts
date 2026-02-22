@@ -5,12 +5,10 @@ import React from 'react';
 
 const mockGetReviews = vi.fn();
 const mockSubmitReview = vi.fn();
-const mockSubmitComplaint = vi.fn();
 
 vi.mock('@/lib/api', () => ({
   getReviews: (...args: unknown[]) => mockGetReviews(...args),
   submitClientReview: (...args: unknown[]) => mockSubmitReview(...args),
-  submitExecutorComplaint: (...args: unknown[]) => mockSubmitComplaint(...args),
 }));
 
 vi.mock('@/lib/mappers', () => ({
@@ -21,7 +19,6 @@ vi.mock('@/lib/mappers', () => ({
 import {
   useReviews,
   useSubmitReview,
-  useSubmitComplaint,
   reviewKeys,
 } from '../useReviews';
 
@@ -84,6 +81,30 @@ describe('useReviews', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(mockGetReviews).toHaveBeenCalledWith({ rating: 5 });
   });
+
+  it('passes about_me filter to API', async () => {
+    mockGetReviews.mockResolvedValue([]);
+
+    const { result } = renderHook(
+      () => useReviews({ about_me: true }),
+      { wrapper: createWrapper() },
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(mockGetReviews).toHaveBeenCalledWith({ about_me: true });
+  });
+
+  it('passes mine filter to API', async () => {
+    mockGetReviews.mockResolvedValue([]);
+
+    const { result } = renderHook(
+      () => useReviews({ mine: true, rating: 4 }),
+      { wrapper: createWrapper() },
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(mockGetReviews).toHaveBeenCalledWith({ mine: true, rating: 4 });
+  });
 });
 
 describe('useSubmitReview', () => {
@@ -113,29 +134,3 @@ describe('useSubmitReview', () => {
   });
 });
 
-describe('useSubmitComplaint', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('calls submitExecutorComplaint API', async () => {
-    mockSubmitComplaint.mockResolvedValue({ success: true });
-
-    const { result } = renderHook(() => useSubmitComplaint(), {
-      wrapper: createWrapper(),
-    });
-
-    result.current.mutate({
-      order_id: 'order-2',
-      complaint: 'Не отвечал',
-      comment: null,
-    });
-
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(mockSubmitComplaint).toHaveBeenCalledWith({
-      order_id: 'order-2',
-      complaint: 'Не отвечал',
-      comment: null,
-    });
-  });
-});
