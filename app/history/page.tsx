@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useCallback, useMemo, useState } from "react";
-import { Block, BlockTitle, Button, Chip, Preloader } from "konsta/react";
-import { Star } from "lucide-react";
+import { Block, BlockTitle, Chip, Preloader } from "konsta/react";
 import { AppNavbar, AppPage, InfoBlock, HistoryCard, OrderCard, PageTransition, PullToRefresh } from "@/src/components";
 import type { HistoryCardData } from "@/src/components/HistoryCard";
 import { minutesLeft, deriveHistoryStatus } from "@/src/utils/order";
@@ -233,17 +232,6 @@ export default function HistoryPage() {
               </>
             )}
 
-            <Block className="my-0 mx-4">
-              <Button
-                rounded
-                outline
-                onClick={() => router.push('/reviews')}
-                className="w-full justify-center"
-              >
-                <Star className="w-4 h-4" />
-                <span className="text-sm">Все отзывы</span>
-              </Button>
-            </Block>
           </Block>
         </PullToRefresh>
       </AppPage>
