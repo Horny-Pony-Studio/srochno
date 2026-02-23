@@ -7,13 +7,6 @@ export type OrderStatus =
   | 'closed_no_response'
   | 'completed';
 
-export type ComplaintReason =
-  | 'Не отвечал'
-  | 'Отменил заказ'
-  | 'Неадекватное поведение'
-  | 'Ложная информация'
-  | 'Другое';
-
 // ─── Users ───────────────────────────────────────────────
 
 export interface UserProfile {
@@ -131,6 +124,7 @@ export interface OrderDetailResponse {
   customer_responded_at: string | null;
   city_locked: boolean;
   rating?: number | null;
+  feedback?: OrderFeedback | null;
 }
 
 export interface OrderListResponse {
@@ -143,6 +137,19 @@ export interface ExecutorTakeResponse {
   contact: string;
   executor_count: number;
   new_balance: number;
+}
+
+// ─── Order Feedback (embedded in OrderDetailResponse) ─
+
+export interface OrderClientReview {
+  id: number;
+  rating: number;
+  comment: string | null;
+  created_at: string;
+}
+
+export interface OrderFeedback {
+  client_review: OrderClientReview | null;
 }
 
 // ─── Reviews ─────────────────────────────────────────────
@@ -158,12 +165,6 @@ export interface ClientReviewResponse {
   review_id: number;
 }
 
-export interface ExecutorComplaintRequest {
-  order_id: string;
-  complaint: ComplaintReason;
-  comment?: string | null;
-}
-
 export interface ReviewResponse {
   id: number;
   author_name: string;
@@ -171,4 +172,8 @@ export interface ReviewResponse {
   comment: string | null;
   category: string;
   created_at: string;
+  order_id?: string | null;
+  description?: string | null;
+  contact?: string | null;
+  city?: string | null;
 }

@@ -24,7 +24,6 @@ import type {
 import { mapOrder, mapOrders } from '@/lib/mappers';
 import type { Order } from '@/src/models/Order';
 import { useAuth } from '@/src/providers/AuthProvider';
-import { isTakenByUser } from '@/src/utils/order';
 
 // ─── Query keys ─────────────────────────────────────────
 
@@ -80,10 +79,8 @@ export function useTakenOrders() {
   return useQuery({
     queryKey: [...orderKeys.all, 'taken'] as const,
     queryFn: async (): Promise<Order[]> => {
-      const res = await getOrders();
-      const all = mapOrders(res.orders);
-      if (!user) return [];
-      return all.filter((o) => isTakenByUser(o, user.id));
+      const res = await getOrders({ taken_by_me: true });
+      return mapOrders(res.orders);
     },
     enabled: !!user,
   });
