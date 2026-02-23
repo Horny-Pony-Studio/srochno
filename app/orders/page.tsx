@@ -112,7 +112,7 @@ export default function OrdersPage() {
               <InfoBlock
                 className={"mx-4"}
                 variant={"blue"}
-                message={"Нет заказов в этой категории или городе"}
+                message={"Пока нет заказов в этой категории или городе."}
               />
             ) : (
               <div className="flex flex-col gap-4">

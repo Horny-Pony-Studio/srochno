@@ -44,6 +44,12 @@ export default function Home() {
       <Page>
         <AppNavbar title="Срочные услуги" showRight />
 
+        {process.env.NEXT_PUBLIC_API_URL?.includes('localhost') && (
+          <div className="bg-yellow-500 text-black text-center text-xs font-bold py-1">
+            DEV
+          </div>
+        )}
+
         <Block className="flex-1 flex flex-col items-center justify-center px-4 pb-20">
           <div className="text-center mb-8 card-appear">
             <div className="w-24 h-24 mx-auto bg-primary rounded-3xl flex items-center justify-center mb-4 transition-transform duration-300 hover:scale-110">

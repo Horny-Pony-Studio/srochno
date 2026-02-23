@@ -167,14 +167,10 @@ describe('useTakenOrders', () => {
     vi.clearAllMocks();
   });
 
-  it('returns only orders taken by the current user', async () => {
+  it('fetches orders via taken_by_me param (server-side filtering)', async () => {
     const rawOrders = [
-      { id: '1', takenBy: [{ executorId: 'user-1', takenAt: '2025-01-01T00:00:00Z' }] },
-      { id: '2', takenBy: [{ executorId: 'other-user', takenAt: '2025-01-01T00:00:00Z' }] },
-      { id: '3', takenBy: [
-        { executorId: 'other-user', takenAt: '2025-01-01T00:00:00Z' },
-        { executorId: 'user-1', takenAt: '2025-01-01T00:00:00Z' },
-      ] },
+      { id: '1', category: 'plumbing' },
+      { id: '3', category: 'electric' },
     ];
     mockGetOrders.mockResolvedValue({ orders: rawOrders });
 
@@ -184,16 +180,13 @@ describe('useTakenOrders', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(mockGetOrders).toHaveBeenCalledWith();
+    expect(mockGetOrders).toHaveBeenCalledWith({ taken_by_me: true });
     expect(result.current.data).toHaveLength(2);
-    expect(result.current.data!.map((o) => o.id)).toEqual(['1', '3']);
+    expect(result.current.data![0]).toHaveProperty('mapped', true);
   });
 
-  it('returns empty array when no orders are taken by user', async () => {
-    const rawOrders = [
-      { id: '1', takenBy: [{ executorId: 'other', takenAt: '2025-01-01T00:00:00Z' }] },
-    ];
-    mockGetOrders.mockResolvedValue({ orders: rawOrders });
+  it('returns empty array when API returns no orders', async () => {
+    mockGetOrders.mockResolvedValue({ orders: [] });
 
     const { result } = renderHook(() => useTakenOrders(), {
       wrapper: createWrapper(),

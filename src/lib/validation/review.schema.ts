@@ -16,26 +16,4 @@ export const clientReviewSchema = z.object({
     .optional(),
 });
 
-// Причины жалоб от исполнителя
-export const COMPLAINT_REASONS = [
-  'Не отвечал',
-  'Отменил заказ',
-  'Неадекватное поведение',
-  'Ложная информация',
-  'Другое',
-] as const;
-
-// Схема для жалобы исполнителя на клиента
-export const executorComplaintSchema = z.object({
-  orderId: z.string(),
-  complaint: z.enum(COMPLAINT_REASONS, {
-    message: 'Выберите причину жалобы',
-  }),
-  comment: z
-    .string()
-    .max(500, 'Комментарий слишком длинный (максимум 500 символов)')
-    .optional(),
-});
-
 export type ClientReviewInput = z.infer<typeof clientReviewSchema>;
-export type ExecutorComplaintInput = z.infer<typeof executorComplaintSchema>;
