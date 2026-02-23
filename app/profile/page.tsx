@@ -11,6 +11,7 @@ import { useTelegramBackButton, useTelegramLinks } from "@/src/hooks/useTelegram
 import { useAuth } from "@/providers/AuthProvider";
 import { usePayment } from "@/src/hooks/usePayment";
 import { useToast } from "@/hooks/useToast";
+import { formatRating, formatBalance } from "@/src/utils/format";
 import { initData } from "@telegram-apps/sdk-react";
 
 function usePhotoUrl(): string | undefined {
@@ -112,7 +113,7 @@ export default function Profile() {
             <div className="text-center">
               <div className="text-2xl mb-1 flex items-center justify-center gap-1">
                 <Star className="w-5 h-5 text-orange-500 fill-orange-500" />
-                {rating}
+                {formatRating(rating)}
               </div>
               <div className="text-xs opacity-55">Рейтинг</div>
             </div>
@@ -130,7 +131,7 @@ export default function Profile() {
               <Wallet className="w-5 h-5 text-primary" />
               <span>Баланс</span>
             </div>
-            <div className="text-2xl">{balance} ₽</div>
+            <div className="text-2xl">{formatBalance(balance)} ₽</div>
           </div>
 
           <div className="space-y-2">
@@ -170,8 +171,9 @@ export default function Profile() {
 
         <div>
           <AppList>
-            <ListItem title="История заказов" link onClick={() => router.push("/history")} />
+            <ListItem title="Мои заявки" link onClick={() => router.push("/customer")} />
             <ListItem title="Заказы в работе" link onClick={() => router.push("/taken")} />
+            <ListItem title="История заказов" link onClick={() => router.push("/history")} />
             <ListItem title="Отзывы" link onClick={() => router.push("/reviews")} />
             <ListItem title="Настройки уведомлений" link onClick={() => router.push("/notifications")} />
           </AppList>
