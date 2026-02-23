@@ -1,5 +1,5 @@
-import type { OrderResponse, OrderDetailResponse, ExecutorTakeSchema, ReviewResponse } from '@/types/api';
-import type { Order, ExecutorTake, CustomerResponse } from '@/src/models/Order';
+import type { OrderResponse, OrderDetailResponse, ExecutorTakeSchema, ReviewResponse, OrderFeedback } from '@/types/api';
+import type { Order, ExecutorTake, CustomerResponse, OrderFeedbackData } from '@/src/models/Order';
 import type { Review } from '@/src/models/Review';
 
 function mapExecutorTake(raw: ExecutorTakeSchema): ExecutorTake {
@@ -16,7 +16,23 @@ function mapCustomerResponse(
   return { respondedAt };
 }
 
+function mapOrderFeedback(raw: OrderFeedback | null | undefined): OrderFeedbackData | undefined {
+  if (raw == null) return undefined;
+  return {
+    clientReview: raw.client_review
+      ? {
+          id: raw.client_review.id,
+          rating: raw.client_review.rating,
+          comment: raw.client_review.comment,
+          createdAt: raw.client_review.created_at,
+        }
+      : null,
+  };
+}
+
 export function mapOrder(raw: OrderResponse | OrderDetailResponse): Order {
+  const feedback = 'feedback' in raw ? mapOrderFeedback(raw.feedback) : undefined;
+
   return {
     id: raw.id,
     category: raw.category,
@@ -30,6 +46,7 @@ export function mapOrder(raw: OrderResponse | OrderDetailResponse): Order {
     customerResponse: mapCustomerResponse(raw.customer_responded_at),
     cityLocked: raw.city_locked,
     ...(raw.rating != null ? { rating: raw.rating } : {}),
+    ...(feedback !== undefined ? { feedback } : {}),
   };
 }
 
@@ -45,6 +62,10 @@ export function mapReview(raw: ReviewResponse): Review {
     category: raw.category,
     authorName: raw.author_name,
     createdAt: raw.created_at,
+    ...(raw.order_id != null ? { orderId: raw.order_id } : {}),
+    ...(raw.description != null ? { description: raw.description } : {}),
+    ...(raw.contact != null ? { contact: raw.contact } : {}),
+    ...(raw.city != null ? { city: raw.city } : {}),
   };
 }
 

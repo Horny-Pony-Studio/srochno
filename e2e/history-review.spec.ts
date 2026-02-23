@@ -1,6 +1,6 @@
 import { test, expect } from './fixtures';
 
-test.describe('History detail — review/complaint flow', () => {
+test.describe('History detail — review flow', () => {
   test('shows order details on history page', async ({ mockPage: page }) => {
     await page.goto('/');
     await page.evaluate(() => localStorage.setItem('user_role', 'client'));
@@ -32,11 +32,12 @@ test.describe('History detail — review/complaint flow', () => {
     await expect(page.getByText('Отправить отзыв')).toBeVisible();
   });
 
-  test('executor sees ComplaintForm on expired order', async ({ mockPage: page }) => {
+  test('executor sees client review empty state on expired order', async ({ mockPage: page }) => {
     await page.goto('/');
     await page.evaluate(() => localStorage.setItem('user_role', 'executor'));
 
     // Override mock so expired order has executor_id matching MOCK_USER.id (1)
+    // and includes feedback field
     await page.route('**/api/orders/order-expired', (route) =>
       route.fulfill({
         status: 200,
@@ -53,17 +54,17 @@ test.describe('History detail — review/complaint flow', () => {
           taken_by: [{ executor_id: 1, taken_at: new Date(Date.now() - 50 * 60_000).toISOString() }],
           customer_responded_at: null,
           city_locked: false,
+          feedback: { client_review: null },
         }),
       }),
     );
 
     await page.goto('/history/order-expired');
 
-    await expect(page.getByText('Пожаловаться на клиента')).toBeVisible();
-    await expect(page.getByText('Отправить жалобу')).toBeVisible();
+    await expect(page.getByText('Клиент пока не оставил отзыв')).toBeVisible();
   });
 
-  test('active order does not show review/complaint forms', async ({ mockPage: page }) => {
+  test('active order does not show review forms', async ({ mockPage: page }) => {
     await page.goto('/');
     await page.evaluate(() => localStorage.setItem('user_role', 'client'));
 

@@ -1,21 +1,14 @@
 "use client";
 
 import React, { useCallback } from "react";
-import dynamic from "next/dynamic";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Block, Chip, ListItem, Preloader } from "konsta/react";
-import { AppList, AppNavbar, AppPage, InfoBlock, PageTransition } from "@/src/components";
-
-const ReviewForm = dynamic(() => import("@/src/components/ReviewForm"), {
-  loading: () => <Preloader className="text-primary" />,
-});
-const ComplaintForm = dynamic(() => import("@/src/components/ComplaintForm"), {
-  loading: () => <Preloader className="text-primary" />,
-});
+import { AppList, AppNavbar, AppPage, InfoBlock, OrderFeedbackSection, PageTransition } from "@/src/components";
 import { minutesLeft, takenCount } from "@/src/utils/order";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
-import { useOrder } from "@/hooks/useOrders";
+import { useOrder, orderKeys } from "@/hooks/useOrders";
 import { useAuth } from "@/providers/AuthProvider";
+import { useQueryClient } from "@tanstack/react-query";
 
 function formatDateTime(iso: string) {
   const d = new Date(iso);
@@ -28,15 +21,15 @@ function formatDateTime(iso: string) {
 }
 
 export default function HistoryDetailPage() {
-  const router = useRouter();
   useTelegramBackButton('/history');
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const params = useParams<{ id?: string }>();
   const id = typeof params?.id === "string" ? params.id : "";
 
-  const handleFeedbackSuccess = useCallback(() => {
-    setTimeout(() => router.push('/history'), 1500);
-  }, [router]);
+  const handleFeedbackSubmitted = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: orderKeys.detail(id) });
+  }, [queryClient, id]);
 
   const { data: order, isLoading, isError } = useOrder(id || undefined);
 
@@ -114,13 +107,12 @@ export default function HistoryDetailPage() {
           </div>
 
           {canLeaveFeedback ? (
-            <div className="scale-in">
-              {user?.id != null && order.takenBy.some(t => t.executorId === String(user.id)) ? (
-                <ComplaintForm orderId={id} onSuccess={handleFeedbackSuccess} />
-              ) : (
-                <ReviewForm orderId={id} onSuccess={handleFeedbackSuccess} />
-              )}
-            </div>
+            <OrderFeedbackSection
+              orderId={id}
+              isExecutor={user?.id != null && order.takenBy.some(t => t.executorId === String(user.id))}
+              feedback={order.feedback}
+              onFeedbackSubmitted={handleFeedbackSubmitted}
+            />
           ) : null}
         </Block>
       </AppPage>
