@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Block, Chip } from "konsta/react";
+import { formatRating } from "@/src/utils/format";
 
 export type HistoryStatus = "completed" | "cancelled" | "closed_no_response" | "in_progress";
 
@@ -37,7 +38,7 @@ function statusChip(status: HistoryStatus, rating?: number) {
           fillTextIos: 'rgb(var(--k-color-green))',
         }}
       >
-        Выполнен{typeof rating === "number" ? ` • ${rating}★` : ""}
+        Выполнен{typeof rating === "number" ? ` • ${formatRating(rating)}★` : ""}
       </Chip>
     );
   }
