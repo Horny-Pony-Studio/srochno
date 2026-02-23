@@ -1,4 +1,5 @@
 import { Order } from "@/src/models/Order";
+import type { HistoryStatus } from "@/src/components/HistoryCard";
 
 export const ORDER_LIFETIME_MINUTES = 60;
 export const NO_RESPONSE_CLOSE_MINUTES = 15;
@@ -35,5 +36,24 @@ export function isAutoClosedNoResponse(order: Order, nowMs: number = Date.now())
 
   const firstTakeMs = Math.min(...order.takenBy.map((t) => Date.parse(t.takenAt)));
   return nowMs - firstTakeMs >= NO_RESPONSE_CLOSE_MINUTES * 60_000;
+}
+
+/**
+ * Derive a display status for order history cards.
+ * Used by /history and /taken to avoid duplicating logic.
+ */
+export function deriveHistoryStatus(order: Order): HistoryStatus {
+  if (order.status === 'completed') return 'completed';
+  if (order.status === 'closed_no_response') return 'closed_no_response';
+  if (order.status === 'deleted') return 'cancelled';
+  if (order.status === 'expired') {
+    return takenCount(order) > 0 ? 'completed' : 'cancelled';
+  }
+
+  const left = minutesLeft(order);
+  if (left <= 0) {
+    return takenCount(order) > 0 ? 'completed' : 'cancelled';
+  }
+  return 'in_progress';
 }
 

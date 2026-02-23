@@ -9,6 +9,17 @@ export interface CustomerResponse {
   respondedAt: string;
 }
 
+export interface ClientReviewData {
+  id: number;
+  rating: number;
+  comment: string | null;
+  createdAt: string;
+}
+
+export interface OrderFeedbackData {
+  clientReview: ClientReviewData | null;
+}
+
 export interface Order {
   id: string;
   category: string;
@@ -22,4 +33,5 @@ export interface Order {
   customerResponse?: CustomerResponse;
   cityLocked: boolean;
   rating?: number;
+  feedback?: OrderFeedbackData;
 }
