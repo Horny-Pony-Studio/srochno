@@ -1,5 +1,31 @@
 # Changelog
 
+## v0.5.0 (2026-02-24)
+
+First stable release of the v0.5.x series.
+
+### Features
+- Unified order history, reviews & feedback system
+- Redirect to profile on insufficient balance
+
+### Performance
+- Remove unoptimized flag from avatar Image
+- Remove duplicate Konsta theme import
+- Optimize OrderCard and OrderTimerChip transitions
+- Optimize theme transition timeout
+- Disable refetchOnWindowFocus for TMA
+- Replace backdrop-blur with solid background for toasts
+- Remove stagger animations from all list pages
+- Remove heavy global animations and transitions
+
+### Bug Fixes
+- Remove unused index variable in customer page
+
+### Chores
+- Dependency updates (minor and patch)
+- Bump @types/node from 20.19.33 to 25.3.0
+- Bump aquasecurity/trivy-action from 0.34.0 to 0.34.1
+
 ## v0.4.0 (2026-02-15)
 
 ### Features
