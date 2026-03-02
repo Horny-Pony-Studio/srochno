@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       if (!raw) {
-        setError('Telegram initData not available');
+        setError('Данные Telegram недоступны');
         setUser(null);
         return;
       }
@@ -57,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(profile);
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : 'Authentication failed';
+        err instanceof Error ? err.message : 'Ошибка авторизации';
       setError(message);
       setUser(null);
     } finally {
