@@ -10,6 +10,8 @@ const mockCreateOrder = vi.fn();
 const mockDeleteOrder = vi.fn();
 const mockTakeOrder = vi.fn();
 const mockCloseOrder = vi.fn();
+const mockRespondToOrder = vi.fn();
+const mockCompleteOrder = vi.fn();
 
 vi.mock('@/lib/api', () => ({
   getOrders: (...args: unknown[]) => mockGetOrders(...args),
@@ -19,6 +21,8 @@ vi.mock('@/lib/api', () => ({
   deleteOrder: (...args: unknown[]) => mockDeleteOrder(...args),
   takeOrder: (...args: unknown[]) => mockTakeOrder(...args),
   closeOrder: (...args: unknown[]) => mockCloseOrder(...args),
+  respondToOrder: (...args: unknown[]) => mockRespondToOrder(...args),
+  completeOrder: (...args: unknown[]) => mockCompleteOrder(...args),
 }));
 
 vi.mock('@/lib/mappers', () => ({
@@ -42,6 +46,8 @@ import {
   useCreateOrder,
   useTakeOrder,
   useCloseOrder,
+  useRespondToOrder,
+  useCompleteOrder,
   orderKeys,
 } from '../useOrders';
 
@@ -55,7 +61,12 @@ function createWrapper() {
   function Wrapper({ children }: { children: React.ReactNode }) {
     return React.createElement(QueryClientProvider, { client: qc }, children);
   }
-  return Wrapper;
+  return { Wrapper, qc };
+}
+
+/** Legacy helper for tests that don't need qc access */
+function createWrapperOnly() {
+  return createWrapper().Wrapper;
 }
 
 describe('orderKeys', () => {
@@ -86,7 +97,7 @@ describe('useOrders', () => {
     mockGetOrders.mockResolvedValue({ orders: rawOrders });
 
     const { result } = renderHook(() => useOrders(), {
-      wrapper: createWrapper(),
+      wrapper: createWrapperOnly(),
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -101,7 +112,7 @@ describe('useOrders', () => {
 
     const { result } = renderHook(
       () => useOrders({ status: 'active' as const }),
-      { wrapper: createWrapper() },
+      { wrapper: createWrapperOnly() },
     );
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -119,7 +130,7 @@ describe('useOrder', () => {
     mockGetOrder.mockResolvedValue(raw);
 
     const { result } = renderHook(() => useOrder('order-1'), {
-      wrapper: createWrapper(),
+      wrapper: createWrapperOnly(),
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -129,7 +140,7 @@ describe('useOrder', () => {
 
   it('does not fetch when id is undefined', () => {
     const { result } = renderHook(() => useOrder(undefined), {
-      wrapper: createWrapper(),
+      wrapper: createWrapperOnly(),
     });
 
     expect(result.current.isFetching).toBe(false);
@@ -151,7 +162,7 @@ describe('useMyOrders', () => {
     mockGetOrders.mockResolvedValue({ orders: rawOrders });
 
     const { result } = renderHook(() => useMyOrders(), {
-      wrapper: createWrapper(),
+      wrapper: createWrapperOnly(),
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -175,7 +186,7 @@ describe('useTakenOrders', () => {
     mockGetOrders.mockResolvedValue({ orders: rawOrders });
 
     const { result } = renderHook(() => useTakenOrders(), {
-      wrapper: createWrapper(),
+      wrapper: createWrapperOnly(),
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -189,7 +200,7 @@ describe('useTakenOrders', () => {
     mockGetOrders.mockResolvedValue({ orders: [] });
 
     const { result } = renderHook(() => useTakenOrders(), {
-      wrapper: createWrapper(),
+      wrapper: createWrapperOnly(),
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -206,7 +217,7 @@ describe('useCreateOrder', () => {
     mockCreateOrder.mockResolvedValue({ id: 'new-1' });
 
     const { result } = renderHook(() => useCreateOrder(), {
-      wrapper: createWrapper(),
+      wrapper: createWrapperOnly(),
     });
 
     result.current.mutate({
@@ -235,7 +246,7 @@ describe('useTakeOrder', () => {
     mockTakeOrder.mockResolvedValue({ success: true });
 
     const { result } = renderHook(() => useTakeOrder(), {
-      wrapper: createWrapper(),
+      wrapper: createWrapperOnly(),
     });
 
     result.current.mutate('order-5');
@@ -254,12 +265,96 @@ describe('useCloseOrder', () => {
     mockCloseOrder.mockResolvedValue(undefined);
 
     const { result } = renderHook(() => useCloseOrder(), {
-      wrapper: createWrapper(),
+      wrapper: createWrapperOnly(),
     });
 
     result.current.mutate('order-7');
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(mockCloseOrder).toHaveBeenCalledWith('order-7');
+  });
+
+  it('invalidates taken orders cache on success', async () => {
+    mockCloseOrder.mockResolvedValue(undefined);
+    const { Wrapper, qc } = createWrapper();
+    const spy = vi.spyOn(qc, 'invalidateQueries');
+
+    const { result } = renderHook(() => useCloseOrder(), { wrapper: Wrapper });
+
+    result.current.mutate('order-7');
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    const calls = spy.mock.calls.map((c) => c[0]);
+    expect(calls).toContainEqual({ queryKey: [...orderKeys.all, 'taken'] });
+  });
+});
+
+describe('useRespondToOrder', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('calls respondToOrder API with order id', async () => {
+    mockRespondToOrder.mockResolvedValue({ id: 'order-8', status: 'active' });
+
+    const { result } = renderHook(() => useRespondToOrder(), {
+      wrapper: createWrapperOnly(),
+    });
+
+    result.current.mutate('order-8');
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(mockRespondToOrder).toHaveBeenCalledWith('order-8');
+  });
+
+  it('invalidates taken orders cache on success', async () => {
+    mockRespondToOrder.mockResolvedValue({ id: 'order-8', status: 'active' });
+    const { Wrapper, qc } = createWrapper();
+    const spy = vi.spyOn(qc, 'invalidateQueries');
+
+    const { result } = renderHook(() => useRespondToOrder(), { wrapper: Wrapper });
+
+    result.current.mutate('order-8');
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    const calls = spy.mock.calls.map((c) => c[0]);
+    expect(calls).toContainEqual({ queryKey: [...orderKeys.all, 'taken'] });
+    expect(calls).toContainEqual({ queryKey: orderKeys.detail('order-8') });
+    expect(calls).toContainEqual({ queryKey: orderKeys.my() });
+  });
+});
+
+describe('useCompleteOrder', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('calls completeOrder API with order id', async () => {
+    mockCompleteOrder.mockResolvedValue({ id: 'order-9', status: 'completed' });
+
+    const { result } = renderHook(() => useCompleteOrder(), {
+      wrapper: createWrapperOnly(),
+    });
+
+    result.current.mutate('order-9');
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(mockCompleteOrder).toHaveBeenCalledWith('order-9');
+  });
+
+  it('invalidates taken orders cache on success', async () => {
+    mockCompleteOrder.mockResolvedValue({ id: 'order-9', status: 'completed' });
+    const { Wrapper, qc } = createWrapper();
+    const spy = vi.spyOn(qc, 'invalidateQueries');
+
+    const { result } = renderHook(() => useCompleteOrder(), { wrapper: Wrapper });
+
+    result.current.mutate('order-9');
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    const calls = spy.mock.calls.map((c) => c[0]);
+    expect(calls).toContainEqual({ queryKey: [...orderKeys.all, 'taken'] });
+    expect(calls).toContainEqual({ queryKey: orderKeys.detail('order-9') });
+    expect(calls).toContainEqual({ queryKey: orderKeys.my() });
   });
 });
