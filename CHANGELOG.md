@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.5.1-beta.1 (2026-03-03)
+
+### Bug Fixes
+- **reviews**: fix swapped `mine`/`about_me` filter params — "Мои отзывы" tab now correctly shows user's own reviews instead of reviews about them (#157)
+- **notifications**: add `label` to toggle ListItem for full-row tap target on mobile (#157)
+- **orders**: invalidate taken-orders cache on complete/respond/close — executor history now updates immediately (#157)
+- **i18n**: translate remaining English strings to Russian (#156)
+- **i18n**: prevent English error messages from reaching UI (#156)
+
+### Tests
+- **orders**: add tests for `useCompleteOrder`, `useRespondToOrder` and cache invalidation assertions (#157)
+
 ## v0.5.0 (2026-02-24)
 
 First stable release of the v0.5.x series.
