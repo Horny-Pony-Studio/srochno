@@ -255,7 +255,7 @@ describe('useMyOrderHistory', () => {
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(result.current.data).toHaveLength(2);
-    const ids = result.current.data!.map((o: Record<string, unknown>) => o.id);
+    const ids = result.current.data!.map((o) => o.id);
     expect(ids).toContain('dup');
     expect(ids).toContain('unique');
   });

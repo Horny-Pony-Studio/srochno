@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.5.2-beta.1 (2026-03-03)
+
+### Bug Fixes
+- **orders**: replace contact link with copy-to-clipboard button — contacts can be phone numbers, Viber, etc., not just Telegram usernames
+- **orders**: fetch all statuses for history and taken pages — backend defaults to `active` only, so completed/expired orders were missing from history for both customer and executor
+
+### Tests
+- **orders**: add tests for `useMyOrderHistory` and `useTakenOrderHistory` hooks (12 tests covering parallel fetching, deduplication, error states, query key nesting)
+
 ## v0.5.1-beta.1 (2026-03-03)
 
 ### Bug Fixes
