@@ -7,7 +7,7 @@ import type { HistoryCardData } from "@/src/components/HistoryCard";
 import { minutesLeft, deriveHistoryStatus } from "@/src/utils/order";
 import { useRouter } from "next/navigation";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
-import { useMyOrders, useTakenOrders } from "@/hooks/useOrders";
+import { useMyOrderHistory, useTakenOrderHistory } from "@/hooks/useOrders";
 import type { Order } from "@/src/models/Order";
 
 function firstLine(text: string) {
@@ -36,8 +36,8 @@ export default function HistoryPage() {
   const [roleTab, setRoleTab] = useState<RoleTab>("my");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
 
-  const { data: myOrders, isLoading: myLoading, isError: myError, refetch: myRefetch } = useMyOrders();
-  const { data: takenOrders, isLoading: takenLoading, isError: takenError, refetch: takenRefetch } = useTakenOrders();
+  const { data: myOrders, isLoading: myLoading, isError: myError, refetch: myRefetch } = useMyOrderHistory();
+  const { data: takenOrders, isLoading: takenLoading, isError: takenError, refetch: takenRefetch } = useTakenOrderHistory();
 
   const handleRefresh = useCallback(async () => {
     if (roleTab === "my") {

@@ -1,5 +1,7 @@
+import { useRef, useCallback, useEffect } from 'react';
 import {
   useQuery,
+  useQueries,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
@@ -20,10 +22,24 @@ import type {
   UpdateOrderRequest,
   ExecutorTakeResponse,
   OrderResponse,
+  OrderStatus,
 } from '@/types/api';
 import { mapOrder, mapOrders } from '@/lib/mappers';
 import type { Order } from '@/src/models/Order';
 import { useAuth } from '@/src/providers/AuthProvider';
+
+// Backend defaults to status=active when no status filter is provided.
+// History pages need all statuses, so we query each explicitly.
+const HISTORY_STATUSES: OrderStatus[] = ['active', 'completed', 'expired', 'closed_no_response'];
+
+function deduplicateOrders(orders: Order[]): Order[] {
+  const seen = new Set<string>();
+  return orders.filter((o) => {
+    if (seen.has(o.id)) return false;
+    seen.add(o.id);
+    return true;
+  });
+}
 
 // ─── Query keys ─────────────────────────────────────────
 
@@ -84,6 +100,68 @@ export function useTakenOrders() {
     },
     enabled: !!user,
   });
+}
+
+// ─── History queries (all statuses) ─────────────────────
+
+export function useMyOrderHistory() {
+  const { user } = useAuth();
+
+  const results = useQueries({
+    queries: HISTORY_STATUSES.map((status) => ({
+      queryKey: [...orderKeys.my(), status] as const,
+      queryFn: async (): Promise<Order[]> => {
+        const res = await getOrders({ mine: true, status });
+        return mapOrders(res.orders);
+      },
+      enabled: !!user,
+    })),
+  });
+
+  const isLoading = results.some((r) => r.isPending);
+  const isError = !isLoading && results.some((r) => r.isError);
+  const data = isLoading
+    ? undefined
+    : deduplicateOrders(results.flatMap((r) => r.data ?? []));
+
+  const resultsRef = useRef(results);
+  useEffect(() => { resultsRef.current = results; });
+  const refetch = useCallback(
+    async () => { await Promise.all(resultsRef.current.map((r) => r.refetch())); },
+    [],
+  );
+
+  return { data, isLoading, isError, refetch };
+}
+
+export function useTakenOrderHistory() {
+  const { user } = useAuth();
+
+  const results = useQueries({
+    queries: HISTORY_STATUSES.map((status) => ({
+      queryKey: [...orderKeys.all, 'taken', status] as const,
+      queryFn: async (): Promise<Order[]> => {
+        const res = await getOrders({ taken_by_me: true, status });
+        return mapOrders(res.orders);
+      },
+      enabled: !!user,
+    })),
+  });
+
+  const isLoading = results.some((r) => r.isPending);
+  const isError = !isLoading && results.some((r) => r.isError);
+  const data = isLoading
+    ? undefined
+    : deduplicateOrders(results.flatMap((r) => r.data ?? []));
+
+  const resultsRef = useRef(results);
+  useEffect(() => { resultsRef.current = results; });
+  const refetch = useCallback(
+    async () => { await Promise.all(resultsRef.current.map((r) => r.refetch())); },
+    [],
+  );
+
+  return { data, isLoading, isError, refetch };
 }
 
 // ─── Mutations ──────────────────────────────────────────
