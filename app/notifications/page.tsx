@@ -269,6 +269,7 @@ export default function NotificationSettingsPage() {
           <div className="card-appear">
             <AppList>
               <ListItem
+                label
                 title="Получать уведомления"
                 after={
                   <Toggle
