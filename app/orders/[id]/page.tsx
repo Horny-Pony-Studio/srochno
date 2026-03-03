@@ -2,8 +2,8 @@
 
 import React, { useCallback, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Block, Chip, Link, ListItem, Preloader } from "konsta/react";
-import { Clock, Phone, Lock, CheckCircle } from "lucide-react";
+import { Block, Chip, ListItem, Preloader } from "konsta/react";
+import { Clock, Copy, Lock, CheckCircle } from "lucide-react";
 import { AppPage, InfoBlock, AppNavbar, AppList, PageTransition } from "@/src/components";
 import { getTimeBackground, getTimeColor } from "@/src/utils/time";
 import { isTakenByUser, takenCount } from "@/src/utils/order";
@@ -152,12 +152,19 @@ export default function OrderDetailPage() {
           <Block className="my-0 card-appear-delayed" style={{ animationDelay: '0.25s' }} strong inset>
             <div className="text-sm opacity-55 mb-2">Контакт</div>
             {showContact ? (
-              <div className="flex items-center gap-2 scale-in">
-                <Phone className="w-5 h-5 text-primary" />
-                <Link href={`https://t.me/${displayContact?.replace("@", "") ?? ""}`} className="text-primary">
-                  {displayContact ?? "—"}
-                </Link>
-              </div>
+              <button
+                type="button"
+                className="flex items-center gap-2 w-full text-left scale-in"
+                onClick={() => {
+                  const text = displayContact ?? "";
+                  navigator.clipboard.writeText(text).then(() => {
+                    toast.success("Скопировано");
+                  });
+                }}
+              >
+                <span className="text-primary">{displayContact ?? "—"}</span>
+                <Copy className="w-4 h-4 text-primary opacity-55 ml-auto" />
+              </button>
             ) : (
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2 opacity-55">
