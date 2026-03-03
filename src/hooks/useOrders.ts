@@ -148,6 +148,7 @@ export function useCloseOrder() {
       qc.invalidateQueries({ queryKey: orderKeys.detail(id) });
       qc.invalidateQueries({ queryKey: orderKeys.lists() });
       qc.invalidateQueries({ queryKey: orderKeys.my() });
+      qc.invalidateQueries({ queryKey: [...orderKeys.all, 'taken'] });
     },
   });
 }
@@ -161,6 +162,7 @@ export function useRespondToOrder() {
       qc.invalidateQueries({ queryKey: orderKeys.detail(id) });
       qc.invalidateQueries({ queryKey: orderKeys.lists() });
       qc.invalidateQueries({ queryKey: orderKeys.my() });
+      qc.invalidateQueries({ queryKey: [...orderKeys.all, 'taken'] });
     },
   });
 }
@@ -174,6 +176,7 @@ export function useCompleteOrder() {
       qc.invalidateQueries({ queryKey: orderKeys.detail(id) });
       qc.invalidateQueries({ queryKey: orderKeys.lists() });
       qc.invalidateQueries({ queryKey: orderKeys.my() });
+      qc.invalidateQueries({ queryKey: [...orderKeys.all, 'taken'] });
     },
   });
 }
