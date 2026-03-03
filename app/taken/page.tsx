@@ -7,7 +7,7 @@ import { AppNavbar, AppPage, HistoryCard, InfoBlock, OrderCard, PageTransition, 
 import type { HistoryCardData } from "@/src/components/HistoryCard";
 import { minutesLeft, deriveHistoryStatus } from "@/src/utils/order";
 import { useTelegramBackButton } from "@/src/hooks/useTelegram";
-import { useMyOrders, useTakenOrders } from "@/hooks/useOrders";
+import { useMyOrders, useTakenOrderHistory } from "@/hooks/useOrders";
 import type { Order } from "@/src/models/Order";
 
 type RoleTab = "my" | "taken";
@@ -23,7 +23,7 @@ export default function TakenOrdersPage() {
   const [roleTab, setRoleTab] = useState<RoleTab>("my");
 
   const { data: myOrders, isLoading: myLoading, isError: myError, refetch: myRefetch } = useMyOrders();
-  const { data: takenOrders, isLoading: takenLoading, isError: takenError, refetch: takenRefetch } = useTakenOrders();
+  const { data: takenOrders, isLoading: takenLoading, isError: takenError, refetch: takenRefetch } = useTakenOrderHistory();
 
   const handleRefresh = useCallback(async () => {
     if (roleTab === "my") {

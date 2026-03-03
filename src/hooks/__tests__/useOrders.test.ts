@@ -43,6 +43,8 @@ import {
   useOrder,
   useMyOrders,
   useTakenOrders,
+  useMyOrderHistory,
+  useTakenOrderHistory,
   useCreateOrder,
   useTakeOrder,
   useCloseOrder,
@@ -205,6 +207,211 @@ describe('useTakenOrders', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toHaveLength(0);
+  });
+});
+
+// ─── History hooks (all statuses) ────────────────────────
+
+describe('useMyOrderHistory', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('fetches mine=true for each status and merges results', async () => {
+    mockGetOrders.mockImplementation((params: Record<string, unknown>) => {
+      if (params.status === 'active') return Promise.resolve({ orders: [{ id: '1' }] });
+      if (params.status === 'completed') return Promise.resolve({ orders: [{ id: '2' }] });
+      if (params.status === 'expired') return Promise.resolve({ orders: [{ id: '3' }] });
+      return Promise.resolve({ orders: [] });
+    });
+
+    const { result } = renderHook(() => useMyOrderHistory(), {
+      wrapper: createWrapperOnly(),
+    });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(mockGetOrders).toHaveBeenCalledTimes(4);
+    expect(mockGetOrders).toHaveBeenCalledWith({ mine: true, status: 'active' });
+    expect(mockGetOrders).toHaveBeenCalledWith({ mine: true, status: 'completed' });
+    expect(mockGetOrders).toHaveBeenCalledWith({ mine: true, status: 'expired' });
+    expect(mockGetOrders).toHaveBeenCalledWith({ mine: true, status: 'closed_no_response' });
+
+    expect(result.current.data).toHaveLength(3);
+  });
+
+  it('deduplicates orders by id', async () => {
+    mockGetOrders.mockImplementation((params: Record<string, unknown>) => {
+      if (params.status === 'active') return Promise.resolve({ orders: [{ id: 'dup' }] });
+      if (params.status === 'completed') return Promise.resolve({ orders: [{ id: 'dup' }] });
+      if (params.status === 'expired') return Promise.resolve({ orders: [{ id: 'unique' }] });
+      return Promise.resolve({ orders: [] });
+    });
+
+    const { result } = renderHook(() => useMyOrderHistory(), {
+      wrapper: createWrapperOnly(),
+    });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.data).toHaveLength(2);
+    const ids = result.current.data!.map((o) => o.id);
+    expect(ids).toContain('dup');
+    expect(ids).toContain('unique');
+  });
+
+  it('returns undefined data while loading', () => {
+    mockGetOrders.mockReturnValue(new Promise(() => {}));
+
+    const { result } = renderHook(() => useMyOrderHistory(), {
+      wrapper: createWrapperOnly(),
+    });
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.data).toBeUndefined();
+  });
+
+  it('sets isError when a query fails', async () => {
+    mockGetOrders.mockImplementation((params: Record<string, unknown>) => {
+      if (params.status === 'completed') return Promise.reject(new Error('fail'));
+      return Promise.resolve({ orders: [] });
+    });
+
+    const { result } = renderHook(() => useMyOrderHistory(), {
+      wrapper: createWrapperOnly(),
+    });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.isError).toBe(true);
+  });
+
+  it('maps orders through mapOrders', async () => {
+    mockGetOrders.mockImplementation((params: Record<string, unknown>) => {
+      if (params.status === 'active') return Promise.resolve({ orders: [{ id: '1' }] });
+      return Promise.resolve({ orders: [] });
+    });
+
+    const { result } = renderHook(() => useMyOrderHistory(), {
+      wrapper: createWrapperOnly(),
+    });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.data![0]).toHaveProperty('mapped', true);
+  });
+
+  it('uses query keys nested under orderKeys.my()', async () => {
+    mockGetOrders.mockResolvedValue({ orders: [] });
+    const { Wrapper, qc } = createWrapper();
+
+    renderHook(() => useMyOrderHistory(), { wrapper: Wrapper });
+
+    await waitFor(() => {
+      const queries = qc.getQueryCache().findAll();
+      const keys = queries.map((q) => q.queryKey);
+      expect(keys).toContainEqual([...orderKeys.my(), 'active']);
+      expect(keys).toContainEqual([...orderKeys.my(), 'completed']);
+      expect(keys).toContainEqual([...orderKeys.my(), 'expired']);
+      expect(keys).toContainEqual([...orderKeys.my(), 'closed_no_response']);
+    });
+  });
+
+  it('returns empty array when all queries return no orders', async () => {
+    mockGetOrders.mockResolvedValue({ orders: [] });
+
+    const { result } = renderHook(() => useMyOrderHistory(), {
+      wrapper: createWrapperOnly(),
+    });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.data).toHaveLength(0);
+  });
+});
+
+describe('useTakenOrderHistory', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('fetches taken_by_me=true for each status and merges results', async () => {
+    mockGetOrders.mockImplementation((params: Record<string, unknown>) => {
+      if (params.status === 'active') return Promise.resolve({ orders: [{ id: 't1' }] });
+      if (params.status === 'completed') return Promise.resolve({ orders: [{ id: 't2' }] });
+      return Promise.resolve({ orders: [] });
+    });
+
+    const { result } = renderHook(() => useTakenOrderHistory(), {
+      wrapper: createWrapperOnly(),
+    });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(mockGetOrders).toHaveBeenCalledTimes(4);
+    expect(mockGetOrders).toHaveBeenCalledWith({ taken_by_me: true, status: 'active' });
+    expect(mockGetOrders).toHaveBeenCalledWith({ taken_by_me: true, status: 'completed' });
+    expect(mockGetOrders).toHaveBeenCalledWith({ taken_by_me: true, status: 'expired' });
+    expect(mockGetOrders).toHaveBeenCalledWith({ taken_by_me: true, status: 'closed_no_response' });
+
+    expect(result.current.data).toHaveLength(2);
+  });
+
+  it('deduplicates orders by id', async () => {
+    mockGetOrders.mockImplementation((params: Record<string, unknown>) => {
+      if (params.status === 'active') return Promise.resolve({ orders: [{ id: 'same' }] });
+      if (params.status === 'completed') return Promise.resolve({ orders: [{ id: 'same' }] });
+      if (params.status === 'expired') return Promise.resolve({ orders: [{ id: 'diff' }] });
+      return Promise.resolve({ orders: [] });
+    });
+
+    const { result } = renderHook(() => useTakenOrderHistory(), {
+      wrapper: createWrapperOnly(),
+    });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.data).toHaveLength(2);
+  });
+
+  it('uses query keys nested under [orders, taken]', async () => {
+    mockGetOrders.mockResolvedValue({ orders: [] });
+    const { Wrapper, qc } = createWrapper();
+
+    renderHook(() => useTakenOrderHistory(), { wrapper: Wrapper });
+
+    await waitFor(() => {
+      const queries = qc.getQueryCache().findAll();
+      const keys = queries.map((q) => q.queryKey);
+      expect(keys).toContainEqual([...orderKeys.all, 'taken', 'active']);
+      expect(keys).toContainEqual([...orderKeys.all, 'taken', 'completed']);
+      expect(keys).toContainEqual([...orderKeys.all, 'taken', 'expired']);
+      expect(keys).toContainEqual([...orderKeys.all, 'taken', 'closed_no_response']);
+    });
+  });
+
+  it('sets isError when a query fails', async () => {
+    mockGetOrders.mockImplementation((params: Record<string, unknown>) => {
+      if (params.status === 'expired') return Promise.reject(new Error('network'));
+      return Promise.resolve({ orders: [] });
+    });
+
+    const { result } = renderHook(() => useTakenOrderHistory(), {
+      wrapper: createWrapperOnly(),
+    });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.isError).toBe(true);
+  });
+
+  it('maps all orders through mapOrders', async () => {
+    mockGetOrders.mockImplementation((params: Record<string, unknown>) => {
+      if (params.status === 'completed') return Promise.resolve({ orders: [{ id: '1' }] });
+      return Promise.resolve({ orders: [] });
+    });
+
+    const { result } = renderHook(() => useTakenOrderHistory(), {
+      wrapper: createWrapperOnly(),
+    });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.data![0]).toHaveProperty('mapped', true);
   });
 });
 
