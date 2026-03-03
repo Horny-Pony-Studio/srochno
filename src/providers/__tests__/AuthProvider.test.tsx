@@ -76,7 +76,7 @@ describe('AuthProvider', () => {
     expect(screen.getByTestId('authenticated')).toHaveTextContent('false');
     expect(screen.getByTestId('user')).toHaveTextContent('null');
     expect(screen.getByTestId('error')).toHaveTextContent(
-      'Telegram initData not available',
+      'Данные Telegram недоступны',
     );
   });
 
@@ -97,7 +97,7 @@ describe('AuthProvider', () => {
 
     expect(screen.getByTestId('authenticated')).toHaveTextContent('false');
     expect(screen.getByTestId('error')).toHaveTextContent(
-      'Telegram initData not available',
+      'Данные Telegram недоступны',
     );
   });
 

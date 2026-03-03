@@ -6,7 +6,7 @@ test.describe('Navigation', () => {
     await page.evaluate(() => localStorage.setItem('user_role', 'client'));
 
     await page.goto('/profile');
-    await page.getByText('История заказов').click();
+    await page.getByRole('listitem').filter({ hasText: 'История заказов' }).click();
     await page.waitForURL('**/history');
     expect(page.url()).toContain('/history');
   });

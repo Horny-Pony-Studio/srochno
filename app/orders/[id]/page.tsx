@@ -63,7 +63,7 @@ export default function OrderDetailPage() {
           } else if (err.status === 402) {
             toast.error('Недостаточно средств на балансе.');
           } else {
-            toast.error(err.detail);
+            toast.error('Не удалось взять заказ. Попробуйте позже.');
           }
         } else {
           toast.error('Не удалось взять заказ. Попробуйте позже.');

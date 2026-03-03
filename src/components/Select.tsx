@@ -20,7 +20,7 @@ function Select({
   value,
   onChangeAction,
   options,
-  placeholder = "Select",
+  placeholder = "Выбрать",
   name,
   className = "",
   disabled,

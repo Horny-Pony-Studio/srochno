@@ -55,7 +55,7 @@ export default function ReviewsPage() {
     refetch,
   } = useReviews({
     ...(ratingFilter != null ? { rating: ratingFilter } : {}),
-    ...(roleTab === "mine" ? { about_me: true } : { mine: true }),
+    ...(roleTab === "mine" ? { mine: true } : { about_me: true }),
   });
 
   const handleRefresh = useCallback(async () => {
